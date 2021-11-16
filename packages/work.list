@@ -1,0 +1,4 @@
+haproxy
+build-essential
+make
+redis-server
