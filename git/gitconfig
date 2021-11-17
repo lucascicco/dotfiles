@@ -1,0 +1,53 @@
+[user]
+    name = Lucas Vitor de Cicco
+    email = lucasciccomy@gmail.com
+
+[fetch]
+    prune = true
+
+[core]
+    editor = vi
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
+
+[color]
+    ui = always
+
+[diff]
+    tool = meld
+    noprefix = true
+    
+[difftool]
+    prompt = false
+[difftool "meld"]
+    cmd = meld "$LOCAL" "$REMOTE"
+
+[pull]
+    ff = only
+
+# FIXME: Uncomment when git 2.34 is available
+#[gpg]
+#    format = ssh
+#
+#[gpg "ssh"]
+#    defaultKeyCommand = ssh-add -L
+
+[alias]
+    aa = git add -A 
+    co = checkout
+    br = branch
+    ci = commit
+    cim = commit -am
+    st = status
+    di = diff
+    sdi = diff --cached
+    ndi = diff --color=never
+    nsdi = diff --cached --color=never
+    fe = fetch --all
+    rom = rebase -i origin/master
+    rm-stale = "!f(){\
+        git branch --color=never | grep -v "master" | grep -v ^* | xargs git branch -d;\
+    }; f"
+    rm-stale-force = "!f(){\
+        git branch --color=never | grep -v "master" | grep -v ^* | xargs git branch -D;\
+    }; f"
