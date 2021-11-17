@@ -10,6 +10,7 @@ LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 LOCAL_BUILD_DIR="${HOME}/.local_build"
 APT_PACKAGES=(
+  python3-pip
   nmap
   tcpdump
   haproxy
@@ -28,7 +29,6 @@ PYTHON_LIBS=(
   pre-commit
   cmake
   flake8
-  pip
 )
 NODE_LIBS=(
   bash-language-server
@@ -97,6 +97,12 @@ function _zsh {
   info "installing zsh plugins"
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
+  chsh -s $(which zsh)
+}
+
+function _python-libs {
+  info "installing python libs"
+  PIP_REQUIRE_VIRTUALENV=false pip install --progress-bar=ascii --user -U "${PYTHON_LIBS[@]}"
 }
 
 function _poetry {
@@ -120,7 +126,7 @@ function _nvm {
   zsh -i -c "nvm upgrade"
 }
 
-function _node-libs {
+function _node-libs {\
   info "installing node libs"
   set +x
   NODE_INSTALLED=$(
@@ -155,6 +161,7 @@ function _node-libs {
 function _ {
   _system "$@"
   _symlinks "$@"
+  _python-libs "$@"
   _zsh "$@"
   _poetry "$@"
   _nvm "$@"

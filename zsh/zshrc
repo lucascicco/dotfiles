@@ -1,5 +1,6 @@
 
 source "$HOME/.antigen.zsh"
+source ~/.nvm/nvm.sh
 
 if [ -f "$HOME/bootstrap/entrypoint.sh" ]; then
   source "$HOME/bootstrap/entrypoint.sh"
