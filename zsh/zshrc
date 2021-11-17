@@ -1,8 +1,8 @@
 
-source /usr/share/zsh-antigen/antigen.zsh
+source "$HOME/.antigen.zsh"
 
-if [ -f "$HOME/.bootstrap/entrypoint.sh" ]; then
-  source "$HOME/.bootstrap/entrypoint.sh"
+if [ -f "$HOME/bootstrap/entrypoint.sh" ]; then
+  source "$HOME/bootstrap/entrypoint.sh"
 fi
 
 # oh-my-zsh config

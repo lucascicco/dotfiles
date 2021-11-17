@@ -15,16 +15,17 @@ APT_PACKAGES=(
   haproxy
   redis
   redis-server
+  flatpak
   build-essential
   fzf
   git
   gitg
   meld
-  pre-commit
   zsh
   zsh-antigen
 )
 PYTHON_LIBS=(
+  pre-commit
   cmake
   flake8
   pip
@@ -71,11 +72,10 @@ function _system {
   info "updating the system"
   sudo apt update --list-cleanup
   # shellcheck disable=2086
-  sudo apt dist-upgrade --purge ${EXTRA_OPTS} "$@"
+  sudo apt dist-upgrade --purge "$@"
   # shellcheck disable=2086
-  sudo apt build-dep neovim ${EXTRA_OPTS} "$@"
-  # shellcheck disable=2086
-  sudo apt install --purge "${APT_PACKAGES[@]}" ${EXTRA_OPTS} "${@}"
+  sudo apt install "${APT_PACKAGES[@]}" "${@}" -y
+  info "apts all instaled..."
   sudo flatpak update
   sudo flatpak uninstall --unused
   sudo apt autoremove --purge
@@ -91,6 +91,9 @@ function _symlinks {
 }
 
 function _zsh {
+  if [ ! -f "${HOME}/.antigen.zsh" ]; then
+     curl -L git.io/antige > antigen.zsh
+  fi
   info "installing zsh plugins"
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
@@ -100,10 +103,10 @@ function _poetry {
   info "installing poetry"
   if [ ! -f "${HOME}/.poetry/bin/poetry" ]; then
     curl -sSL -o- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
-    poetry config virtualenvs.create true
-    poetry config virtualenvs.in-project true
+    # poetry config virtualenvs.create true
+    # poetry config virtualenvs.in-project true
   fi
-  poetry self update
+  # poetry self update
 }
 
 function _nvm {
