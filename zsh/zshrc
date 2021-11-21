@@ -1,6 +1,4 @@
-
 source "$HOME/.antigen.zsh"
-source ~/.nvm/nvm.sh
 
 if [ -f "$HOME/bootstrap/entrypoint.sh" ]; then
   source "$HOME/bootstrap/entrypoint.sh"
@@ -25,6 +23,7 @@ antigen bundle fzf
 antigen bundle gitfast
 antigen bundle npm
 antigen bundle systemd
+antigen bundle git
 
 # theme
 antigen theme agnoster

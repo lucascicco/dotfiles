@@ -13,6 +13,7 @@ APT_PACKAGES=(
   python3-pip
   nmap
   tcpdump
+  fonts-powerline
   haproxy
   redis
   redis-server
@@ -36,18 +37,11 @@ NODE_LIBS=(
   create-react-native-app
   dockerfile-language-server-nodejs
   eslint
-  expo-cli
-  fixjson
   graphql
   graphql-language-service-cli
   npm
-  opencollective
-  patch-package
   prettier
   pyright
-  react-native-cli
-  tree-sitter
-  tree-sitter-cli
   ts-server
   ts-node
   typescript
@@ -92,12 +86,11 @@ function _symlinks {
 
 function _zsh {
   if [ ! -f "${HOME}/.antigen.zsh" ]; then
-     curl -L git.io/antige > antigen.zsh
+     curl -L git.io/antigen > "$HOME/.antigen.zsh"
   fi
   info "installing zsh plugins"
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
-  chsh -s $(which zsh)
 }
 
 function _python-libs {
@@ -123,7 +116,6 @@ function _nvm {
     nvm use 16
     nvm alias default 16
   fi
-  zsh -i -c "nvm upgrade"
 }
 
 function _node-libs {\
