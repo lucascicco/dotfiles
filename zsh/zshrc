@@ -31,3 +31,9 @@ antigen theme agnoster
 antigen apply
 
 autoload -U compinit && compinit
+
+# alias
+
+alias gdff="git difftool --dir-diff"
+alias c="clear"
+

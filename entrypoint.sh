@@ -7,10 +7,8 @@ fi
 export DOTFILES_DIR="${HOME}/bootstrap"
 
 export GIT_SSH=ssh
-export PIP_REQUIRE_VIRTUALENV=true
 export PROJECT_HOME=$HOME/projects
 
-export PERL_LOCAL_LIB_ROOT=$HOME/.local/perl
 export GOBIN=$HOME/.local/bin
 export NVM_DIR="$HOME/.nvm"
 
