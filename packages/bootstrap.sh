@@ -23,6 +23,7 @@ APT_PACKAGES=(
   git
   gitg
   meld
+  tmux
   zsh
   zsh-antigen
 )
@@ -102,10 +103,10 @@ function _poetry {
   info "installing poetry"
   if [ ! -f "${HOME}/.poetry/bin/poetry" ]; then
     curl -sSL -o- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
-    # poetry config virtualenvs.create true
-    # poetry config virtualenvs.in-project true
+    poetry config virtualenvs.create true
+    poetry config virtualenvs.in-project true
   fi
-  # poetry self update
+   poetry self update
 }
 
 function _nvm {
