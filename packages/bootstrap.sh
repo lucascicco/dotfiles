@@ -4,12 +4,14 @@ set -e
 
 MY_DIR=$(dirname "${0}")
 BASE_DIR=$(dirname "${MY_DIR}")
-source "${MY_DIR}/funcs.sh"
+
+source "${DOTFILES_DIR}/utils/funcs.sh"
 
 LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 LOCAL_BUILD_DIR="${HOME}/.local_build"
 APT_PACKAGES=(
+  curl
   python3-pip
   nmap
   tcpdump
@@ -33,21 +35,13 @@ PYTHON_LIBS=(
   flake8
 )
 NODE_LIBS=(
-  bash-language-server
   corepack
   create-react-native-app
-  dockerfile-language-server-nodejs
   eslint
   graphql
-  graphql-language-service-cli
-  npm
-  prettier
-  pyright
   ts-server
   ts-node
   typescript
-  typescript-language-server
-  yaml-language-server
   yarn
 )
 SYMLINKS=(
@@ -149,7 +143,6 @@ function _node-libs {\
   set -x
   npm update -g
 }
-
 
 function _ {
   _system "$@"

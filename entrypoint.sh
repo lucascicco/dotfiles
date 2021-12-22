@@ -39,6 +39,7 @@ function bootstrap {
   echo "Bootstraping your scripts..."
   cd "${DOTFILES_DIR}"
   bash "${DOTFILES_DIR}/packages/bootstrap.sh" "${@}" || return 1
- }
+  bash "${DOTFILES_DIR}/nvim/setup.sh" "${@}" || return 1
+}
 
 export _DEFAULTS_SOURCED="1"
