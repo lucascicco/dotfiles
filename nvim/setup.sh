@@ -17,9 +17,9 @@ LOCAL_BUILD_DIR="${HOME}/.local_build"
 FONTS_DIR="${HOME}/.local/share/fonts"
 
 NVIM_CONFIG="${HOME}/.config/nvim"
-NVIM_BIN="${HOME}/.neovim/bin/nvim"
+NVIM_BIN="${HOME}/.local/bin/nvim"
 
-VNIM_SYM_LINK = "${BASE_DIR}/vim ${HOME}/.config/nvim"
+NVIM_SYM_LINK="${BASE_DIR}/nvim/vim ${HOME}/.config/nvim"
 
 LSP_NODE_LIBS=(
   bash-language-server
@@ -68,6 +68,7 @@ function _fonts {
 function _neovim {
   info "installing neovim"
   git_clone_or_pull "${LOCAL_BUILD_DIR}/neovim" https://github.com/neovim/neovim master
+  # jellybeans-nvim
   (
     cd "${LOCAL_BUILD_DIR}/neovim"
     # shellcheck disable=2015
@@ -89,6 +90,7 @@ function _neovim-gtk {
   info "installing neovim-gtk"
   git_clone_or_pull "${LOCAL_BUILD_DIR}/neovim-gtk" https://github.com/Lyude/neovim-gtk main
   (
+    # sudo apt install libgtk-3-dev (pango + cargo)
     cd "${LOCAL_BUILD_DIR}/neovim-gtk"
     make PREFIX="${LOCAL_DIR}" install
   )
@@ -103,6 +105,7 @@ function _language-servers {
     cargo install --path . 2>/dev/null
   )
   # lua-ls
+  # sudo apt-get install ninja-build
   info "installing lua-ls"
   git_clone_or_pull \
     "${LOCAL_BUILD_DIR}/lua-language-server" https://github.com/sumneko/lua-language-server master
@@ -157,7 +160,6 @@ function _lsp-node-libs {
 function _ {
   _nvim-sym-link "$@"
   _fonts "$@"
-  _nvm "$@"
   _neovim "$@"
   _neovim-gtk "$@"
   _language-servers "$@"

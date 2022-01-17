@@ -1,9 +1,5 @@
 #!/bin/bash
 
-if [ "${_DEFAULTS_SOURCED}" = "1" ]; then
-  return
-fi
-
 export DOTFILES_DIR="${HOME}/bootstrap"
 
 export GIT_SSH=ssh
@@ -27,19 +23,19 @@ if [ -f ${PYENV_ROOT} ]; then
   eval "$(pyenv init --path)" # This load pyenv
 fi
 
-if [ -f "${HOME}/.nvm/nvm.sh" ]; then
+if [ -f "${NVM_DIR}/nvm.sh" ]; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
 export PATH
 
-function bootstrap { 
+function bootstrap {
   set -e
   echo "Bootstraping your scripts..."
   cd "${DOTFILES_DIR}"
-  bash "${DOTFILES_DIR}/packages/bootstrap.sh" "${@}" || return 1
   bash "${DOTFILES_DIR}/nvim/setup.sh" "${@}" || return 1
+  bash "${DOTFILES_DIR}/packages/bootstrap.sh" "${@}" || return 1
 }
 
 export _DEFAULTS_SOURCED="1"

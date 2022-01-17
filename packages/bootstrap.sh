@@ -5,7 +5,7 @@ set -e
 MY_DIR=$(dirname "${0}")
 BASE_DIR=$(dirname "${MY_DIR}")
 
-source "${DOTFILES_DIR}/utils/funcs.sh"
+source "${DOTFILES_DIR}/utils/functions.sh"
 
 LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
