@@ -1,0 +1,3 @@
+nvim/vim/spell/*
+!nvim/vim/spell/.keep
+nvim/vim/plugin/packer_compiled.lua

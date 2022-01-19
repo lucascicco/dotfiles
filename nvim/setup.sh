@@ -21,6 +21,20 @@ NVIM_BIN="${HOME}/.local/bin/nvim"
 
 NVIM_SYM_LINK="${BASE_DIR}/nvim/vim ${HOME}/.config/nvim"
 
+REQUIRED_APT_PACKAGES=(
+  ninja-build
+  gettext
+  libtool
+  libtool-bin
+  autoconf
+  automake
+  cmake
+  g++
+  pkg-config
+  unzip
+  curl
+  doxygen
+)
 LSP_NODE_LIBS=(
   bash-language-server
   dockerfile-language-server-nodejs
@@ -41,6 +55,15 @@ LSP_NODE_LIBS=(
   yaml-language-server
   yarn
 )
+
+function _neovim-apt-packages {
+  EXTRA_OPTS="-t unstable"
+  info "download required neovim apt packages"
+  sudo apt install "${APT_PACKAGES[@]}" "${@}" -y
+  info "apts all instaled..."
+  sudo apt autoremove --purge
+  sudo apt clean
+}
 
 function _nvim-sym-link {
   info "adding symlink for nvim"
@@ -72,8 +95,8 @@ function _neovim {
   (
     cd "${LOCAL_BUILD_DIR}/neovim"
     # shellcheck disable=2015
-    make CMAKE_INSTALL_PREFIX="${HOME}/.neovim" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
-      make CMAKE_INSTALL_PREFIX="${HOME}/.neovim" CMAKE_BUILD_TYPE=Release install || true
+    make CMAKE_INSTALL_PREFIX="${LOCAL_DIR}" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
+      make CMAKE_INSTALL_PREFIX="${LOCAL_DIR}" CMAKE_BUILD_TYPE=Release install || true
   )
   info "installing vim-spell"
   if [ ! -f "${NVIM_CONFIG}/spell/.done" ]; then
@@ -84,16 +107,6 @@ function _neovim {
       touch .done
     )
   fi
-}
-
-function _neovim-gtk {
-  info "installing neovim-gtk"
-  git_clone_or_pull "${LOCAL_BUILD_DIR}/neovim-gtk" https://github.com/Lyude/neovim-gtk main
-  (
-    # sudo apt install libgtk-3-dev (pango + cargo)
-    cd "${LOCAL_BUILD_DIR}/neovim-gtk"
-    make PREFIX="${LOCAL_DIR}" install
-  )
 }
 
 function _language-servers {
@@ -158,12 +171,12 @@ function _lsp-node-libs {
 }
 
 function _ {
+  _neovim-apt-packages "$@"
   _nvim-sym-link "$@"
   _fonts "$@"
   _neovim "$@"
-  _neovim-gtk "$@"
-  _language-servers "$@"
   _neovim-plugins "$@"
+  _language-servers "$@"
   _lsp-node-libs "$@"
 }
 

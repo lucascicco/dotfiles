@@ -19,11 +19,18 @@
     
 [difftool]
     prompt = false
+
 [difftool "meld"]
     cmd = meld "$LOCAL" "$REMOTE"
 
 [pull]
     ff = only
+
+[mergetool "nvim"]
+  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+
+[merge]
+ tool = nvim
 
 [alias]
     aa = git add -A 

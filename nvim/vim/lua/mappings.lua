@@ -1,5 +1,5 @@
-local map = require("utils").map
-local bmap = require("utils").bmap
+local map = vim.keymap.set
+local utils = require("utils")
 
 local M = {}
 
@@ -13,85 +13,116 @@ map("v", "<", "<gv")
 map("v", ">", ">gv")
 
 -- Togglers
-map("n", "<Leader>tl", "<cmd>set list!<CR>:set list?<CR>")
-map("n", "<Leader>tn", "<cmd>set number!<CR>:set number?<CR>")
-map("n", "<Leader>tp", "<cmd>set paste!<CR>:set paste?<CR>")
-map("n", "<Leader>ts", "<cmd>set spell!<CR>:set spell?<CR>")
-map("n", "<Leader>tq", '<cmd>lua require("utils").toggle_qf()<CR>')
-map("n", "<Leader>td", '<cmd>lua require("dapui").toggle()<CR>')
-map("n", "<F2>", "<cmd>UndotreeToggle<CR>")
-map("n", "<F4>", "<cmd>NvimTreeToggle<CR>")
+map("n", "<leader>tl", "<cmd>set list!<cr>:set list?<CR>")
+map("n", "<leader>tl", "<cmd>set list!<cr>:set list?<CR>")
+map("n", "<leader>tn", "<cmd>set number!<cr>:set number?<CR>")
+map("n", "<leader>tp", "<cmd>set paste!<cr>:set paste?<CR>")
+map("n", "<leader>ts", "<cmd>set spell!<cr>:set spell?<CR>")
+map("n", "<leader>tq", '<cmd>lua require("utils").toggle_qf()<cr>')
+map("n", "<leader>td", '<cmd>lua require("dapui").toggle()<cr>')
+map("n", "<F2>", "<cmd>UndotreeToggle<cr>")
+map("n", "<F4>", "<cmd>NvimTreeToggle<cr>")
 
 -- File utils
-map("n", "z=", "<cmd>Telescope spell_suggest theme=cursor<CR>")
-map("n", "<C-P>", "<cmd>Telescope git_files theme=dropdown<CR>")
-map("n", "<C-F>", "<cmd>Telescope live_grep<CR>")
-map("n", "<C-B>", "<cmd>Telescope buffers<CR>")
-map("n", "<C-G>", '<cmd>lua require("utils").grep()<CR>', { silent = true })
+map("n", "<C-F>", utils.lazy("telescope.builtin", "live_grep"))
+map("n", "<C-B>", utils.lazy("telescope.builtin", "buffers"))
+map("n", "<C-P>", utils.find_files)
+map("n", "<C-G>", utils.grep)
 
 -- Dap
-map("n", "<F1>", '<cmd>lua require("dap").toggle_breakpoint()<CR>', { silent = true })
-map("n", "<F5>", '<cmd>lua require("dap").continue()<CR>')
-map("n", "<F6>", '<cmd>lua require("dap").step_over()<CR>')
-map("n", "<F7>", '<cmd>lua require("dap").step_into()<CR>')
-map("n", "<F8>", '<cmd>lua require("dap").step_out()<CR>')
-map("n", "<Leader>df", '<cmd>lua require("config.dap").test_func()<CR>', { silent = true })
-map("n", "<Leader>dc", '<cmd>lua require("config.dap").test_class()<CR>', { silent = true })
-map("n", "gK", '<cmd>lua require("dapui").eval()<CR>', { silent = true })
-map("v", "gK", '<cmd>lua require("dapui").eval()<CR>')
+map("n", "<F1>", utils.lazy("dap", "toggle_breakpoint"))
+map("n", "<F5>", utils.lazy("dap", "continue"))
+map("n", "<F6>", utils.lazy("dap", "step_over"))
+map("n", "<F7>", utils.lazy("dap", "sep_into"))
+map("n", "<F8>", utils.lazy("dap", "step_out"))
+map("n", "<Leader>df", utils.lazy("config.dap", "test_func"))
+map("n", "<Leader>dc", utils.lazy("config.dap", "test_class"))
+map({ "n", "v" }, "gK", utils.lazy("dapui", "eval"))
 
--- Snippets
-map("i", "<Tab>", "vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'", { expr = true, noremap = false })
-map("s", "<Tab>", "vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Tab>'", { expr = true, noremap = false })
-map("i", "<S-Tab>", "vsnip#jumpable(1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'", { expr = true, noremap = false })
-map("s", "<S-Tab>", "vsnip#jumpable(1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'", { expr = true, noremap = false })
+-- Dependency management
+map(
+    "n",
+    "<leader>cd",
+    "<cmd>lua require('package-info').show()<cr>",
+    { silent = true, noremap = true }
+)
+
+-- Tabs management
+map("n", "<A-Left>", "gT")
+map("n", "<A-Right>", "gt")
 
 -- Comment with Ctrl-/
-map("n", "<C-_>", "gcc", { silent = true, noremap = false })
-map("v", "<C-_>", "gc", { silent = true, noremap = false })
-map("n", "<C-/>", "gcc", { silent = true, noremap = false })
-map("v", "<C-/>", "gc", { silent = true, noremap = false })
+map("n", "<C-_>", "gcc", { remap = true })
+map("v", "<C-_>", "gc", { remap = true })
+map("n", "<C-/>", "gcc", { remap = true })
+map("v", "<C-/>", "gc", { remap = true })
+
+-- Trouble
+map("n", "<C-q>", "<cmd>TroubleToggle<cr>")
+map("n", "]q", utils.lazy("trouble", "next", { { skip_groups = true, jump = true } }))
+map("n", "[q", utils.lazy("trouble", "previous", { { skip_groups = true, jump = true } }))
+
+-- Winshift
+map("n", "<C-w>m", "<cmd>WinShift<cr>")
+map("n", "<C-w>x", "<cmd>WinShift swap<cr>")
 
 -- Reload treesitter
-map("n", "<Leader>rt", "<cmd>write | edit | TSBufEnable highlight<CR>")
-
--- Edit the quickfix
-map("n", "<Leader>h", '<cmd>lua require("replacer").run()<CR>')
+map("n", "<Leader>rt", "<cmd>write | edit | TSBufEnable highlight<cr>")
 
 -- Fix spell with telescope
-map("n", "z=", "<cmd>Telescope spell_suggest theme=cursor<CR>")
+-- map("n", "z=", utils.lazy("telescope.builtin", "spell_suggest", { { theme = "cursor" } }))
+map("n", "z=", utils.spell_suggest)
+
+-- Ctrl-Up/Down scrolls 10 lunes and keep the screen centered
+map("n", "<C-Up>", "10kzz")
+map("n", "<C-Down>", "10jzz")
 
 -- Terminal toggle
-map("n", "<C-Z>", '<cmd>lua require("toggleterm").toggle(0)<CR>', { silent = true })
-map("t", "<C-Z>", '<cmd>lua require("toggleterm").toggle_all()<CR>', { silent = true })
+map("n", "<C-Z>", utils.lazy("toggleterm", "toggle", { 0 }), { silent = true })
+map("t", "<C-Z>", utils.lazy("toggleterm", "toggle_all"), { silent = true })
 for i = 1, 5 do
-    map("n", "<A-" .. i .. ">", '<cmd>lua require("toggleterm").toggle(' .. i .. ")<CR>", { silent = true })
-    map("t", "<A-" .. i .. ">", '<cmd>lua require("toggleterm").toggle(' .. i .. ")<CR>", { silent = true })
+    map(
+        { "n", "t" },
+        "<A-" .. i .. ">",
+        utils.lazy("toggleterm", "toggle", { i }),
+        { silent = true }
+    )
 end
 
 M.setup_lsp = function(client, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
-    local opts = { noremap = true, silent = true }
-    bmap(bufnr, "n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
-    bmap(bufnr, "i", "<C-K>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
-    bmap(bufnr, "n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-    bmap(bufnr, "n", "<C-LeftMouse>", "<cmd>Telescope lsp_definitions<CR>", opts)
-    bmap(bufnr, "n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts)
-    bmap(bufnr, "n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts)
-    bmap(bufnr, "n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
-    bmap(bufnr, "n", "gs", "<cmd>Telescope lsp_dynamic_workspace_symbols<CR>", opts)
-    bmap(bufnr, "n", "ge", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
-    bmap(bufnr, "n", "gE", "<cmd>Telescope diagnostics<CR>", opts)
-    bmap(bufnr, "n", "<leader>D", "<cmd>Telescope lsp_type_definitions<CR>", opts)
-    bmap(bufnr, "n", "<leader>ca", "<cmd>Telescope lsp_code_actions<CR>", opts)
-    bmap(bufnr, "n", "<leader>e", "<cmd>lua vim.diagnostic.open_float()<CR>", opts)
-    bmap(bufnr, "n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
-    bmap(bufnr, "n", "<leader>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
-    bmap(bufnr, "n", "<leader>wr", "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", opts)
-    bmap(bufnr, "n", "<leader>wl", "<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", opts)
-    bmap(bufnr, "n", "[d", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opts)
-    bmap(bufnr, "n", "]d", "<cmd>lua vim.diagnostic.goto_next()<CR>", opts)
-    bmap(bufnr, "n", "<leader>q", "<cmd>lua vim.diagnostic.set_loclist()<CR>", opts)
+    local opts = { buffer = true, silent = true }
+
+    -- omnifunc
+    vim.opt_local.omnifunc = "v:lua.vim.lsp.omnifunc"
+
+    -- diagnostic
+    map("n", "[d", vim.diagnostic.goto_prev, opts)
+    map("n", "]d", vim.diagnostic.goto_next, opts)
+    map("n", "<leader>e", vim.diagnostic.open_float, opts)
+    map("n", "ge", "<cmd>TroubleToggle document_diagnostics<cr>", opts)
+    map("n", "gE", "<cmd>TroubleToggle workspace_diagnostics<cr>", opts)
+
+    -- lsp
+    map("n", "K", vim.lsp.buf.hover, opts)
+    map({ "i", "n" }, "<C-K>", vim.lsp.buf.signature_help, opts)
+    map("n", "gD", vim.lsp.buf.declaration, opts)
+    map("n", "<C-LeftMouse>", vim.lsp.buf.definition, opts)
+    map("n", "gd", vim.lsp.buf.definition, opts)
+    map("n", "gI", vim.lsp.buf.implementation, opts)
+    map("n", "gci", vim.lsp.buf.incoming_calls, opts)
+    map("n", "gco", vim.lsp.buf.outgoing_calls, opts)
+    map("n", "gr", vim.lsp.buf.references, opts)
+    map("n", "gs", vim.lsp.buf.document_symbol, opts)
+    map("n", "gS", vim.lsp.buf.workspace_symbol, opts)
+    map("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+    map("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+    map("v", "<leader>ca", vim.lsp.buf.range_code_action, opts)
+    map("n", "<leader>rn", vim.lsp.buf.rename, opts)
+    map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts)
+    map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts)
+    map("n", "<leader>wl", function()
+        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+    end, opts)
 end
 
 return M
