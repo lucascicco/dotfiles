@@ -19,7 +19,7 @@ FONTS_DIR="${HOME}/.local/share/fonts"
 NVIM_CONFIG="${HOME}/.config/nvim"
 NVIM_BIN="${HOME}/.local/bin/nvim"
 
-NVIM_SYM_LINK="${BASE_DIR}/nvim/vim ${HOME}/.config/nvim"
+NVIM_SYM_LINK="${BASE_DIR}/vim ${HOME}/.config/nvim"
 
 REQUIRED_APT_PACKAGES=(
   ninja-build

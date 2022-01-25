@@ -4,6 +4,8 @@ if [ -f "$HOME/bootstrap/entrypoint.sh" ]; then
   source "$HOME/bootstrap/entrypoint.sh"
 fi
 
+export ZSH_WAKATIME_PROJECT_DETECTION=true
+
 # oh-my-zsh config
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
@@ -29,6 +31,9 @@ antigen bundle git
 
 # github
 antigen bundle zdharma-continuum/fast-syntax-highlighting
+antigen bundle jocelynmallon/zshmarks
+antigen bundle wbingli/zsh-wakatime
+antigen bundle popstas/zsh-command-time
 
 # theme
 antigen theme agnoster
