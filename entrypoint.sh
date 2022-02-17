@@ -9,8 +9,8 @@ export GOBIN=$HOME/.local/bin
 export NVM_DIR="$HOME/.nvm"
 
 # Pyenv
-export PYENV_VERSION="3.9.6"
-export PYENV_ROOT="$HOME/.pyenv"
+export PYENV_VERSION="3.10-dev"
+export PYENV_ROOT="${HOME}/.pyenv"
 
 # Paths
 PATH="$HOME/.cargo/bin:$PATH"

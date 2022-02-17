@@ -11,6 +11,7 @@ LOCAL_DIR="${HOME}/.local"
 LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 LOCAL_BUILD_DIR="${HOME}/.local_build"
 APT_PACKAGES=(
+  batcat
   curl
   python3-pip
   nmap
