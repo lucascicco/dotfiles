@@ -1,5 +1,7 @@
 # Dotfiles
 
+[![Ansible Logo](https://camo.githubusercontent.com/eb25100389f8134449aa0f429899bf9b386cfadd80c47fe176501a42db1fcc50/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f414e5349424c452d2532333141313931382e7376673f267374796c653d666c6174266c6f676f3d616e7369626c65266c6f676f436f6c6f723d7768697465)](https://www.ansible.com/)
+
 This project use ansible to provision all the installation.
 
 ### Requirements
