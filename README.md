@@ -25,7 +25,7 @@ Then to install the packages just run the "bootstrap" script:
 
 To check lint issues on your yaml files, just run:
 
-`make lint`
+`$ make lint`
 
 but make sure you have yamllint installed.
 
