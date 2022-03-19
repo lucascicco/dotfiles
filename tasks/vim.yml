@@ -39,5 +39,3 @@
     src: "~/dotfiles/tasks/files/config/vim"
     dest: "~/.config/nvim"
     state: link
-- name: "Setup neovim"
-  command: sh ~/dotfiles/tasks/files/build/neovim.sh

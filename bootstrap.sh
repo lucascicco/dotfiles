@@ -10,4 +10,8 @@ PLAYBOOK="$ROOTDIR/local.yml"
 # Runs Ansible playbook using our user.
 ansible-playbook "$PLAYBOOK" -e user="$USER" --ask-become-pass
 
+# Build neovim
+# FIXME: Ansible fails the execution of this script
+~/dotfiles/tasks/files/build/neovim.sh 
+
 exit 0
