@@ -1,0 +1,12 @@
+---
+- name: "Install node packages"
+  command: npm -g i {{ item }} --force
+  with_items:
+    - corepack
+    - ts-node
+    - typescript
+    - yarn
+    - eslint
+    - graphql
+    - prettier
+    - neoss

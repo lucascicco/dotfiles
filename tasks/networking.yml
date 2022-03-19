@@ -1,0 +1,9 @@
+---
+- name: "Install network packages"
+  become_user: root
+  apt:
+    pkg:
+      - tcpdump
+      - nmap
+      - haproxy
+    state: latest

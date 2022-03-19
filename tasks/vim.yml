@@ -1,0 +1,43 @@
+---
+- name: "Install neovim required apt packages"
+  become_user: root
+  apt:
+    pkg:
+      - ninja-build
+      - gettext
+      - libtool
+      - libtool-bin
+      - autoconf
+      - automake
+      - cmake
+      - g++
+      - pkg-config
+      - unzip
+      - doxygen
+    state: latest
+    autoremove: true
+    autoclean: true
+- name: "Install neovim required npm packages"
+  command: npm -g i {{ item }} --force
+  with_items:
+    - bash-language-server
+    - dockerfile-language-server-nodejs
+    - graphql-language-service-cli
+    - neovim
+    - pyright
+    - stylelint
+    - tree-sitter
+    - tree-sitter-cli
+    - ts-server
+    - typescript
+    - typescript-language-server
+    - vim-language-server
+    - vscode-langservers-extracted
+    - yaml-language-server
+- name: "Add symlink for neovim"
+  file:
+    src: "~/dotfiles/tasks/files/config/vim"
+    dest: "~/.config/nvim"
+    state: link
+- name: "Setup neovim"
+  command: sh ~/dotfiles/tasks/files/build/neovim.sh

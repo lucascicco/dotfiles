@@ -1,6 +1,11 @@
-#!/bin/bash
+#!/bin/bas
 
-export DOTFILES_DIR="${HOME}/bootstrap"
+if [ "${_DEFAULTS_SOURCED}" = "1" ]; then
+  return
+fi
+
+# Env variables
+export DOTFILES_DIR="${HOME}/dotfiles"
 
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
@@ -18,24 +23,25 @@ PATH="$HOME/.poetry/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 PATH="$PYENV_ROOT/bin:$PATH"
+export PATH
 
+# Pyenv
 if [ -f ${PYENV_ROOT} ]; then
   eval "$(pyenv init --path)" # This load pyenv
 fi
 
+# Nvm
 if [ -f "${NVM_DIR}/nvm.sh" ]; then
   [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
   [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 fi
 
-export PATH
-
-function bootstrap {
+# Functions
+function bootstrap() { (
   set -e
-  echo "Bootstraping your scripts..."
   cd "${DOTFILES_DIR}"
-  bash "${DOTFILES_DIR}/nvim/setup.sh" "${@}" || return 1
-  bash "${DOTFILES_DIR}/packages/bootstrap.sh" "${@}" || return 1
-}
+  git pull origin master || true
+  bash "${DOTFILES_DIR}/bootstrap.sh" "${@}" || return 1
+); }
 
 export _DEFAULTS_SOURCED="1"

@@ -1,0 +1,10 @@
+---
+- name: "Install git packages"
+  become_user: root
+  apt:
+    pkg:
+      - git
+      - meld
+      - gitk
+      - gitg
+    state: latest

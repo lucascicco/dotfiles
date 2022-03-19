@@ -1,0 +1,17 @@
+---
+- name: "Install zsh"
+  become_user: root
+  apt:
+    pkg:
+      - zsh
+    state: latest
+- name: Download antigen
+  command: "curl -fLo ~/antigen.zsh git.io/antigen"
+- name: Install zsh plugins
+  command: "zsh -i -c 'antigen {{ item }}'"
+  with_items:
+    - cleanup
+    - update
+- name: Setting zsh as default shell
+  become_user: root
+  shell: chsh -s /bin/zsh $USER

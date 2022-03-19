@@ -1,0 +1,43 @@
+---
+- name: "Check if docker is already installed"
+  package:
+    name: docker
+    state: present
+  check_mode: true
+  register: docker
+- name: "Install docker required packages"
+  become_user: root
+  apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - software-properties-common
+      - lsb-release
+      - gnupg
+    state: latest
+- name: "Add gpg key for ubuntu"
+  shell: |
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: ansible_distribution == 'Ubuntu' and docker.changed
+- name: "Add gpg key for debian"
+  shell: |
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
+     $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  when: ansible_distribution == 'Debian' and docker.changed
+- name: "Install docker"
+  become_user: root
+  apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+- name: "Grant permissions to execute docker"
+  shell: |
+    usermod -aG docker ${USER}
+    su - ${USER}
+    id -nG

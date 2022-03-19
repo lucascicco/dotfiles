@@ -1,7 +1,9 @@
 source "$HOME/.antigen.zsh"
 
-if [ -f "$HOME/bootstrap/entrypoint.sh" ]; then
-  source "$HOME/bootstrap/entrypoint.sh"
+SETTINGS_FILE="$HOME/dotfiles/settings.sh"
+
+if [ -f $SETTINGS_FILE ]; then
+  source $SETTINGS_FILE
 fi
 
 export ZSH_WAKATIME_PROJECT_DETECTION=true

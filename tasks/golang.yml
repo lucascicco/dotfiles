@@ -1,0 +1,12 @@
+---
+- name: "Install golang"
+  become_user: root
+  apt:
+    pkg:
+      - golang
+    state: latest
+- name: "Install golang libs"
+  shell: |
+    go install github.com/jesseduffield/lazydocker@latest
+    go get -u github.com/derailed/k9s@latest
+    go install github.com/sachaos/tcpterm@latest

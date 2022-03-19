@@ -1,0 +1,7 @@
+---
+- name: "Upgrade distro"
+  become_user: root
+  shell: |
+    apt update --list-cleanup
+    apt dist-upgrade --purge -y
+  when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'

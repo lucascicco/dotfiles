@@ -1,0 +1,14 @@
+---
+- name: "Check for nvm installation"
+  stat: path=~/.nvm/nvm.sh
+  register: nvm
+- name: "Install nvm"
+  become_user: root
+  command: "curl -ssL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+  when: not nvm.stat.exists
+- name: "Config nvm version"
+  shell: |
+    nvm install 16
+    nvm use 16
+    nvm alias default 16
+  when: not nvm.stat.exists
