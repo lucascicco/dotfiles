@@ -6,7 +6,7 @@
       - zsh
     state: latest
 - name: Download antigen
-  command: "curl -fLo ~/antigen.zsh git.io/antigen"
+  command: "curl -fLo ~/.antigen.zsh git.io/antigen"
 - name: Install zsh plugins
   command: "zsh -i -c 'antigen {{ item }}'"
   with_items:
