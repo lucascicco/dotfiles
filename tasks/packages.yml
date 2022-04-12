@@ -42,10 +42,10 @@
     sudo tar xf /tmp/btop.tbz -C /usr/local bin/btop
     btop --version
     rm -rf /tmp/btop.tbz
-- name: "Install sysz"
-  shell: |
-    wget -O ~/bin/sysz https://github.com/joehillen/sysz/releases/latest/download/sysz
-    sudo chmod +x ~/bin/sysz
+# - name: "Install sysz"
+#   shell: |
+#     wget -qO ~/bin/sysz https://github.com/joehillen/sysz/releases/latest/download/sysz
+#     sudo chmod +x ~/bin/sysz
 - name: "Install kmon required packages"
   become_user: root
   apt:

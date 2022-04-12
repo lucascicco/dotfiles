@@ -14,6 +14,9 @@ NVIM_BIN="${HOME}/.local/bin/nvim"
 
 function _fonts {
   info "installing fonts"
+  if [ ! -d ${FONTS_DIR} ]; then
+    mkdir -p ${FONTS_DIR}
+  fi
   curl -sSL -o- \
     https://github.com/microsoft/vscode-codicons/blob/main/dist/codicon.ttf?raw=true \
     >"${FONTS_DIR}/codicon.ttf"
@@ -27,7 +30,7 @@ function _fonts {
     https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraCode/Regular/complete/Fira%20Code%20Regular%20Nerd%20Font%20Complete.ttf?raw=true \
     >"${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf"
   fc-cache -fv
-  gsettings set org.gnome.desktop.interface monospace-font-name 'Inconsolata Nerd Font 14'
+  gsettings set org.gnome.desktop.interface monospace-font-name 'Inconsolata Nerd Font 12'
 }
 
 function _neovim {
@@ -42,8 +45,12 @@ function _neovim {
   )
   info "installing vim-spell"
   if [ ! -f "${NVIM_CONFIG}/spell/.done" ]; then
+    SPELL_DIR="${NVIM_CONFIG}/spell"
+    if [! -d ${SPELL_DIR} ]; then
+      mkdir -p ${SPELL_DIR}
+    fi
     (
-      cd "${NVIM_CONFIG}/spell"
+      cd ${SPELL_DIR}
       wget -N -nv ftp://ftp.vim.org/pub/vim/runtime/spell/en.* --timeout=5 || exit 1
       wget -N -nv ftp://ftp.vim.org/pub/vim/runtime/spell/pt.* --timeout=5 || exit 1
       touch .done
