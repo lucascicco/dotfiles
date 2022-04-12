@@ -14,4 +14,5 @@
     - update
 - name: Setting zsh as default shell
   become_user: root
-  shell: chsh -s /bin/zsh $USER
+  shell: > 
+    chsh -s $(which zsh)
