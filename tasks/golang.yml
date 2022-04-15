@@ -5,8 +5,12 @@
     pkg:
       - golang
     state: latest
+- name: "Install golang kubernetes libs"
+  shell: |
+    go get -u github.com/derailed/k9s
+    GO111MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter
+    go get -u github.com/hidetatz/kubecolor/cmd/kubecolor
 - name: "Install golang libs"
   shell: |
-    go get github.com/jesseduffield/lazydocker
-    go get github.com/derailed/k9s
-    go get github.com/sachaos/tcpterm
+    go get -u github.com/jesseduffield/lazydocker
+    go get -u github.com/sachaos/tcpterm
