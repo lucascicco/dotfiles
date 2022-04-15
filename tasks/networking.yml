@@ -6,4 +6,5 @@
       - tcpdump
       - nmap
       - haproxy
+      - whois
     state: latest
