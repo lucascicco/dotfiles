@@ -41,3 +41,9 @@
     usermod -aG docker ${USER}
     su - ${USER}
     id -nG
+- name: Install docker-compose
+  become_user: root
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v2.4.1/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: "u+x,g+x"
