@@ -7,7 +7,7 @@
       - libpcap-dev
       - htop
       - cargo
-      # - batcat
+      - bat
       - ncdu
       - curl
       - fonts-powerline
