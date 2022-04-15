@@ -5,8 +5,8 @@
 - name: "Install poetry"
   become_user: root
   # export PATH="~/.poetry/bin:$PATH"
-  shell: > 
-    curl -sSL -o- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 - 
+  shell: >
+    curl -sSL -o- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
   when: not poetry.stat.exists
 # - name: "Config poetry"
 #   shell: |

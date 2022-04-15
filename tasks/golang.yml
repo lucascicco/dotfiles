@@ -7,6 +7,6 @@
     state: latest
 - name: "Install golang libs"
   shell: |
-    go install github.com/jesseduffield/lazydocker@latest
-    go get -u github.com/derailed/k9s@latest
-    go install github.com/sachaos/tcpterm@latest
+    go get github.com/jesseduffield/lazydocker
+    go get github.com/derailed/k9s
+    go get github.com/sachaos/tcpterm

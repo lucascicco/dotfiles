@@ -6,7 +6,7 @@
     prune = true
 
 [core]
-    editor = vi
+	editor = vi
     excludesfile = ~/.gitignore
     attributesfile = ~/.gitattributes
 

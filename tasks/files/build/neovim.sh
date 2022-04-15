@@ -46,7 +46,7 @@ function _neovim {
   info "installing vim-spell"
   if [ ! -f "${NVIM_CONFIG}/spell/.done" ]; then
     SPELL_DIR="${NVIM_CONFIG}/spell"
-    if [! -d ${SPELL_DIR} ]; then
+    if [ ! -d ${SPELL_DIR} ]; then
       mkdir -p ${SPELL_DIR}
     fi
     (

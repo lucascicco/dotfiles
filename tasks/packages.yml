@@ -54,5 +54,5 @@
       - libxcb-shape0-dev
       - libxcb-xfixes0-dev
       - libxcb-render0-dev
-- name: "Install kmon through cargo"
-  command: cargo install kmon
+# - name: "Install kmon through cargo"
+#  command: cargo install kmon
