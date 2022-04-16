@@ -1,16 +1,32 @@
 ---
-- name: "Install golang"
+- name: Install required apt packages for gvm
   become_user: root
   apt:
     pkg:
-      - golang
-    state: latest
-- name: "Install golang kubernetes libs"
+      - curl
+      - bison
+      - mercurial
+      - make
+      - binutils
+      - gcc
+      - build-essential
+- name: "Check if GVM is installed"
+  stat: path=~/.gvm/bin/gvm
+  register: gvm
+- name: Install golang version manager (GVM)
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
   shell: |
-    go get -u github.com/derailed/k9s
-    GO111MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter
-    go get -u github.com/hidetatz/kubecolor/cmd/kubecolor
+    curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
+  when: not gvm.stat.exists
+- name: Install golang
+  script:
+    cmd: ~/dotfiles/tasks/files/build/gvm.sh
+- name: Install k8s golang libs
+  shell: |
+    GO110MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
 - name: "Install golang libs"
   shell: |
-    go get -u github.com/jesseduffield/lazydocker
-    go get -u github.com/sachaos/tcpterm
+    go install github.com/jesseduffield/lazydocker@latest
+    go install github.com/sachaos/tcpterm@latest

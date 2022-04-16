@@ -1,5 +1,5 @@
 ---
-- name: "Install neovim required apt packages"
+- name: Install neovim required apt packages
   become_user: root
   apt:
     pkg:
@@ -18,7 +18,7 @@
     state: latest
     autoremove: true
     autoclean: true
-- name: "Install neovim required npm packages"
+- name: Install neovim required npm packages
   command: npm -g i {{ item }} --force
   with_items:
     - bash-language-server
@@ -35,7 +35,7 @@
     - vim-language-server
     - vscode-langservers-extracted
     - yaml-language-server
-- name: "Add symlink for neovim"
+- name: Add symlink for neovim
   file:
     src: "~/dotfiles/tasks/files/config/vim"
     dest: "~/.config/nvim"

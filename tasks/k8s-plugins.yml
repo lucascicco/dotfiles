@@ -43,3 +43,19 @@
     dest: /usr/local/bin/octant
     mode: 755
   when: download_octant.changed
+- name: Install k9s
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: >
+    curl -sS https://webinstall.dev/k9s | bash
+- name: Install kubecolor
+  become_user: root
+  shell: |
+    cd /tmp
+    wget https://github.com/hidetatz/kubecolor/releases/download/v0.0.20/kubecolor_0.0.20_Linux_x86_64.tar.gz -O kubecolor.tar.gz
+    tar -xf kubecolor.tar.gz kubecolor
+    chmod +x kubecolor
+    mv kubecolor /usr/local/bin/
+  args:
+    warn: no

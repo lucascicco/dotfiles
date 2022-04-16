@@ -1,5 +1,5 @@
 ---
-- name: "Check for poetry installation"
+- name: Check for poetry installation
   stat: path=~/.poetry/bin/poetry
   register: poetry
 - name: "Install poetry"

@@ -1,5 +1,5 @@
 ---
-- name: "Update symlinks"
+- name: Update symlinks
   file:
     src: "~/dotfiles/tasks/files/config/{{ item.path }}"
     dest: "~/{{ item.dest }}"

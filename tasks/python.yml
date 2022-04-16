@@ -1,5 +1,5 @@
 ---
-- name: "Check for pyenv installation"
+- name: Check for pyenv installation
   stat: path=~/.pyenv
   register: pyenv
 - name: "Install pyenv"
@@ -11,11 +11,11 @@
     pkg:
       - python3-pip
     state: latest
-- name: "Set pip require virtualenv to false"
+- name: Set pip require virtualenv to false
   become_user: root
   shell: |
     PIP_REQUIRE_VIRTUALENV=false
-- name: "Install python packages"
+- name: Install python packages
   become_user: root
   command: "pip install --user {{ item }}"
   with_items:

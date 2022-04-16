@@ -13,6 +13,9 @@ export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export NVM_DIR="$HOME/.nvm"
 
+# Gvm
+[[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
+
 # Pyenv
 export PYENV_VERSION="3.10-dev"
 export PYENV_ROOT="${HOME}/.pyenv"

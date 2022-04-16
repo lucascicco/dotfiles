@@ -1,5 +1,5 @@
 ---
-- name: "Install git packages"
+- name: Install git packages
   become_user: root
   apt:
     pkg:

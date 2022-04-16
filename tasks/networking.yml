@@ -1,5 +1,5 @@
 ---
-- name: "Install network packages"
+- name: Install network packages
   become_user: root
   apt:
     pkg:

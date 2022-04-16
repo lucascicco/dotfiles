@@ -1,18 +1,11 @@
 ---
-- name: "Check for nvm installation"
+- name: Check for nvm installation
   stat: path=~/.nvm/nvm.sh
   register: nvm
 - name: "Install nvm"
   shell: >
     curl -ssL -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
   when: not nvm.stat.exists
-# - name: "Source nvm in ~/.profile"
-#   lineinfile: >
-#     path=~/.profile
-#     line="source ~/.nvm/nvm.sh"
-#     create=yes
-# - name: "Config nvm version"
-#   shell: |
-#     nvm install 16
-#     nvm use 16
-#     nvm alias default 16
+- name: Install node
+  script:
+    cmd: ~/dotfiles/tasks/files/build/nvm.sh
