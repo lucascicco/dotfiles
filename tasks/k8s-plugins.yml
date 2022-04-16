@@ -36,7 +36,7 @@
       - --transform
       - s/^octant_0.25.1_Linux-64bit/octant/
   register: download_octant
-- name: Copy octact to local binary folder
+- name: Copy octant to local binary folder
   become_user: root
   copy:
     src: /tmp/octant/octant

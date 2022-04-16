@@ -16,6 +16,7 @@
     - include: tasks/golang.yml
     - include: tasks/docker.yml
     - include: tasks/k8s.yml
+    - include: tasks/k8s-plugins.yml
     - include: tasks/symlinks.yml
     - include: tasks/zsh.yml
     - include: tasks/vim.yml
