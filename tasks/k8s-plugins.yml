@@ -1,5 +1,5 @@
 ---
-- name: Install krew kubernetes pluging manager
+- name: Install krew kubernetes plugin manager
   shell: >
     (
       set -x; cd "$(mktemp -d)" &&
@@ -10,10 +10,7 @@
       tar zxvf "${KREW}.tar.gz" &&
       ./"${KREW}" install krew
     )
-- name: Add krew bin path env to zshrc
-  shell: >
-    echo export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH" >> ~/.zshrc
-- name: Install k8s plugings
+- name: Install k8s plugins
   command: kubectl krew install {{ item }}
   with_items:
     - popeye
@@ -25,12 +22,24 @@
     - tree
 - name: Install mizu API traffic viewer for k8s
   become_user: root
-  shell: >
-    curl -Lo mizu github.com/up9inc/mizu/releases/latest/download/mizu_linux_amd64 && chmod 755 mizu
-    mv mizu /usr/local/bin/
-- name: Install octant
+  get_url:
+    url: https://github.com/up9inc/mizu/releases/latest/download/mizu_linux_amd64
+    dest: /usr/local/bin/mizu
+    mode: 755
+- name: Download octant
   become_user: root
-  shell: >
-    curl -s https://api.github.com/repos/octant/compose/releases/latest | grep browser_download_url  | grep octant-linux-x86_64 | cut -d '"' -f 4 | wget -qi -
-    chmod 755 octant
-    mv octant /usr/local/bin/
+  unarchive:
+    src: https://github.com/vmware-tanzu/octant/releases/download/v0.25.1/octant_0.25.1_Linux-64bit.tar.gz
+    dest: /tmp/
+    remote_src: True
+    extra_opts:
+      - --transform
+      - s/^octant_0.25.1_Linux-64bit/octant/
+  register: download_octant
+- name: Copy octact to local binary folder
+  become_user: root
+  copy:
+    src: /tmp/octant/octant
+    dest: /usr/local/bin/octant
+    mode: 755
+  when: download_octant.changed

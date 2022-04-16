@@ -1,4 +1,4 @@
-#!/bin/bas
+#!/bin/bash
 
 if [ "${_DEFAULTS_SOURCED}" = "1" ]; then
   return
@@ -23,6 +23,7 @@ PATH="$HOME/.poetry/bin:$PATH"
 PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 PATH="$PYENV_ROOT/bin:$PATH"
+PATH="$HOME/.krew/bin:$PATH"
 export PATH
 
 # Pyenv

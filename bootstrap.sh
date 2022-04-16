@@ -8,7 +8,7 @@ ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLAYBOOK="$ROOTDIR/local.yml"
 
 # Runs Ansible playbook using our user.
-ansible-playbook "$PLAYBOOK" -e user="$USER" --ask-become-pass
+ansible-playbook "$PLAYBOOK" -e user=$USER --ask-become-pass
 
 # Build neovim
 # FIXME: Ansible fails the execution of this script
