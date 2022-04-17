@@ -36,7 +36,6 @@ function _fonts {
 function _neovim {
   info "installing neovim"
   git_clone_or_pull "${LOCAL_BUILD_DIR}/neovim" https://github.com/neovim/neovim master
-  # jellybeans-nvim
   (
     cd "${LOCAL_BUILD_DIR}/neovim"
     # shellcheck disable=2015
@@ -89,7 +88,7 @@ function _neovim-plugins {
 function _ {
   _fonts "$@"
   _neovim "$@"
-  _neovim-plugins "$@"
+  # _neovim-plugins "$@"
   _language-servers "$@"
 }
 
