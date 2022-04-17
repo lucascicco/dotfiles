@@ -42,6 +42,9 @@ function _neovim {
     make CMAKE_INSTALL_PREFIX="$LOCAL_DIR" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
       make CMAKE_INSTALL_PREFIX="$LOCAL_DIR" CMAKE_BUILD_TYPE=Release install || true
   )
+  if [ -d $NVIM_CONFIG_ROOT ]; then
+    create_symlink $NVIM_CONFIG_ROOT $NVIM_CONFIG
+  fi
   info "installing vim-spell"
   if [ ! -f "$NVIM_CONFIG/spell/.done" ]; then
     SPELL_DIR="$NVIM_CONFIG/spell"
@@ -55,19 +58,9 @@ function _neovim {
       touch .done
     )
   fi
-  if [ -d $NVIM_CONFIG_ROOT ]; then
-    create_symlink $NVIM_CONFIG_ROOT $NVIM_CONFIG
-  fi
 }
 
 function _language-servers {
-  info "installing stylua"
-  git_clone_or_pull "$LOCAL_BUILD_DIR/stylua" https://github.com/JohnnyMorganz/StyLua master
-  (
-    cd "$LOCAL_BUILD_DIR/stylua"
-    git pull origin master
-    cargo install --path . 2>/dev/null
-  )
   # lua-ls
   info "installing lua-ls"
   git_clone_or_pull \
@@ -78,6 +71,13 @@ function _language-servers {
     ./compile/install.sh
     cd ../..
     ./3rd/luamake/luamake rebuild
+  )
+  info "installing stylua"
+  git_clone_or_pull "$LOCAL_BUILD_DIR/stylua" https://github.com/JohnnyMorganz/StyLua master
+  (
+    cd "$LOCAL_BUILD_DIR/stylua"
+    git pull origin master
+    cargo install --path . 2>/dev/null
   )
 }
 

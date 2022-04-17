@@ -33,3 +33,4 @@
     - pynvim
     - wheel
     - yamllint
+    - boto3
