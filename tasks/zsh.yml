@@ -26,8 +26,6 @@
     - cleanup
     - update
 - name: Setting zsh as default shell
-  become: true
-  become_method: sudo
-  become_user: "{{user}}"
+  become_user: root
   shell: > 
     chsh -s $(which zsh)

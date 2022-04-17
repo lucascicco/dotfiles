@@ -35,7 +35,7 @@
   unarchive:
     src: https://github.com/vmware-tanzu/octant/releases/download/v0.25.1/octant_0.25.1_Linux-64bit.tar.gz
     dest: /tmp/
-    remote_src: True
+    remote_src: true
     extra_opts:
       - --transform
       - s/^octant_0.25.1_Linux-64bit/octant/

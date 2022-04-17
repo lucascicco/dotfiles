@@ -40,11 +40,6 @@
     - vim-language-server
     - vscode-langservers-extracted
     - yaml-language-server
-- name: Add symlink for neovim
-  file:
-    src: "~/dotfiles/tasks/files/config/vim"
-    dest: "~/.config/nvim"
-    state: link
 - name: Make nvim build script executable
   become: true
   become_user: "{{user}}"

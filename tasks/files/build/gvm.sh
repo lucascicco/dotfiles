@@ -1,14 +1,13 @@
 #!/bin/bash
 
-DOTFILES_DIR="${HOME}/dotfiles"
+set -e
 
+DOTFILES_DIR="${HOME}/dotfiles"
 source "${DOTFILES_DIR}/tasks/files/scripts/functions.sh"
 
 if [ -d "$HOME/.gvm" ]; then
-  set -e
+  set +x
   info "Installing golang v1.18 with gvm"
-  # apt install curl bison mercutial make binutils gcc build-essencial
-  # curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
   [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
   gvm install go1.4 -B
   gvm use go1.4
@@ -16,6 +15,6 @@ if [ -d "$HOME/.gvm" ]; then
   gvm install go1.18
   gvm use go1.18 --default
   set -x
-  exit 0
 fi
 
+exit 0

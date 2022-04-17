@@ -3,9 +3,9 @@
 set -e
 
 DOTFILES_DIR="${HOME}/dotfiles"
-
 source "${DOTFILES_DIR}/tasks/files/scripts/functions.sh"
 
+NVIM_CONFIG_ROOT="${DOTFILES_DIR}/tasks/files/config/vim"
 LOCAL_DIR="${HOME}/.local"
 LOCAL_BUILD_DIR="${HOME}/.local_build"
 FONTS_DIR="${HOME}/.local/share/fonts"
@@ -54,6 +54,9 @@ function _neovim {
       wget -N -nv ftp://ftp.vim.org/pub/vim/runtime/spell/pt.* --timeout=5 || exit 1
       touch .done
     )
+  fi
+  if [ -d $NVIM_CONFIG_ROOT ]; then
+    create_symlink $NVIM_CONFIG_ROOT $NVIM_CONFIG
   fi
 }
 
