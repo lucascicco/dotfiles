@@ -9,6 +9,9 @@
     - include: tasks/packages.yml
     - include: tasks/networking.yml
     - include: tasks/git.yml
+    - include: tasks/zsh.yml
+    - include: tasks/symlinks.yml
+    - include: tasks/vim.yml
     - include: tasks/nvm.yml
     - include: tasks/node.yml
     - include: tasks/python.yml
@@ -17,6 +20,3 @@
     - include: tasks/docker.yml
     - include: tasks/k8s.yml
     - include: tasks/k8s-plugins.yml
-    - include: tasks/symlinks.yml
-    - include: tasks/zsh.yml
-    - include: tasks/vim.yml

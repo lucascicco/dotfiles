@@ -6,12 +6,15 @@ set -e
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Main playbook
 PLAYBOOK="$ROOTDIR/local.yml"
+# Build folder
+BUILD_FOLDER="$ROOTDIR/tasks/files/build"
 
 # Runs Ansible playbook using our user.
-ansible-playbook "$PLAYBOOK" -e user=$USER --ask-become-pass
+ansible-playbook "$PLAYBOOK" -e user=$USER --ask-become-pass -v
 
 # Build neovim
 # FIXME: Ansible fails the execution of this script
-~/dotfiles/tasks/files/build/neovim.sh 
+${BUILD_FOLDER}/neovim.sh 
+
 
 exit 0

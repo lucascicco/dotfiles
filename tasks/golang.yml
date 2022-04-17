@@ -20,6 +20,12 @@
   shell: |
     curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
   when: not gvm.stat.exists
+- name: Make gvm build script executable
+  become: true
+  become_user: "{{user}}"
+  become_method: sudo
+  shell: >
+    chmod +x ~/dotfiles/tasks/files/build/gvm.sh
 - name: Install golang
   script:
     cmd: ~/dotfiles/tasks/files/build/gvm.sh

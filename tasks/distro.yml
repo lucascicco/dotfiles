@@ -1,6 +1,6 @@
 ---
 - name: Upgrade distro
-  become_user: root
+  become_user: sudo
   shell: |
     apt update --list-cleanup
     apt dist-upgrade --purge -y

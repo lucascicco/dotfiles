@@ -40,3 +40,9 @@
     src: "~/dotfiles/tasks/files/config/vim"
     dest: "~/.config/nvim"
     state: link
+- name: Make nvim build script executable
+  become: true
+  become_user: "{{user}}"
+  become_method: sudo
+  shell: >
+    chmod +x ~/dotfiles/tasks/files/build/neovim.sh
