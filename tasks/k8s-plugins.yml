@@ -10,8 +10,11 @@
       tar zxvf "${KREW}.tar.gz" &&
       ./"${KREW}" install krew
     )
+- name: Check for krew installation
+  stat: path=~/.krew/bin/kubectl-krew
+  register: krew
 - name: Install k8s plugins
-  command: kubectl krew install {{ item }}
+  command: "'{{ krew.stat.path }}' install '{{ item }}'"
   with_items:
     - popeye
     - ns
@@ -20,6 +23,7 @@
     - example
     - sniff
     - tree
+  when: krew.stat.exists
 - name: Install mizu API traffic viewer for k8s
   become_user: root
   get_url:

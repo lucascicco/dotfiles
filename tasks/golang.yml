@@ -29,10 +29,12 @@
 - name: Install golang
   script:
     cmd: ~/dotfiles/tasks/files/build/gvm.sh
-- name: Install k8s golang libs
-  shell: |
-    GO110MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
 - name: "Install golang libs"
   shell: |
+    source ~/.gvm/scripts/gvm
+    GO110MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+    go install github.com/jesseduffield/lazygit@latest
     go install github.com/jesseduffield/lazydocker@latest
     go install github.com/sachaos/tcpterm@latest
+  args:
+    executable: /bin/bash

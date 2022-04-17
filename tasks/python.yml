@@ -3,7 +3,7 @@
   stat: path=~/.pyenv
   register: pyenv
 - name: "Install pyenv"
-  command: curl https://pyenv.run | bash
+  shell: curl https://pyenv.run | bash
   when: not pyenv.stat.exists
 - name: "Install python3 pip"
   become_user: root

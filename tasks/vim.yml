@@ -19,7 +19,12 @@
     autoremove: true
     autoclean: true
 - name: Install neovim required npm packages
-  command: npm -g i {{ item }} --force
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: source ~/.nvm/nvm.sh && npm -g i {{item}} --force
+  args:
+    executable: /bin/bash
   with_items:
     - bash-language-server
     - dockerfile-language-server-nodejs
