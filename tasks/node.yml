@@ -1,6 +1,23 @@
 ---
+- name: Get npm bin path
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: |
+    source  ~/.nvm/nvm.sh
+    which npm
+  args:
+    executable: /bin/bash
+  register: npm_version
 - name: Install node packages
-  command: npm -g i {{ item }} --force
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  npm: 
+    name: "{{item}}"
+    global: true
+    state: latest
+    executable: "{{ npm_version.stdout }}"
   with_items:
     - corepack
     - ts-node
@@ -10,3 +27,4 @@
     - graphql
     - prettier
     - neoss
+  when: npm_version.changed
