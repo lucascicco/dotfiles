@@ -98,3 +98,4 @@ function _ {
 echo
 set -x
 "_${1}" "$@"
+exit 0
