@@ -10,7 +10,6 @@
     - include: tasks/networking.yml
     - include: tasks/git.yml
     - include: tasks/zsh.yml
-    - include: tasks/symlinks.yml
     - include: tasks/vim.yml
     - include: tasks/nvm.yml
     - include: tasks/node.yml

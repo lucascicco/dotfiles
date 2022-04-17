@@ -8,3 +8,12 @@
       - gitk
       - gitg
     state: latest
+- name: Add symlinks for git config files
+  file:
+    src: "~/dotfiles/tasks/files/config/{{ item.path }}"
+    dest: "~/{{ item.dest }}"
+    state: link
+  with_items:
+    - { path: "git/gitattributes", dest: ".gitattributes" }
+    - { path: "git/gitconfig", dest: ".gitconfig" }
+    - { path: "git/gitignore", dest: ".gitignore" }
