@@ -2,8 +2,8 @@
 
 set -e
 
-DOTFILES_DIR="${HOME}/dotfiles"
-source "${DOTFILES_DIR}/tasks/files/scripts/functions.sh"
+DOTFILES_DIR="$HOME/dotfiles"
+source "$DOTFILES_DIR/tasks/files/scripts/functions.sh"
 
 NVM_DIR="$HOME/.nvm"
 

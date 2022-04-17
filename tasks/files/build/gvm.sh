@@ -2,8 +2,8 @@
 
 set -e
 
-DOTFILES_DIR="${HOME}/dotfiles"
-source "${DOTFILES_DIR}/tasks/files/scripts/functions.sh"
+DOTFILES_DIR="$HOME/dotfiles"
+source "$DOTFILES_DIR/tasks/files/scripts/functions.sh"
 
 if [ -d "$HOME/.gvm" ]; then
   set +x
