@@ -16,5 +16,6 @@ ansible-playbook "$PLAYBOOK" -e user=$USER --ask-become-pass -v
 # FIXME: Ansible fails the execution of this script
 ${BUILD_FOLDER}/neovim.sh 
 
+set -x
 
 exit 0
