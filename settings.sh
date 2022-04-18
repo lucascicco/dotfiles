@@ -13,6 +13,11 @@ export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export NVM_DIR="$HOME/.nvm"
 
+# Kubecolor
+source <(kubectl completion zsh)
+command -v kubecolor >/dev/null 2>&1 && alias kubectl="kubecolor"
+compdef kubecolor=kubectl
+
 # Gvm
 [[ -s "$HOME/.gvm/scripts/gvm" ]] && source "$HOME/.gvm/scripts/gvm"
 
