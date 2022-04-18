@@ -4,6 +4,7 @@
   apt:
     pkg:
       - vim
+      - xclip
       - ninja-build
       - gettext
       - libtool

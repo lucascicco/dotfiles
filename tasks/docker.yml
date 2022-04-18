@@ -38,6 +38,7 @@
       - containerd.io
     update_cache: yes
 - name: Grant permissions to execute docker
+  become_user: root
   shell: |
     usermod -aG docker ${USER}
     su - ${USER}

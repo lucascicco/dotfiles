@@ -33,6 +33,7 @@
   shell: |
     source ~/.gvm/scripts/gvm
     GO110MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+    go install github.com/ipinfo/cli/ipinfo@latest
     go install github.com/jesseduffield/lazygit@latest
     go install github.com/jesseduffield/lazydocker@latest
     go install github.com/sachaos/tcpterm@latest

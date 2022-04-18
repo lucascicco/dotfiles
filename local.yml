@@ -21,3 +21,4 @@
     - include: tasks/k8s-plugins.yml
     - include: tasks/gcloud.yml
     - include: tasks/aws.yml
+  ignore_errors: yes

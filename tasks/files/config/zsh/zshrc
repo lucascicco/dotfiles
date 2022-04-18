@@ -49,3 +49,7 @@ autoload -U compinit && compinit
 alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias luamake=/home/lucascicco/.local_build/lua-language-server/3rd/luamake/luamake
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
+
