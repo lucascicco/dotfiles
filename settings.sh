@@ -27,8 +27,12 @@ export PATH
 # Kubernetes
 source <(kubectl completion zsh)
 command -v kubecolor >/dev/null 2>&1 && alias kubectl="kubecolor"
+
 # kube-ps1 
-[[ -s $KUBE_PS1_SH ]] && source $KUBE_PS1_SH
+if [ -s $KUBE_PS1_SH ]; then 
+  source $KUBE_PS1_SH
+  PROMPT='$(kube_ps1)'$PROMPT
+fi
 
 # Gvm
 [[ -s $GVM_SCRIPTS ]] && source $GVM_SCRIPTS
