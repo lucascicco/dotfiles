@@ -63,3 +63,9 @@
     mv kubecolor /usr/local/bin/
   args:
     warn: no
+- name: Download kube-ps1
+  git: 
+    repo: https://github.com/jonmosco/kube-ps1
+    dest: ~/.local_build
+    version: master
+    clone: yes
