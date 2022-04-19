@@ -29,7 +29,7 @@ source <(kubectl completion zsh)
 command -v kubecolor >/dev/null 2>&1 && alias kubectl="kubecolor"
 
 # kube-ps1 
-if [ -s $KUBE_PS1_SH ]; then 
+if [ -f $KUBE_PS1_SH ]; then 
   source $KUBE_PS1_SH
   PROMPT='$(kube_ps1)'$PROMPT
 fi

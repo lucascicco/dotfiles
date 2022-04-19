@@ -66,6 +66,6 @@
 - name: Download kube-ps1
   git: 
     repo: https://github.com/jonmosco/kube-ps1
-    dest: ~/.local_build
+    dest: ~/.local_build/kube-ps1
     version: master
     clone: yes
