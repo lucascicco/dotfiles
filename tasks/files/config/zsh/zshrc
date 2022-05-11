@@ -53,3 +53,8 @@ alias luamake=/home/lucascicco/.local_build/lua-language-server/3rd/luamake/luam
 # Generated for envman. Do not edit.
 [ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
 
+# kube-ps1 
+if [ -f $KUBE_PS1_SH ]; then 
+  source $KUBE_PS1_SH
+  PROMPT='$(kube_ps1)'$PROMPT
+fi
