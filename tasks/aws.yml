@@ -1,3 +1,4 @@
+---
 - name: Download aws cli
   become_user: root
   unarchive:

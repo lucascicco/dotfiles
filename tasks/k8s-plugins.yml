@@ -69,3 +69,15 @@
     dest: ~/.local_build/kube-ps1
     version: master
     clone: yes
+- name: Download helm
+  become_user: root
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    dest: /tmp/get_helm.sh
+    mode: '755'
+  register: download_helm
+- name: Install helm
+  become_user: root
+  script:
+    cmd: /tmp/get_helm.sh
+  when: download_helm.changed

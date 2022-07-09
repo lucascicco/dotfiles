@@ -1,3 +1,4 @@
+---
 - name: Install gcloud required packages
   become_user: root
   apt:
@@ -6,16 +7,19 @@
       - ca-certificates
       - gnupg
     state: latest
-- name: Add gcloud repo to apt sources list
-  become_user: root
-  shell: >
-    echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 - name: Add gcloud public key to usr share keyrings
   become_user: root
-  shell: >
-    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
-  args:
-    warn: no
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    keyring: /usr/share/keyrings/cloud.google.gpg
+    state: present
+- name: Add gcloud repo to apt sources list
+  become_user: root
+  apt_repository:
+    repo: deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main
+    filename: google-cloud-sdk.list
+    update_cache: yes
+    state: present
 - name: Install google-cloud-cli with apt
   become_user: root
   apt:
