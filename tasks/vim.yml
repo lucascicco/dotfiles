@@ -16,6 +16,7 @@
       - pkg-config
       - unzip
       - doxygen
+      - ripgrep
     state: latest
     autoremove: true
     autoclean: true
