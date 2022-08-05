@@ -14,6 +14,7 @@ export KUBE_PS1_SH="$HOME/.local_build/kube-ps1/kube-ps1.sh"
 export PYENV_VERSION="3.10-dev"
 export PYENV_ROOT="$HOME/.pyenv"
 export GVM_SCRIPTS="$HOME/.gvm/scripts/gvm"
+export K8S_SCRIPTS="$DOTFILES_DIR/tasks/files/config/k8s/k8s.sh"
 
 # Paths
 PATH="$HOME/.cargo/bin:$PATH"
@@ -26,8 +27,7 @@ export PATH
 
 # Kubernetes
 source <(kubectl completion zsh)
-command -v kubecolor >/dev/null 2>&1 && alias k="kubecolor"
-
+[[ -s $K8S_SCRIPTS ]] && source $K8S_SCRIPTS
 # Gvm
 [[ -s $GVM_SCRIPTS ]] && source $GVM_SCRIPTS
 
