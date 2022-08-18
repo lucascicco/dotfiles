@@ -23,6 +23,7 @@
     - example
     - sniff
     - tree
+    - reap
   when: krew.stat.exists
 - name: Install mizu API traffic viewer for k8s
   become_user: root

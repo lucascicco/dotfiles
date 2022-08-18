@@ -25,3 +25,6 @@ alias kei='kubectl exec -it'
 alias kctx='kubectl-ctx'
 # namespace
 alias kns='kubectl-ns'
+# convert 
+alias kconvert='kubectl-convert'
+alias kcnvf='kubectl-convert -f'

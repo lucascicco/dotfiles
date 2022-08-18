@@ -63,3 +63,5 @@ fi
 export PNPM_HOME="$HOME/.config/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
 # pnpm end
+
+[ -s "/home/lucascicco/.jabba/jabba.sh" ] && source "/home/lucascicco/.jabba/jabba.sh"
