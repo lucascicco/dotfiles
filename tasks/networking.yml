@@ -7,4 +7,5 @@
       - nmap
       - haproxy
       - whois
+      - net-tools
     state: latest

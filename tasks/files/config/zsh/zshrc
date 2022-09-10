@@ -42,10 +42,12 @@ antigen theme agnoster
 
 antigen apply
 
-autoload -U compinit && compinit
+autoload -U +X compinit && compinit
+
+# k8s
+source <(kubectl completion zsh)
 
 # alias
-
 alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias luamake=/home/lucascicco/.local_build/lua-language-server/3rd/luamake/luamake
@@ -56,12 +58,20 @@ alias luamake=/home/lucascicco/.local_build/lua-language-server/3rd/luamake/luam
 # kube-ps1 
 if [ -f $KUBE_PS1_SH ]; then 
   source $KUBE_PS1_SH
+  kubeoff
   PROMPT='$(kube_ps1)'$PROMPT
 fi
 
+[ -s "/home/lucascicco/.jabba/jabba.sh" ] && source "/home/lucascicco/.jabba/jabba.sh"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
 # pnpm
-export PNPM_HOME="$HOME/.config/.local/share/pnpm"
+export PNPM_HOME="/home/lucascicco/.local/share/pnpm"
 export PATH="$PNPM_HOME:$PATH"
-# pnpm end
 
 [ -s "/home/lucascicco/.jabba/jabba.sh" ] && source "/home/lucascicco/.jabba/jabba.sh"
+=======
+# pnpm end
