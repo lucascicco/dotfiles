@@ -1,4 +1,5 @@
 ---
+# TODO: Check if installed then update with --update
 - name: Download aws cli
   become_user: root
   unarchive:

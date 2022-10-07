@@ -60,39 +60,9 @@ function _neovim {
   fi
 }
 
-function _language-servers {
-  info "installing stylua"
-  git_clone_or_pull "$LOCAL_BUILD_DIR/stylua" https://github.com/JohnnyMorganz/StyLua master
-  (
-    cd "$LOCAL_BUILD_DIR/stylua"
-    git pull origin master
-    cargo install --path . 2>/dev/null
-  )
-  # lua-ls
-  info "installing lua-ls"
-  git_clone_or_pull \
-    "$LOCAL_BUILD_DIR/lua-language-server" https://github.com/sumneko/lua-language-server master
-  (
-    cd "$LOCAL_BUILD_DIR/lua-language-server"
-    cd 3rd/luamake
-    ./compile/install.sh
-    cd ../..
-    ./3rd/luamake/luamake rebuild
-  )
-}
-
-function _neovim-plugins {
-  info "updating nvim plugins"
-  $NVIM_BIN -c 'PackerSync'
-  $NVIM_BIN --headless -c "TSUpdateSync" -c "sleep 100m | write! /tmp/ts.update.result | qall"
-  cat /tmp/ts.update.result
-};
-
 function _ {
   _fonts "$@"
   _neovim "$@"
-  # _neovim-plugins "$@"
-  _language-servers "$@"
 }
 
 echo

@@ -1,4 +1,5 @@
 ---
+# TODO: Fix this step (arch)
 - name: Install gcloud required packages
   become_user: root
   apt:

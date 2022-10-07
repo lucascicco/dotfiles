@@ -33,6 +33,7 @@
   args:
     warn: no
   when: ansible_distribution == 'Debian' and docker.changed
+# TODO: Fix this step failure (architecture)
 - name: Install docker
   become_user: root
   apt:
@@ -42,6 +43,7 @@
       - containerd.io
     update_cache: yes
     state: latest
+# TODO: Fix this step failure (no permission)
 - name: Grant permissions to execute docker
   become: true
   become_user: "{{user}}"

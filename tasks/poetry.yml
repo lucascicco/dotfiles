@@ -1,4 +1,5 @@
 ---
+# TODO: Fix this step
 - name: Check for poetry installation
   stat: path=~/.poetry/bin/poetry
   register: poetry

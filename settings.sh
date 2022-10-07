@@ -28,6 +28,7 @@ export PATH
 # Kubernetes
 source <(kubectl completion zsh)
 [[ -s $K8S_SCRIPTS ]] && source $K8S_SCRIPTS
+
 # Gvm
 [[ -s $GVM_SCRIPTS ]] && source $GVM_SCRIPTS
 
