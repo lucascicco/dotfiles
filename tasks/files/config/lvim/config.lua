@@ -21,8 +21,8 @@ lvim.leader = "space"
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-Up>"] = "10kzz"
 lvim.keys.normal_mode["<C-Down>"] = "10jzz"
--- lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
--- lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 -- unmap a default keymapping
 -- vim.keymap.del("n", "<C-Up>")
 -- override a default keymapping
@@ -85,9 +85,9 @@ lvim.builtin.treesitter.ensure_installed = {
 lvim.builtin.treesitter.autotag.enabled = true
 lvim.builtin.treesitter.ignore_install = { "haskell" }
 lvim.builtin.treesitter.highlight.enabled = true
-lvim.parser_configs.hcl = {
-  filetype = "hcl", "terraform",
-}
+-- lvim.parser_configs.hcl = {
+--   filetype = "hcl", "terraform",
+-- }
 
 -- generic LSP settings
 

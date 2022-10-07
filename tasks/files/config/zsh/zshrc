@@ -48,26 +48,9 @@ autoload -U +X compinit && compinit
 alias gdff="git difftool --dir-diff"
 alias c="clear"
 
-# Generated for envman. Do not edit.
-[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"
-
 # kube-ps1 
 if [ -f $KUBE_PS1_SH ]; then 
   source $KUBE_PS1_SH
   kubeoff
   PROMPT='$(kube_ps1)'$PROMPT
 fi
-
-[ -s "/home/lucascicco/.jabba/jabba.sh" ] && source "/home/lucascicco/.jabba/jabba.sh"
-
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="$HOME/.sdkman"
-[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-
-# pnpm
-export PNPM_HOME="/home/lucascicco/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
-
-# Java VM
-[ -s "/home/lucascicco/.jabba/jabba.sh" ] && source "/home/lucascicco/.jabba/jabba.sh"
-# pnpm end
