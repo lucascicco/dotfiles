@@ -19,6 +19,4 @@ install-lvim:
 	$$BUILD_DIR/lvim.sh
 
 .PHYONY: upgrade-lvim
-upgrade-lvim:
-	make install-nvim
-	make install-lvim
+upgrade-lvim: install-nvim install-lvim
