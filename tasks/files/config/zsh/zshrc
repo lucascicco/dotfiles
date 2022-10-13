@@ -52,6 +52,6 @@ alias tf="terraform "
 # kube-ps1 
 if [ -f $KUBE_PS1_SH ]; then 
   source $KUBE_PS1_SH
-  kubeoff
+  kubeon
   PROMPT='$(kube_ps1)'$PROMPT
 fi
