@@ -34,3 +34,5 @@
     - wheel
     - yamllint
     - boto3
+    - mycli
+    - pgcli
