@@ -32,7 +32,7 @@
 - name: "Install golang libs"
   shell: |
     source ~/.gvm/scripts/gvm
-    GO110MODULE=on go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+    go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
     go install github.com/ipinfo/cli/ipinfo@latest
     go install github.com/jesseduffield/lazygit@latest
     go install github.com/jesseduffield/lazydocker@latest
@@ -40,5 +40,6 @@
     go install github.com/instrumenta/kubeval@latest
     go install github.com/mikefarah/yq/v4@latest
     go install github.com/stern/stern@latest
+    go install github.com/controlplaneio/kubesec/v2@latest
   args:
     executable: /bin/bash

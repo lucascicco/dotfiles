@@ -36,3 +36,4 @@
     - boto3
     - mycli
     - pgcli
+    - azure-cli
