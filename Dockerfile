@@ -10,7 +10,7 @@ COPY ./settings.sh settings.sh
 COPY ./bootstrap.sh bootstrap.sh
 
 RUN apt-get update && apt-get install -y \
-    make \
-    ansible \
-    vim \
-    sudo
+  make \
+  ansible \
+  vim \
+  sudo

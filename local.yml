@@ -19,6 +19,7 @@
      - include: tasks/docker.yml
      - include: tasks/k8s.yml
      - include: tasks/k8s-plugins.yml
+     - include: tasks/openshift.yml
      - include: tasks/terraform.yml
      - include: tasks/gcloud.yml
      - include: tasks/aws.yml

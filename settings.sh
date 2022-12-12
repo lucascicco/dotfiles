@@ -23,17 +23,17 @@ PATH="$HOME/.local/bin:$PATH"
 PATH="$HOME/bin:$PATH"
 PATH="$PYENV_ROOT/bin:$PATH"
 PATH="$HOME/.krew/bin:$PATH"
+PATH="$PNPM_HOME:$PATH"
 export PATH
 
 # Kubernetes
-source <(kubectl completion zsh)
-[[ -s $K8S_SCRIPTS ]] && source $K8S_SCRIPTS
+[[ -s "$K8S_SCRIPTS" ]] && source $K8S_SCRIPTS
 
 # Gvm
-[[ -s $GVM_SCRIPTS ]] && source $GVM_SCRIPTS
+[[ -s "$GVM_SCRIPTS" ]] && source $GVM_SCRIPTS
 
 # Pyenv
-if [ -f $PYENV_ROOT ]; then
+if [ -f "$PYENV_ROOT" ]; then
   eval "$(pyenv init --path)" # This load pyenv
 fi
 
@@ -52,12 +52,11 @@ export SDKMAN_DIR="$HOME/.sdkman"
 
 # Pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
-export PATH="$PNPM_HOME:$PATH"
 
 # Functions
 function bootstrap() { (
   set -e
-  cd $DOTFILES_DIR
+  cd "$DOTFILES_DIR" || return
   git pull origin master || true
   bash "$DOTFILES_DIR/bootstrap.sh" "${@}" || return 1
 ); }

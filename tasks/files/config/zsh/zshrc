@@ -1,7 +1,6 @@
 source "$HOME/.antigen.zsh"
 
 SETTINGS_FILE="$HOME/dotfiles/settings.sh"
-
 if [ -f $SETTINGS_FILE ]; then
   source $SETTINGS_FILE
 fi
@@ -55,3 +54,4 @@ if [ -f $KUBE_PS1_SH ]; then
   kubeon
   PROMPT='$(kube_ps1)'$PROMPT
 fi
+

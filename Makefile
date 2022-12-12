@@ -11,7 +11,7 @@ bootstrap:
 	bash ./bootstrap.sh
 
 .PHYONY: install-nvim
-install-lvim:
+install-nvim:
 	$$BUILD_DIR/neovim.sh
 
 .PHYONY: install-lvim
