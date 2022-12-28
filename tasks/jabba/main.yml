@@ -1,0 +1,10 @@
+- name: "Check if Jabba is installed"
+  stat: path=~/.jabba/bin/jabba
+  register: jabba
+- name: Install jabba version manager (Jabba)
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: |
+    curl -sL https://github.com/shyiko/jabba/raw/master/install.sh | bash
+  when: not jabba.stat.exists

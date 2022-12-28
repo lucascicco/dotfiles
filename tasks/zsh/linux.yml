@@ -1,0 +1,31 @@
+---
+- name: Install zsh
+  become_user: root
+  apt:
+    pkg:
+      - zsh
+    state: latest
+- name: Add symlink for zshrc
+  file:
+    src: "~/dotfiles/files/config/zsh/zshrc"
+    dest: "~/.zshrc"
+    state: link
+- name: Download antigen
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  command: "curl -fLo ~/.antigen.zsh git.io/antigen"
+- name: Install zsh plugins
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: source ~/.antigen.zsh && antigen "{{ item }}"
+  args:
+    executable: /usr/bin/zsh
+  with_items:
+    - cleanup
+    - update
+- name: Setting zsh as default shell
+  become_user: root
+  shell: > 
+    chsh -s $(which zsh)

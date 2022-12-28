@@ -1,14 +1,21 @@
-export BUILD_DIR := ${HOME}/dotfiles/tasks/files/build
+export BUILD_DIR := ${HOME}/dotfiles/files/build
 
 .PHYONY: lint
 lint:
 	yamllint .	
 
-.PHYONY: bootstrap
-bootstrap:
+.PHYONY: bootstrap-linux
+bootstrap-linux:
+	chmod +x ./files/build/*.sh
 	sudo apt-get install ansible -y
-	chmod +x ./tasks/files/build/*.sh
-	bash ./bootstrap.sh
+	bash ./run_ansible.sh
+
+.PHYONY: bootstrap-macos
+bootstrap-macos:
+	chmod +x ./files/build/*.sh
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	brew install ansible
+	bash ./run_ansible.sh
 
 .PHYONY: install-nvim
 install-nvim:
@@ -18,5 +25,6 @@ install-nvim:
 install-lvim:
 	$$BUILD_DIR/lvim.sh
 
-.PHYONY: upgrade-lvim
-upgrade-lvim: install-nvim install-lvim
+.PHYONY: force-nvim-upgrade
+force-nvim-upgrade:
+	$$BUILD_DIR/force_nvim_upgrade.sh

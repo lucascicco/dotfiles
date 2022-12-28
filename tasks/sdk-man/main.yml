@@ -1,0 +1,10 @@
+- name: "Check if sdkman is installed"
+  stat: path=~/.sdkman/bin/sdkman-init.sh
+  register: sdkman
+- name: Install sdk version manager (sdk)
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: |
+    curl -s "https://get.sdkman.io" | bash
+  when: not sdkman.stat.exists

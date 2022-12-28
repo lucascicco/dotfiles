@@ -1,0 +1,50 @@
+---
+- name: Install neovim required apt packages
+  become_user: root
+  apt:
+    pkg:
+      - vim
+      - xclip
+      - ninja-build
+      - gettext
+      - libtool
+      - libtool-bin
+      - autoconf
+      - automake
+      - cmake
+      - g++
+      - pkg-config
+      - unzip
+      - doxygen
+      - ripgrep
+    state: latest
+    autoremove: true
+    autoclean: true
+- name: Install neovim required npm packages
+  become: true
+  become_method: sudo
+  become_user: "{{user}}"
+  shell: source ~/.nvm/nvm.sh && npm -g i {{item}} --force
+  args:
+    executable: /bin/bash
+  with_items:
+    - bash-language-server
+    - dockerfile-language-server-nodejs
+    - graphql-language-service-cli
+    - neovim
+    - pyright
+    - stylelint
+    - tree-sitter
+    - tree-sitter-cli
+    - ts-server
+    - typescript
+    - typescript-language-server
+    - vim-language-server
+    - vscode-langservers-extracted
+    - yaml-language-server
+- name: Make nvim build script executable
+  become: true
+  become_user: "{{user}}"
+  become_method: sudo
+  shell: >
+    chmod +x ~/dotfiles/files/build/neovim.sh

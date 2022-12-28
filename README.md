@@ -21,7 +21,7 @@ Make sure to have ansible installed in your machine by running the following com
 
 Then to install the packages just run the "bootstrap" script:
 
-`$ sh bootstrap.sh`
+`$ sh run_ansible.sh`
 
 ### Extras
 

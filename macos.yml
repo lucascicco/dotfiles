@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  become: true
+  become_user: "{{user}}"
+  environment:
+    PATH: "/opt/node/bin:{{ ansible_env.PATH }}"
+  tasks:
+     - include: tasks/distro/macos.yml
+     - include: tasks/packages/macos.yml
+     - include: tasks/networking/macos.yml
+     - include: tasks/git/macos.yml
+     - include: tasks/jabba/main.yml
+     - include: tasks/sdkman/main.yml
+     - include: tasks/nvm/macos.yml
+     - include: tasks/node/macos.yml
+     - include: tasks/python/macos.yml
+     - include: tasks/poetry/macos.yml
+     - include: tasks/zsh/macos.yml
+     - include: tasks/vim/macos.yml
+     - include: tasks/golang/macos.yml
+     - include: tasks/docker/macos.yml
+     - include: tasks/k8s/macos.yml
+     - include: tasks/k8s-plugins/macos.yml
+     - include: tasks/openshift/macos.yml
+     - include: tasks/terraform/macos.yml
+     - include: tasks/gcloud/macos.yml
+     - include: tasks/aws/macos.yml
+  ignore_errors: yes

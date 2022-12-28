@@ -1,0 +1,28 @@
+---
+- hosts: localhost
+  become: true
+  become_user: "{{user}}"
+  environment:
+    PATH: "/opt/node/bin:{{ ansible_env.PATH }}"
+  tasks:
+     # - include: tasks/distro/linux.yml
+     - include: tasks/packages/linux.yml
+     - include: tasks/networking/linux.yml
+     - include: tasks/git/linux.yml
+     - include: tasks/jabba/main.yml
+     - include: tasks/sdkman/main.yml
+     - include: tasks/nvm/linux.yml
+     - include: tasks/node/linux.yml
+     - include: tasks/python/linux.yml
+     - include: tasks/poetry/linux.yml
+     - include: tasks/zsh/linux.yml
+     - include: tasks/vim/linux.yml
+     - include: tasks/golang/linux.yml
+     - include: tasks/docker/linux.yml
+     - include: tasks/k8s/linux.yml
+     - include: tasks/k8s-plugins/linux.yml
+     - include: tasks/openshift/linux.yml
+     - include: tasks/terraform/linux.yml
+     - include: tasks/gcloud/linux.yml
+     - include: tasks/aws/linux.yml
+  ignore_errors: yes

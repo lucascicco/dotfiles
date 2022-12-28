@@ -1,0 +1,17 @@
+FROM debian:bullseye
+
+RUN mkdir -p /dotfiles
+WORKDIR /dotfiles
+
+RUN apt-get update && apt-get install -y \
+  make \
+  ansible \
+  vim \
+  sudo
+
+COPY ./../tasks tasks
+COPY ./../linux.yml linux.yml
+COPY ./../files.yml files.yml
+COPY ./..//Makefile Makefile
+COPY ./../settings.sh settings.sh
+COPY ./../run_ansible.sh run_ansible.sh
