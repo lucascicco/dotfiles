@@ -1,0 +1,31 @@
+---
+- name: Install roseta
+  become_user: root
+  shell: |
+    softwareupdate --install-roseta
+- name: Check if docker is already installed
+  shell:
+    cmd: docker --version
+  check_mode: false
+  changed_when: false
+  register: docker
+- name: Download docker dmg
+  become: true
+  become_user: "{{user}}"
+  become_method: sudo
+  get_url:
+    url: https://desktop.docker.com/mac/main/arm64/Docker.dmg
+    dest: /Users/${USER}/Downloads/Docker.dmg
+    mode: '755'
+  when: "'command not found' in docker.stdout"
+- name: Install docker dmg
+  become: true
+  become_user: "{{user}}"
+  become_method: sudo
+  shell: |
+    sudo hdiutil attach Docker.dmg
+    sudo /Volumes/Docker/Docker.app/Contents/MacOS/install --user=${USER}
+    sudo hdiutil detach /Volumes/Docker
+  args:
+    warn: no
+  when: "'command not found' in docker.stdout"
