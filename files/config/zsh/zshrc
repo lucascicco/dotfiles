@@ -1,7 +1,15 @@
 DOTFILES_FILES_DIR="$HOME/dotfiles/files"
-OS=$(source $DOTFILES_FILES_DIR/scripts/get_os.sh)
+GET_OS_SCRIPT="$DOTFILES_FILES_DIR/scripts/get_os.sh"
+OS=˜""
+if [ -s $GET_OS_SCRIPT ]; then
+  OS="$(source $GET_OS_SCRIPT)"
+fi
 SETTINGS_FILE="$DOTFILES_FILES_DIR/config/bash/rc_$OS.sh"
 [[ -s $SETTINGS_FILE ]] && source $SETTINGS_FILE
+
+DOCKER_ZSH_SCRIPT="$HOME/.docker/init-zsh.sh"
+[[ -s $DOCKER_ZSH_SCRIPT ]] && source $DOCKER_ZSH_SCRIPT
+
 
 # oh-my-zsh config
 export ZSH_WAKATIME_PROJECT_DETECTION=true
@@ -21,7 +29,7 @@ antigen bundle common-aliases
 antigen bundle docker
 antigen bundle encode64
 antigen bundle extract
-antigen bundle fzf
+# antigen bundle fzf
 antigen bundle gitfast
 antigen bundle npm
 antigen bundle systemd

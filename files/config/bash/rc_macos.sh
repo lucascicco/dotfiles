@@ -3,6 +3,8 @@
 BASE_CONFIG="$HOME/dotfiles/files/config/bash/rc.sh"
 [[ -s "$BASE_CONFIG" ]] && source $BASE_CONFIG
 
+DOCKER_ZSH_SCRIPT="$HOME/.docker/init-zsh.sh"
+
 if [ "${_DEFAULTS_SOURCED}" = "1" ]; then
   return
 fi
@@ -15,6 +17,9 @@ PATH="$HOME/bin:$PATH"
 PATH="$HOME/.krew/bin:$PATH"
 PATH="$PYENV_ROOT/bin:$PATH"
 export PATH
+
+# homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Functions
 function bootstrap() { (
