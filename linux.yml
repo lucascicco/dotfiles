@@ -5,7 +5,7 @@
   environment:
     PATH: "/opt/node/bin:{{ ansible_env.PATH }}"
   tasks:
-     # - include: tasks/distro/linux.yml
+     - include: tasks/distro/linux.yml
      - include: tasks/packages/linux.yml
      - include: tasks/networking/linux.yml
      - include: tasks/git/linux.yml
