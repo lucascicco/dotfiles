@@ -20,7 +20,5 @@ SOURCES=(
 )
 batch_source "${SOURCES[@]}"
 
-# pyenv
-export PYENV_VERSION="3.10-dev"
 export PYENV_ROOT="$HOME/.pyenv"
-[[ -f "$PYENV_ROOT" ]] && eval "$(pyenv init --path)"
+export PYENV_VERSION="3.10-dev"

@@ -87,6 +87,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "java",
   "yaml",
   "elixir",
+  "hcl",
 }
 lvim.builtin.treesitter.autotag.enabled = true
 lvim.builtin.treesitter.ignore_install = { "haskell" }
@@ -169,8 +170,8 @@ formatters.setup {
 -- Additional Plugins
 lvim.plugins = {
   { "hashivim/vim-terraform" },
-  { "vim-syntastic/syntastic" },
   { "juliosueiras/vim-terraform-completion" },
+  { "vim-syntastic/syntastic" },
   { "folke/tokyonight.nvim" },
   { "sainnhe/sonokai" },
   { "rebelot/kanagawa.nvim" },

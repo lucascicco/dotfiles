@@ -15,6 +15,7 @@
   become_user: root
   shell: |
     PIP_REQUIRE_VIRTUALENV=false
+# TODO: load pyenv before install pip packages
 - name: Install python packages
   become_user: root
   command: "pip install --user {{ item }}"
