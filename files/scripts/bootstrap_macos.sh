@@ -17,7 +17,6 @@ BREW_PACKAGES=(
   kubectl
   go
   jq
-  yq
   neovim
   mercurial
   antigen
@@ -49,7 +48,7 @@ NODE_LIBS=(
   neovim
   tree-sitter-cli
   corepack
-  tsnode
+  ts-node
   typescript
   yarn
   eslint
@@ -141,7 +140,7 @@ function _kubernetes_plugins {
     if [[ "$K8S_PLUGINS_INSTALLED" != *"$PLG"* ]]; then
       set -x
       debug "Installing $PLG since it's missing on system"
-      kubect krew install "$PLG"
+      kubectl krew install "$PLG"
       continue
       set +x
     fi
@@ -223,7 +222,7 @@ function _golang_libs {
 
 function _rust {
   task "Install rust"
-  if [ -d "$HOME/.cargo/bin" ]; then
+  if [ ! -d "$HOME/.cargo/bin" ]; then
     curl https://sh.rustup.rs -sSf | sh
   fi
   for R in "${RUST_LIBS[@]}"; do

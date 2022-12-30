@@ -98,11 +98,10 @@ function batch_source {
 
 function brew_install_or_update {
   PKG="$1"
-  shift 1
-  EXTRA_ARGS=$@
+  EXTRA_ARGS="$2"
   if brew ls --versions "$PKG" >/dev/null; then
-    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "$PKG" $EXTRA_ARGS
+    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "$PKG" "$EXTRA_ARGS"
   else
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install "$PKG" $EXTRA_ARGS
+    HOMEBREW_NO_AUTO_UPDATE=1 brew install "$PKG" "$EXTRA_ARGS"
   fi
 }
