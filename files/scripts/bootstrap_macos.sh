@@ -56,11 +56,14 @@ NODE_LIBS=(
   eslint
   graphql
   neovim
+  pyright
   prettier
   tree-sitter-cli
   ts-node
   typescript
+  ts-server
   yarn
+  rimraf
 )
 KUBERNETES_PLUGINS=(
   ctx
@@ -96,7 +99,7 @@ SYMLINKS=(
 )
 GO_DEFAULT_VERSION="go1.19"
 PYTHON_DEFAULT_VERSION="${PYENV_VERSION:-3.10-dev}"
-JAVA_DEFAULT_VERSION=""
+JAVA_DEFAULT_VERSION="openjdk64-11.0.0"
 
 mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
@@ -163,14 +166,15 @@ function _kubernetes_plugins {
 
 function _jenv {
   task "Install jenv"
-  INSTALLED_VERSIONS=$(wc -w <<< "$(jvenv versions)")
-  if [[ $INSTALLED_VERSIONS -lt 1 ]]; then
-    brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
-    jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/
+  INSTALLED_JENV_VERSIONS=$(wc -w <<< "$(jvenv versions)")
+  if [[ $INSTALLED_JENV_VERSIONS -lt 1 ]]; then
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk8
     jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/
-    jenv global openjdk64-11.0.0
+    brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
+    jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/
+    jenv global "$JAVA_DEFAULT_VERSION"
   fi
+  zsh -i -c "jenv update"
 }
 
 function _pyenv {
@@ -181,6 +185,7 @@ function _pyenv {
     pvenv install "$PYTHON_DEFAULT_VERSION"
     pvenv global "$PYTHON_DEFAULT_VERSION"
   fi
+  zsh -i -c "pyenv update"
 }
 
 function _poetry {
@@ -208,6 +213,7 @@ function _nvm {
     nvm use --lts
     nvm alias default --lts
   fi
+  zsh -i -c "nvm upgrade"
 }
 
 function _node_libs {

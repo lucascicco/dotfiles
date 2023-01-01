@@ -6,8 +6,11 @@ BREW_BIN="$(which brew)"
 JENV_ROOT="$HOME/.jenv"
 
 # Paths
-PATH="$HOME/.docker/bin:$PATH"
-PATH="$HOME/.jenv/bin:$PATH"
+PATHS=(
+  "$HOME/.docker/bin"
+  "$JENV_ROOT/bin"
+)
+dynamic_load_path "${PATHS[@]}"
 export PATH
 
 # Evals

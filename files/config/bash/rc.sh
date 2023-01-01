@@ -31,9 +31,12 @@ function bootstrap() { (
 ); }
 
 # Paths
-PATH="$HOME/.cargo/bin:$PATH"
-PATH="$HOME/.poetry/bin:$PATH"
-PATH="$HOME/.krew/bin:$PATH"
-PATH="$HOME/.local/bin:$PATH"
-PATH="$HOME/bin:$PATH"
-PATH="$PYENV_ROOT/bin:$PATH"
+BASE_PATHS=(
+  "$HOME/.cargo/bin"
+  "$HOME/.poetry/bin"
+  "$HOME/.krew/bin"
+  "$HOME/.local/bin"
+  "$HOME/bin"
+  "$PYENV_ROOT/bin"
+)
+dynamic_load_path "${BASE_PATHS[@]}"

@@ -116,3 +116,13 @@ function reload_zsh {
   ZSHRC_PATH="$HOME/.zshrc"
   [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH
 }
+
+function dynamic_load_path {
+  PATHS=("$@")
+  for P in $PATHS; do
+    if [ ! -d "$P" ]; then
+      continue
+    fi
+    PATH="$P:$PATH"
+  done
+}
