@@ -9,24 +9,31 @@ FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
 
 BREW_PACKAGES=(
-  git
-  htop
-  fzf
-  bat
-  kubectl
-  jq
-  neovim
-  mercurial
   antigen
-  nmap
+  bat
+  hyperkit
+  docker-machine-driver-hyperkit
+  fzf
+  git
   haproxy
+  htop
+  jq
+  kubectl
+  mercurial
+  neovim
+  nmap
   tfenv
+  zsh
 )
 BREW_CAST_PACKAGES=(
   docker
+  iterm2
+  minishift
 )
 PYTHON_LIBS=(
+  azure-cli
   black
+  boto3
   cmake
   codespell
   debugpy
@@ -34,53 +41,52 @@ PYTHON_LIBS=(
   ipython
   isort
   numpy
+  mycli
   pandas
   pip
   pre-commit
   pynvim
-  wheel
-  yamllint
-  boto3
-  mycli
   pgcli
   tree
-  azure-cli
+  wheel
+  yamllint
 )
 NODE_LIBS=(
-  neovim
-  tree-sitter-cli
   corepack
+  eslint
+  graphql
+  neovim
+  prettier
+  tree-sitter-cli
   ts-node
   typescript
   yarn
-  eslint
-  graphql
-  prettier
 )
 KUBERNETES_PLUGINS=(
-  popeye
-  ns
   ctx
-  score
   example
+  ns
+  popeye
+  reap
+  score
   sniff
   tree
-  reap
 )
 GO_LIBS=(
-  golang.stackrox.io/kube-linter/cmd/kube-linter@latest
-  github.com/ipinfo/cli/ipinfo@latest
-  github.com/jesseduffield/lazygit@latest
-  github.com/jesseduffield/lazydocker@latest
-  github.com/sachaos/tcpterm@latest
-  github.com/instrumenta/kubeval@latest
-  github.com/mikefarah/yq/v4@latest
-  github.com/stern/stern@latest
   github.com/controlplaneio/kubesec/v2@latest
+  github.com/instrumenta/kubeval@latest
+  github.com/ipinfo/cli/ipinfo@latest
+  github.com/jesseduffield/lazydocker@latest
+  github.com/jesseduffield/lazygit@latest
+  github.com/mikefarah/yq/v4@latest
+  github.com/sachaos/tcpterm@latest
+  github.com/stern/stern@latest
+  golang.stackrox.io/kube-linter/cmd/kube-linter@latest
 )
 RUST_LIBS=(
   ripgrep
   fd-find
+  "--locked broot"
 )
 SYMLINKS=(
   "$CONFIG_DIR/git/gitattributes $HOME/.gitattributes"
@@ -89,7 +95,8 @@ SYMLINKS=(
   "$CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
 )
 GO_DEFAULT_VERSION="go1.19"
-PYTHON_DEFAULT_VERSION="3.10-dev"
+PYTHON_DEFAULT_VERSION="${PYENV_VERSION:-3.10-dev}"
+JAVA_DEFAULT_VERSION=""
 
 mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
@@ -101,7 +108,7 @@ function _packages {
     brew_install_or_update "$BP"
   done
   for BCP in "${BREW_CAST_PACKAGES[@]}"; do
-    brew_install_or_update "$BCP" "--cast"
+    brew_install_or_update "$BCP" --cast
   done
   brew autoremove 
 }
@@ -118,7 +125,7 @@ function _fonts {
   task "Install nerd fonts"
   brew tap homebrew/cask-fonts
   brew_install_or_update font-hack-nerd-font
-  # NOTE: change the font on iTerm2
+  # NOTE: change the font on iTerm2 (LunarVim depends on it)
 }
 
 function _zsh {
@@ -141,7 +148,7 @@ function _kubernetes_plugins {
     ./"${KREW}" install krew
   )
   fi
-  K8S_PLUGINS_INSTALLED=$(kubectl krew list | sort)
+  K8S_PLUGINS_INSTALLED=$(kubectl krew list | tail -n +2 | sort)
   for PLG in "${KUBERNETES_PLUGINS[@]}"; do
     if [[ "$K8S_PLUGINS_INSTALLED" != *"$PLG"* ]]; then
       set -x
@@ -152,6 +159,18 @@ function _kubernetes_plugins {
     fi
     kubectl krew upgrade "$PLG"
   done
+}
+
+function _jenv {
+  task "Install jenv"
+  INSTALLED_VERSIONS=$(wc -w <<< "$(jvenv versions)")
+  if [[ $INSTALLED_VERSIONS -lt 1 ]]; then
+    brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
+    jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/
+    brew install --cask adoptopenjdk/openjdk/adoptopenjdk8
+    jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/
+    jenv global openjdk64-11.0.0
+  fi
 }
 
 function _pyenv {
@@ -265,6 +284,7 @@ function _ {
   _kubernetes_plugins "$@"
   _zsh "$@"
   _poetry "$@"
+  _jenv "$@"
   _pyenv "$@"
   _python_libs "$@"
   _nvm "$@"

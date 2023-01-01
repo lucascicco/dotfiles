@@ -1,3 +1,7 @@
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 DOTFILES_FILES_DIR="$HOME/dotfiles/files"
 GET_OS_SCRIPT="$DOTFILES_FILES_DIR/scripts/get_os.sh"
 OS=˜""
@@ -6,10 +10,6 @@ if [ -s $GET_OS_SCRIPT ]; then
 fi
 SETTINGS_FILE="$DOTFILES_FILES_DIR/config/bash/rc_$OS.sh"
 [[ -s $SETTINGS_FILE ]] && source $SETTINGS_FILE
-
-DOCKER_ZSH_SCRIPT="$HOME/.docker/init-zsh.sh"
-[[ -s $DOCKER_ZSH_SCRIPT ]] && source $DOCKER_ZSH_SCRIPT
-
 
 # oh-my-zsh config
 export ZSH_WAKATIME_PROJECT_DETECTION=true
@@ -29,18 +29,25 @@ antigen bundle common-aliases
 antigen bundle docker
 antigen bundle encode64
 antigen bundle extract
-# antigen bundle fzf
+antigen bundle kubectl
+antigen bundle kubectx
+antigen bundle fzf
 antigen bundle gitfast
 antigen bundle npm
 antigen bundle systemd
 antigen bundle git
+antigen bundle yarn
 # github
+antigen bundle sheax0r/etcdctl-zsh
+antigen bundle gantsign/zsh-plugins kubeadm
+antigen bundle sunlei/zsh-ssh
+antigen bundle bobsoppe/zsh-ssh-agent
 antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle jocelynmallon/zshmarks
 antigen bundle wbingli/zsh-wakatime
 antigen bundle popstas/zsh-command-time
 # theme
-antigen theme agnoster
+antigen theme romkatv/powerlevel10k
 antigen apply
 autoload -U +X compinit && compinit
 
@@ -49,10 +56,19 @@ alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias tf="terraform "
 
+
+# p10k settings
+[[ ! -f ${DOTFILES_FILES_DIR}/config/zsh/p10k.zsh ]] || source ${DOTFILES_FILES_DIR}/config/zsh/p10k.zsh
 # kube-ps1 
-KUBE_PS1_SH="$HOME/.local_build/kube-ps1/kube-ps1.sh"
-if [ -f $KUBE_PS1_SH ]; then 
-  source $KUBE_PS1_SH
-  kubeon
-  PROMPT='$(kube_ps1)'$PROMPT
-fi
+function kube-toggle() {
+  if (( ${+POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND} )); then
+    unset POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND
+  else
+    POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
+  fi
+  p10k reload
+  if zle; then
+    zle push-input
+    zle accept-line
+  fi
+}

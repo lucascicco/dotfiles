@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Common variables
+# Constants
 export DOTFILES_DIR="$HOME/dotfiles"
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
@@ -8,9 +8,9 @@ export GOBIN=$HOME/.local/bin
 export PYENV_ROOT="$HOME/.pyenv"
 export PYENV_VERSION="3.10-dev"
 
+# Sources
 FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
-
 SOURCES=(
   # Version Managers
   "$HOME/.sdkman/bin/sdkman-init.sh"
@@ -27,6 +27,13 @@ function bootstrap() { (
   set -e
   cd "$DOTFILES_DIR" || return
   git pull origin master || true
-  bash "$DOTFILES_DIR/run_bootstrap.sh" "${@}" || return 1
+  bash "$DOTFILES_DIR/run_bootstrap.sh" "${@}"
 ); }
 
+# Paths
+PATH="$HOME/.cargo/bin:$PATH"
+PATH="$HOME/.poetry/bin:$PATH"
+PATH="$HOME/.krew/bin:$PATH"
+PATH="$HOME/.local/bin:$PATH"
+PATH="$HOME/bin:$PATH"
+PATH="$PYENV_ROOT/bin:$PATH"
