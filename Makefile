@@ -4,18 +4,8 @@ export BUILD_DIR := ${HOME}/dotfiles/files/build
 lint:
 	yamllint .	
 
-.PHYONY: bootstrap-linux
-bootstrap-linux:
-	chmod +x ./files/build/*.sh
-	sudo apt-get install ansible -y
-	bash ./run_bootstrap.sh
-
-.PHYONY: bootstrap-macos
-bootstrap-macos:
-	chmod +x ./files/build/*.sh
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-	eval "$(/opt/homebrew/bin/brew shellenv)"
-	brew install ansible
+.PHYONY: bootstrap
+bootstrap:
 	bash ./run_bootstrap.sh
 
 .PHYONY: install-nvim

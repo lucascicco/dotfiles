@@ -106,6 +106,10 @@ mkdir -p "${LOCAL_BUILD_DIR}"
 
 function _packages {
   task "Install and update common brew packages"
+  if ! command -v brew; then
+    curl -ssL -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
+    reload_zsh
+  fi
   brew update
   for BP in "${BREW_PACKAGES[@]}"; do
     brew_install_or_update "$BP"
@@ -174,7 +178,6 @@ function _jenv {
     jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-11.jdk/Contents/Home/
     jenv global "$JAVA_DEFAULT_VERSION"
   fi
-  zsh -i -c "jenv update"
 }
 
 function _pyenv {
