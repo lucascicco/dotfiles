@@ -79,7 +79,13 @@ function create_symlink {
     return 1
   fi
 
-  if [ "$(readlink -f "$DEST_FILE")" != "$SOURCE_FILE" ]; then
+  OS="$(uname)"
+  DEST_SYMLINK_PATH="$(readlink "$DEST_FILE")"
+  if [ "$OS" == "Linux" ]; then
+    DEST_SYMLINK_PATH="$(readlink -f "$DEST_FILE")"
+  fi 
+
+  if [ "$DEST_SYMLINK_PATH" != "$SOURCE_FILE" ]; then
     debug "updating symlink ${DEST_FILE} -> ${SOURCE_FILE}"
     ln -f -s "$SOURCE_FILE" "$DEST_FILE"
   fi
@@ -98,10 +104,15 @@ function batch_source {
 
 function brew_install_or_update {
   PKG="$1"
-  EXTRA_ARGS="$2"
+  ARGS="$@"
   if brew ls --versions "$PKG" >/dev/null; then
-    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "$PKG" "$EXTRA_ARGS"
+    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "$ARGS"
   else
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install "$PKG" "$EXTRA_ARGS"
+    HOMEBREW_NO_AUTO_UPDATE=1 brew install "$ARGS"
   fi
+}
+
+function reload_zsh {
+  ZSHRC_PATH="$HOME/.zshrc"
+  [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH
 }

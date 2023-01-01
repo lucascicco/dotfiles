@@ -18,15 +18,8 @@ PATH="$HOME/.krew/bin:$PATH"
 PATH="$PYENV_ROOT/bin:$PATH"
 export PATH
 
-# homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Functions
-function bootstrap() { (
-  set -e
-  cd "$DOTFILES_DIR" || return
-  git pull origin master || true
-  bash "$DOTFILES_DIR/run_ansible.sh" "${@}" || return 1
-); }
+[[ -d "$PYENV_ROOT" ]] && eval "$(pyenv init --path)"
 
 export _DEFAULTS_SOURCED="1"

@@ -5,6 +5,8 @@ export DOTFILES_DIR="$HOME/dotfiles"
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
+export PYENV_ROOT="$HOME/.pyenv"
+export PYENV_VERSION="3.10-dev"
 
 FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
@@ -20,5 +22,11 @@ SOURCES=(
 )
 batch_source "${SOURCES[@]}"
 
-export PYENV_ROOT="$HOME/.pyenv"
-export PYENV_VERSION="3.10-dev"
+# Functions
+function bootstrap() { (
+  set -e
+  cd "$DOTFILES_DIR" || return
+  git pull origin master || true
+  bash "$DOTFILES_DIR/run_bootstrap.sh" "${@}" || return 1
+); }
+

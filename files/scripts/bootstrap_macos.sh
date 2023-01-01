@@ -13,9 +13,7 @@ BREW_PACKAGES=(
   htop
   fzf
   bat
-  "docker --cast"
   kubectl
-  go
   jq
   neovim
   mercurial
@@ -23,6 +21,9 @@ BREW_PACKAGES=(
   nmap
   haproxy
   tfenv
+)
+BREW_CAST_PACKAGES=(
+  docker
 )
 PYTHON_LIBS=(
   black
@@ -35,14 +36,15 @@ PYTHON_LIBS=(
   numpy
   pandas
   pip
-  precommit
+  pre-commit
   pynvim
   wheel
   yamllint
   boto3
   mycli
   pgcli
-  azurecli
+  tree
+  azure-cli
 )
 NODE_LIBS=(
   neovim
@@ -87,6 +89,7 @@ SYMLINKS=(
   "$CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
 )
 GO_DEFAULT_VERSION="go1.19"
+PYTHON_DEFAULT_VERSION="3.10-dev"
 
 mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
@@ -97,11 +100,14 @@ function _packages {
   for BP in "${BREW_PACKAGES[@]}"; do
     brew_install_or_update "$BP"
   done
+  for BCP in "${BREW_CAST_PACKAGES[@]}"; do
+    brew_install_or_update "$BCP" "--cast"
+  done
   brew autoremove 
 }
 
 function _symlinks {
-  info "updating symlinks"
+  task "Update symlinks"
   for FILE in "${SYMLINKS[@]}"; do
     # shellcheck disable=2086
     create_symlink ${FILE}
@@ -148,32 +154,37 @@ function _kubernetes_plugins {
   done
 }
 
+function _pyenv {
+  task "Install pyenv"
+  if [ ! -f "$HOME/.pyenv/bin/pyenv" ]; then
+    curl -sSL -o- https://pyenv.run | bash
+    reload_zsh
+    pvenv install "$PYTHON_DEFAULT_VERSION"
+    pvenv global "$PYTHON_DEFAULT_VERSION"
+  fi
+}
+
 function _poetry {
   info "Install poetry"
-  if [ ! -f "$HOME/.poetry/bin/poetry" ]; then
-    curl -sSL -o- https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 -
+  if [ ! -f "$HOME/.local/bin/poetry" ]; then
+    curl -sSL https://install.python-poetry.org | python3 -
+    reload_zsh
     poetry config virtualenvs.create true
     poetry config virtualenvs.in-project true
   fi
   poetry self update
 }
 
-function _pyenv {
-  task "Install pyenv"
-  if [ ! -f "$HOME/.pyenv/bin/pyenv" ]; then
-    curl -sSL -o- https://pyenv.run | bash
-  fi
-}
-
 function _python_libs {
   task "Install python libs"
-  PIP_REQUIRE_VIRTUALENV=false pip install --user -U "${PYTHON_LIBS[@]}"
+  PIP_REQUIRE_VIRTUALENV=false pip3 install --user -U "${PYTHON_LIBS[@]}"
 }
 
 function _nvm {
   task "Install nvm"
   if [ ! -f "$HOME/.nvm/nvm.sh" ]; then
     curl -ssL -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+    reload_zsh
     nvm install --lts
     nvm use --lts
     nvm alias default --lts
@@ -206,10 +217,12 @@ function _node_libs {
 function _gvm {
   task "Install gvm"
   if [ ! -f "$HOME/.gvm/scripts/gvm" ]; then
+    brew install go
     curl -ssL -o- https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash
-    export GOROOT_BOOTSTRAP=$(which go)
+    reload_zsh
     gvm install "$GO_DEFAULT_VERSION"
-    gvm use "$GO_DEFAULT_VERSION"
+    gvm use "$GO_DEFAULT_VERSION" --default
+    brew uninstall go
   fi
 }
 
@@ -224,6 +237,7 @@ function _rust {
   task "Install rust"
   if [ ! -d "$HOME/.cargo/bin" ]; then
     curl https://sh.rustup.rs -sSf | sh
+    reload_zsh
   fi
   for R in "${RUST_LIBS[@]}"; do
     cargo install "$R"
@@ -233,14 +247,14 @@ function _rust {
 function _lunarvim {
   task "Install and update LunarVim"
   if command -v lvim; then
-    lvim +LvimUpdate +q
     rm -rf ~/.local/share/nvim/site/pack/packer
+    lvim +LvimUpdate +q
     lvim +PackerSync # NOTE: +Lazy sync for future updates on LunarVim
   else
     LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
     EXTRA_ARGS="--no-install-dependencies"
     bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS
-    create_symlink "$CONFIG_DIR/lvim/config.lua $HOME/.config/lvim/config.lua"
+    create_symlink "$CONFIG_DIR/lvim/config.lua" "$HOME/.config/lvim/config.lua"
   fi
 }
 
