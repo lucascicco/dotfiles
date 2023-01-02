@@ -2,7 +2,7 @@
 
 BASE_CONFIG="$HOME/dotfiles/files/config/bash/rc.sh"
 [[ -s "$BASE_CONFIG" ]] && source "$BASE_CONFIG"
-BREW_BIN="$(which brew)"
+BREW_BIN="/opt/homebrew/bin/brew"
 JENV_ROOT="$HOME/.jenv"
 
 # Paths

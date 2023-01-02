@@ -18,6 +18,7 @@ BREW_PACKAGES=(
   haproxy
   htop
   jq
+  jenv
   kubectl
   mercurial
   neovim
@@ -25,7 +26,7 @@ BREW_PACKAGES=(
   tfenv
   zsh
 )
-BREW_CAST_PACKAGES=(
+BREW_CASK_PACKAGES=(
   docker
   iterm2
   minishift
@@ -89,7 +90,7 @@ GO_LIBS=(
 RUST_LIBS=(
   ripgrep
   fd-find
-  "--locked broot"
+  broot
 )
 SYMLINKS=(
   "$CONFIG_DIR/git/gitattributes $HOME/.gitattributes"
@@ -114,8 +115,8 @@ function _packages {
   for BP in "${BREW_PACKAGES[@]}"; do
     brew_install_or_update "$BP"
   done
-  for BCP in "${BREW_CAST_PACKAGES[@]}"; do
-    brew_install_or_update "$BCP" --cast
+  for BCP in "${BREW_CASK_PACKAGES[@]}"; do
+    brew_install_or_update "$BCP" --cask
   done
   brew autoremove 
 }
@@ -171,7 +172,7 @@ function _kubernetes_plugins {
 function _jenv {
   task "Install jenv"
   INSTALLED_JENV_VERSIONS=$(wc -w <<< "$(jvenv versions)")
-  if [[ $INSTALLED_JENV_VERSIONS -lt 1 ]]; then
+  if [[ $INSTALLED_JENV_VERSIONS -lt 2 ]]; then
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk8
     jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
@@ -216,7 +217,6 @@ function _nvm {
     nvm use --lts
     nvm alias default --lts
   fi
-  zsh -i -c "nvm upgrade"
 }
 
 function _node_libs {
