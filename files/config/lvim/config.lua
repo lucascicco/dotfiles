@@ -20,12 +20,22 @@ lvim.keys.normal_mode["<C-Up>"] = "10kzz"
 lvim.keys.normal_mode["<C-Down>"] = "10jzz"
 lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
+lvim.keys.normal_mode["<F2>"] = ":set spell!<CR>" -- toggle spell check
+lvim.keys.normal_mode["<F3>"] = ":set spelllang=pt_br<CR>"
+lvim.keys.normal_mode["<F4>"] = ":set spelllang=en<CR>"
 
 -- --------------
 -- NVIM TREE ---
 --
 lvim.builtin.nvimtree.setup.view.side = "left"
 lvim.builtin.nvimtree.setup.renderer.icons.show.git = true
+
+-- --------------
+-- TELESCOPE ---
+--
+lvim.builtin.telescope.pickers = {
+  find_files = { find_command = { "fd", "--type=file", "--hidden", "--exclude", ".git" } },
+}
 
 -- --------------
 -- TREESITTER ---
@@ -53,7 +63,7 @@ lvim.builtin.treesitter.ensure_installed = {
   "json",
   "json5",
 }
-lvim.builtin.treesitter.autotag.enabled = true
+lvim.builtin.treesitter.autotag.enable = true
 lvim.builtin.treesitter.highlight.enable = true
 lvim.parser_configs.hcl = {
   filetype = "hcl", "terraform",
@@ -67,19 +77,15 @@ lvim.lsp.installer.setup.automatic_installation = true
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
   { command = "black", filetypes = { "python" } },
-  { command = "isort", filetypes = { "python" } },
-  {
-    -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
-    command = "prettier",
-    ---@usage arguments to pass to the formatter
-    -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
-    extra_args = { "--print-with", "100" },
-    ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
-    filetypes = { "typescript", "typescriptreact" },
-  },
-  { exe = "lua-format", filetypes = { "lua" } },
+  { command = "prettier", extra_args = { "--print-with", "100" }, filetypes = { "typescript", "typescriptreact" }, },
+  { command = "lua-format", filetypes = { "lua" } },
 }
 
+local linters = require "lvim.lsp.null-ls.linters"
+linters.setup {
+  { exe = "flake8" },
+  { exe = "eslint_d" },
+}
 -- -------
 -- PLUGINS
 --
@@ -89,6 +95,7 @@ lvim.plugins = {
   { "sainnhe/sonokai" },
   { "folke/tokyonight.nvim" },
   -- Extras
+  { "ggandor/lightspeed.nvim" },
   { "wakatime/vim-wakatime" },
   {
     "norcalli/nvim-colorizer.lua",

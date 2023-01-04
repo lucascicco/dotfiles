@@ -3,16 +3,18 @@
 DOTFILES_DIR="$HOME/dotfiles"
 LOCAL_BIN_DIR="$HOME/.local"
 LOCAL_BUILD_DIR="$HOME/.local_build"
-
 CONFIG_DIR="$DOTFILES_DIR/files/config"
 FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
 
+# Libs
 BREW_PACKAGES=(
   antigen
   bat
   # hyperkit
   # docker-machine-driver-hyperkit
+  curl
+  wget
   fzf
   git
   haproxy
@@ -97,10 +99,25 @@ SYMLINKS=(
   "$CONFIG_DIR/git/gitconfig $HOME/.gitconfig"
   "$CONFIG_DIR/git/gitignore $HOME/.gitignore"
   "$CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
+  "$CONFIG_DIR/vim/vimrc $HOME/.vimrc"
 )
+
+# Language versions
 GO_DEFAULT_VERSION="go1.19"
 PYTHON_DEFAULT_VERSION="${PYENV_VERSION:-3.10-dev}"
 JAVA_DEFAULT_VERSION="openjdk64-11.0.0"
+
+# LunarVim
+LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
+EXTRA_ARGS="--no-install-dependencies"
+NVIM_SPELL_DIRS=(
+  "$HOME/.local/share/nvim/site/spell"
+  "$HOME/.local/share/lunarvim/site"
+)
+NVIM_SPELL_LANGUAGES=(
+  "en"
+  "pt"
+)
 
 mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
@@ -288,10 +305,20 @@ function _lunarvim {
     lvim +LvimUpdate +q
     lvim +PackerSync # NOTE: +Lazy sync for future updates on LunarVim
   else
-    LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
-    EXTRA_ARGS="--no-install-dependencies"
     bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS
     create_symlink "$CONFIG_DIR/lvim/config.lua" "$HOME/.config/lvim/config.lua"
+    TEMP_DIR=$(mktemp -d)
+    for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
+      set -x
+      debug "Spell check for language (${L}) is missing, downloading it..."
+      wget -N -nv "ftp://ftp.vim.org/pub/vim/runtime/spell/$L.*" --timeout=5 -P "$TEMP_DIR" || exit 1
+      set +x
+    done
+    for SD in "${NVIM_SPELL_DIRS[@]}"; do
+      [[ -d "$SD" ]] || mkdir -p "$SD"
+      # NOTE: default aliased to `cp -i`
+      /bin/cp -rf "$TEMP_DIR" "$SD/"
+    done
   fi
 }
 
