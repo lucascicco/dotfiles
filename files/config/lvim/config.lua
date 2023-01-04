@@ -15,14 +15,39 @@ lvim.builtin.terminal.active = true
 -- KEYMAPPINGS ---
 --
 lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
-lvim.keys.normal_mode["<C-s>"] = ":w<cr>"
 lvim.keys.normal_mode["<C-Up>"] = "10kzz"
 lvim.keys.normal_mode["<C-Down>"] = "10jzz"
-lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
-lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
-lvim.keys.normal_mode["<F2>"] = ":set spell!<CR>" -- toggle spell check
-lvim.keys.normal_mode["<F3>"] = ":set spelllang=pt_br<CR>"
-lvim.keys.normal_mode["<F4>"] = ":set spelllang=en<CR>"
+lvim.keys.normal_mode["n"] = "nzz"
+lvim.keys.normal_mode["N"] = "Nzz"
+-- tab navigation
+lvim.keys.normal_mode["<S-Right>"] = ":BufferLineCycleNext<CR>"
+lvim.keys.normal_mode["<S-Left>"] = ":BufferLineCyclePrev<CR>"
+-- telescope
+lvim.keys.normal_mode["<F2>"] = "<cmd>Telescope find_files<CR>"
+lvim.keys.normal_mode["<C-b>"] = "<cmd>Telescope buffers<CR>"
+lvim.keys.normal_mode["<C-f>"] = "<cmd>Telescope live_grep<CR>"
+-- spell check
+lvim.keys.normal_mode["<F5>"] = ":set spell!<CR>"
+lvim.keys.normal_mode["<F6>"] = ":set spelllang=pt_br<CR>"
+lvim.keys.normal_mode["<F7>"] = ":set spelllang=en<CR>"
+-- lsp
+lvim.keys.normal_mode["K"] = vim.lsp.buf.hover
+lvim.keys.normal_mode["gd"] = vim.lsp.buf.definition
+lvim.keys.normal_mode["gD"] = vim.lsp.buf.declaration
+lvim.keys.normal_mode["gI"] = vim.lsp.buf.implementation
+lvim.keys.normal_mode["gci"] = vim.lsp.buf.incoming_calls
+lvim.keys.normal_mode["gco"] = vim.lsp.buf.outgoing_calls
+lvim.keys.normal_mode["grn"] = vim.lsp.buf.rename
+lvim.keys.normal_mode["gr"] = vim.lsp.buf.references
+-- trouble
+lvim.keys.normal_mode["<F3>"] = "<cmd>TroubleToggle<cr>"
+-- diagnostic
+lvim.keys.normal_mode["[d"] = vim.diagnostic.goto_prev
+lvim.keys.normal_mode["]d"] = vim.diagnostic.goto_next
+lvim.keys.normal_mode["<F4>"] = "<cmd>Telescope diagnostics<cr>"
+-- git
+lvim.keys.normal_mode["<F8>"] = "<cmd>lua require 'gitsigns'.blame_line()<cr>"
+lvim.keys.normal_mode["<F9>"] = "<cmd>lua require 'lvim.core.terminal'.lazygit_toggle()<cr>"
 
 -- --------------
 -- NVIM TREE ---
@@ -65,14 +90,16 @@ lvim.builtin.treesitter.ensure_installed = {
 }
 lvim.builtin.treesitter.autotag.enable = true
 lvim.builtin.treesitter.highlight.enable = true
-lvim.parser_configs.hcl = {
-  filetype = "hcl", "terraform",
-}
 
 -- -------
 -- LSP ---
 --
 lvim.lsp.installer.setup.automatic_installation = true
+lvim.lsp.installer.setup.ensure_installed = {
+  "sumneko_lua",
+  "bashls",
+  "yamlls"
+}
 
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
@@ -91,11 +118,11 @@ linters.setup {
 --
 lvim.plugins = {
   { "vim-syntastic/syntastic" },
-  -- Themes
-  { "sainnhe/sonokai" },
-  { "folke/tokyonight.nvim" },
   -- Extras
-  { "ggandor/lightspeed.nvim" },
+  {
+    "ggandor/lightspeed.nvim",
+    event = "BufRead",
+  },
   { "wakatime/vim-wakatime" },
   {
     "norcalli/nvim-colorizer.lua",
@@ -119,6 +146,9 @@ lvim.plugins = {
   },
   {
     "folke/trouble.nvim",
-    cmd = "TroubleToggle",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    cmd = { "TroubleToggle", "trouble" },
   },
 }

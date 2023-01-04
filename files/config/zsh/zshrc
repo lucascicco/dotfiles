@@ -55,7 +55,6 @@ antigen apply
 autoload -U +X compinit && compinit
 
 # alias
-alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias tf="terraform "
 alias lg="lazygit"
