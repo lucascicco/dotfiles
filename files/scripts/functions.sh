@@ -112,6 +112,16 @@ function brew_install_or_update {
   fi
 }
 
+function brew_cask_install_or_update {
+  PKG="$1"
+  ARGS="$@"
+  if brew ls --versions "$PKG" >/dev/null; then
+    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade --cask "$ARGS"
+  else
+    HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask "$ARGS"
+  fi
+}
+
 function reload_zsh {
   ZSHRC_PATH="$HOME/.zshrc"
   [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH

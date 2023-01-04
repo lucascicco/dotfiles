@@ -21,7 +21,7 @@ HIST_STAMPS="yyyy-mm-dd"
 DISABLE_VENV_CD=1
 
 # antigen
-source "$HOME/.antigen.zsh"
+source "$HOME/antigen.zsh"
 antigen use oh-my-zsh
 antigen bundle colored-man-pages
 antigen bundle colorize
@@ -41,7 +41,6 @@ antigen bundle yarn
 antigen bundle sheax0r/etcdctl-zsh
 antigen bundle gantsign/zsh-plugins kubeadm
 antigen bundle sunlei/zsh-ssh
-antigen bundle bobsoppe/zsh-ssh-agent
 antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle jocelynmallon/zshmarks
 antigen bundle wbingli/zsh-wakatime

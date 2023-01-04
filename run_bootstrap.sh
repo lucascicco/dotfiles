@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOTDIR="$HOME/dotfiles"
 
 function run_ansible_for_linux {
   [[ "$(command -v ansible)" ]] || sudo apt-get install ansible -y
@@ -14,7 +14,7 @@ function run_macos_bootstrap {
 }
 
 function bootstrap {
-	chmod +x "$ROOTDIR/files/build/*.sh"
+	chmod +x -R "$ROOTDIR/files/build"
   OS=$(uname)
   case $OS in
     'Linux')

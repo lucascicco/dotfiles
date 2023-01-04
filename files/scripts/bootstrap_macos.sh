@@ -11,8 +11,8 @@ FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 BREW_PACKAGES=(
   antigen
   bat
-  hyperkit
-  docker-machine-driver-hyperkit
+  # hyperkit
+  # docker-machine-driver-hyperkit
   fzf
   git
   haproxy
@@ -116,7 +116,7 @@ function _packages {
     brew_install_or_update "$BP"
   done
   for BCP in "${BREW_CASK_PACKAGES[@]}"; do
-    brew_install_or_update "$BCP" --cask
+    brew_cask_install_or_update "$BCP"
   done
   brew autoremove 
 }
@@ -132,12 +132,21 @@ function _symlinks {
 function _fonts {
   task "Install nerd fonts"
   brew tap homebrew/cask-fonts
-  brew_install_or_update font-hack-nerd-font
+  brew_cask_install_or_update font-hack-nerd-font
   # NOTE: change the font on iTerm2 (LunarVim depends on it)
 }
 
 function _zsh {
   task "Install zsh plugins"
+  ANTIGEN_SCRIPT_PATH="$HOME/antigen.zsh"
+  if [[ ! -s "$ANTIGEN_SCRIPT_PATH" ]]; then
+  (
+    brew reinstall antigen &&
+    curl -L git.io/antigen > "$ANTIGEN_SCRIPT_PATH" &&
+    chmod +x $ANTIGEN_SCRIPT_PATH
+  )
+  reload_zsh
+  fi
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
 }
@@ -171,8 +180,8 @@ function _kubernetes_plugins {
 
 function _jenv {
   task "Install jenv"
-  INSTALLED_JENV_VERSIONS=$(wc -w <<< "$(jvenv versions)")
-  if [[ $INSTALLED_JENV_VERSIONS -lt 2 ]]; then
+  JENV_INSTALLED_VERSIONS=$(expr $(wc -l <<< "$(jenv versions)") - 1)
+  if [[ $JENV_INSTALLED_VERSIONS -lt 2 ]]; then
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk8
     jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home/
     brew install --cask adoptopenjdk/openjdk/adoptopenjdk11
@@ -193,7 +202,7 @@ function _pyenv {
 }
 
 function _poetry {
-  info "Install poetry"
+  task "Install poetry"
   if [ ! -f "$HOME/.local/bin/poetry" ]; then
     curl -sSL https://install.python-poetry.org | python3 -
     reload_zsh
