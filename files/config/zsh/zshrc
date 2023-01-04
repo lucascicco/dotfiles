@@ -58,6 +58,7 @@ autoload -U +X compinit && compinit
 alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias tf="terraform "
+alias lg="lazygit"
 alias nvim="lvim "
 
 # p10k settings
