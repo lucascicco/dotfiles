@@ -16,3 +16,6 @@ export PATH
 [[ -d "$PYENV_ROOT" ]] && eval "$(pyenv init --path)"
 [[ -s "$BREW_BIN" ]] && eval "$("$BREW_BIN" shellenv)"
 [[ -s "$JENV_BIN" ]] && eval "$("$JENV_BIN" init -)"
+
+# FIXME: https://github.com/lionheart/openradar-mirror/issues/15361#issuecomment-267367902
+{ eval `ssh-agent`; ssh-add -A; } &>/dev/null
