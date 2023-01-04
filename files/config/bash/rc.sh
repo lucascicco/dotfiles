@@ -6,6 +6,7 @@ export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export PYENV_ROOT="$HOME/.pyenv"
+export EDITOR=="vim"
 export PYENV_VERSION="3.10-dev"
 
 # Sources

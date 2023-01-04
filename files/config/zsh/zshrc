@@ -54,7 +54,7 @@ autoload -U +X compinit && compinit
 alias gdff="git difftool --dir-diff"
 alias c="clear"
 alias tf="terraform "
-
+alias nvim="lvim "
 
 # p10k settings
 [[ ! -f ${DOTFILES_FILES_DIR}/config/zsh/p10k.zsh ]] || source ${DOTFILES_FILES_DIR}/config/zsh/p10k.zsh
