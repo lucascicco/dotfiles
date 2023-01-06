@@ -1,3 +1,1 @@
-tasks/files/config/vim/spell/*
-tasks/files/config/vim/spell/.keep
-tasks/files/config/vim/plugin/packer_compiled.lua
+files/config/lvim/plugin/packer_compiled.lua

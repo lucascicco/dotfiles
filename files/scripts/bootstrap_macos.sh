@@ -306,7 +306,7 @@ function _lunarvim {
     lvim +PackerSync # NOTE: +Lazy sync for future updates on LunarVim
   else
     bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS
-    create_symlink "$CONFIG_DIR/lvim/config.lua" "$HOME/.config/lvim/config.lua"
+    create_symlink "$CONFIG_DIR/lvim" "$HOME/.config/lvim"
     TEMP_DIR=$(mktemp -d)
     for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
       set -x
