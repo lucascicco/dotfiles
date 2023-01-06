@@ -1,6 +1,6 @@
 M = {}
-
 lvim.leader = "space"
+
 local opts = { noremap = true, silent = true }
 local keymap = vim.keymap.set
 
@@ -8,15 +8,21 @@ local keymap = vim.keymap.set
 keymap("n", "<C-s>", ":w<cr>", opts)
 keymap("n", "<C-Up>", "10kzz", opts)
 keymap("n", "<C-Down>", "10jzz", opts)
+
+-- word navigation
 keymap("n", "n", "nzz", opts)
 keymap("n", "N", "Nzz", opts)
+keymap("n", "*", "*zz", opts)
+keymap("n", "#", "#zz", opts)
+keymap("n", "g*", "g*zz", opts)
+keymap("n", "g#", "g#zz", opts)
 -- tab navigation
-keymap("n", "S-Right", ":BufferLineCycleNext<CR>", opts)
-keymap("n", "S-Left", ":BufferLineCyclePrev<CR>", opts)
+keymap("n", "<S-Right>", ":BufferLineCycleNext<CR>", opts)
+keymap("n", "<S-Left>", ":BufferLineCyclePrev<CR>", opts)
 -- telescope
 keymap("n", "<F2>", "<cmd>Telescope find_files<CR>", opts)
-keymap("n", "C-b", "<cmd>Telescope buffers<CR>", opts)
-keymap("n", "C-f", "<cmd>Telescope live_grep<CR>", opts)
+keymap("n", "<C-b>", "<cmd>Telescope buffers<CR>", opts)
+keymap("n", "<C-f>", "<cmd>Telescope live_grep<CR>", opts)
 -- spell check
 keymap("n", "<F5>", ":set spell!<CR>", opts)
 keymap("n", "<F6>", ":set spelllang=pt_br<CR>", opts)
@@ -34,7 +40,7 @@ keymap("n", "gr", vim.lsp.buf.references, opts)
 keymap("n", "gs", vim.lsp.buf.document_symbol, opts)
 keymap("n", "gS", vim.lsp.buf.workspace_symbol, opts)
 keymap("n", "gt", vim.lsp.buf.type_definition, opts)
-keymap("n", "grn", vim.lsp.buf.rename, opts)
+keymap("n", ",rn", vim.lsp.buf.rename, opts)
 -- trouble
 keymap("n", "<F3>", "<cmd>TroubleToggle<cr>", opts)
 -- diagnostic
@@ -44,5 +50,12 @@ keymap("n", "<F4>", "<cmd>Telescope diagnostics<cr>", opts)
 -- git
 keymap("n", "<F8>", "<cmd>GitBlameToggle<cr>", opts)
 keymap("n", "<F9>", "<cmd>lua require 'lvim.core.terminal'.lazygit_toggle()<cr>", opts)
+-- lunarvim
+keymap("n", "<C-Space>", "<cmd>WhichKey \\<space><cr>", opts)
+-- zenmode
+keymap("n", "<C-z>", "<cmd>ZenMode<cr>", opts)
+-- diffview
+keymap("n", ",d", ":DiffviewOpen<cr>", opts)
+keymap("n", ",dq", ":DiffviewClose<cr>", opts)
 
 return M

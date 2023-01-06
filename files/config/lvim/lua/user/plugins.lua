@@ -1,4 +1,5 @@
 lvim.plugins = {
+  "kylechui/nvim-surround",
   "vim-syntastic/syntastic",
   "ruifm/gitlinker.nvim",
   "windwp/nvim-ts-autotag",
@@ -7,6 +8,13 @@ lvim.plugins = {
   "mfussenegger/nvim-jdtls",
   "lunarvim/darkplus.nvim",
   "folke/todo-comments.nvim",
+  "folke/zen-mode.nvim",
+  "nacro90/numb.nvim",
+  "ghillb/cybu.nvim",
+  "lvimuser/lsp-inlayhints.nvim",
+  "petertriho/nvim-scrollbar",
+  "jose-elias-alvarez/typescript.nvim",
+  "windwp/nvim-spectre",
   {
     "sindrets/diffview.nvim",
     requires = 'nvim-lua/plenary.nvim'

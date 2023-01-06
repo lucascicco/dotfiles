@@ -4,6 +4,7 @@ require "lsp.languages.js-ts"
 require "lsp.languages.sh"
 
 lvim.lsp.diagnostics.virtual_text = false
+lvim.lsp.diagnostics.float.focusable = true
 
 vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "jdtls" })
 

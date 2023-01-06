@@ -27,6 +27,8 @@ BREW_PACKAGES=(
   nmap
   tfenv
   zsh
+  gnu-sed # spectre.nvim
+
 )
 BREW_CASK_PACKAGES=(
   docker
