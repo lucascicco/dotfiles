@@ -6,6 +6,7 @@ LOCAL_BUILD_DIR="$HOME/.local_build"
 CONFIG_DIR="$DOTFILES_DIR/files/config"
 FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
+CONFIG_LVIM_DIR="$HOME/.config/lvim"
 
 # Libs
 BREW_PACKAGES=(
@@ -17,6 +18,7 @@ BREW_PACKAGES=(
   wget
   fzf
   git
+  gh
   haproxy
   htop
   jq
@@ -83,6 +85,7 @@ KUBERNETES_PLUGINS=(
 GO_LIBS=(
   github.com/controlplaneio/kubesec/v2@latest
   github.com/instrumenta/kubeval@latest
+  github.com/hidetatz/kubecolor/cmd/kubecolor@latest
   github.com/ipinfo/cli/ipinfo@latest
   github.com/jesseduffield/lazydocker@latest
   github.com/jesseduffield/lazygit@latest
@@ -135,7 +138,7 @@ function _packages {
     brew_install_or_update "$BP"
   done
   for BCP in "${BREW_CASK_PACKAGES[@]}"; do
-    brew_cask_install_or_update "$BCP"
+    brew_install_or_update "$BCP" cask
   done
   brew autoremove 
 }
@@ -151,7 +154,7 @@ function _symlinks {
 function _fonts {
   task "Install nerd fonts"
   brew tap homebrew/cask-fonts
-  brew_cask_install_or_update font-hack-nerd-font
+  brew_install_or_update font-hack-nerd-font cask
   # NOTE: change the font on iTerm2 (LunarVim depends on it)
 }
 
@@ -303,12 +306,17 @@ function _rust {
 function _lunarvim {
   task "Install and update LunarVim"
   if command -v lvim; then
-    rm -rf ~/.local/share/nvim/site/pack/packer
     lvim +LvimUpdate +q
-    lvim +PackerSync # NOTE: +Lazy sync for future updates on LunarVim
-  else
-    bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS
-    create_symlink "$CONFIG_DIR/lvim" "$HOME/.config/lvim"
+    lvim --headless "+Lazy! sync" +qa
+  else                                               
+    bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS || exit 1
+    
+    # NOTE: Backup the config folder before removing it and symlink
+    CURRENT_TIMESTAMP="$(date +%s)"
+    /bin/cp -rf "$CONFIG_LVIM_DIR" "$CONFIG_LVIM_DIR.backup-$CURRENT_TIMESTAMP"
+    rm -rf "$CONFIG_LVIM_DIR"
+    create_symlink "$CONFIG_DIR/lvim" "$CONFIG_LVIM_DIR"
+
     TEMP_DIR=$(mktemp -d)
     for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
       set -x

@@ -9,7 +9,7 @@ JENV_BIN="/opt/homebrew/bin/jenv"
 PATHS=(
   "$HOME/.docker/bin"
 )
-dynamic_load_path "${PATHS[@]}"
+dynamic_batch_load_path "${PATHS[@]}"
 export PATH
 
 # Evals

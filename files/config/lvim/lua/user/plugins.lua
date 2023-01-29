@@ -17,7 +17,7 @@ lvim.plugins = {
   "windwp/nvim-spectre",
   {
     "sindrets/diffview.nvim",
-    requires = 'nvim-lua/plenary.nvim'
+    dependencies = 'nvim-lua/plenary.nvim'
   },
   {
     "ggandor/lightspeed.nvim",
@@ -31,7 +31,7 @@ lvim.plugins = {
   },
   {
     "iamcco/markdown-preview.nvim",
-    run = "cd app && npm install",
+    build = "cd app && npm install",
     ft = "markdown",
     config = function()
       vim.g.mkdp_auto_start = 0
@@ -47,12 +47,12 @@ lvim.plugins = {
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    cmd = { "TroubleToggle", "trouble" },
+    cmd = { "TroubleToggle", "Trouble" },
   },
   {
     "saecki/crates.nvim",
-    tag = "v0.3.0",
-    requires = { "nvim-lua/plenary.nvim" },
+    version = "v0.3.0",
+    dependencies = { "nvim-lua/plenary.nvim" },
     config = function()
       require("crates").setup {
         null_ls = {

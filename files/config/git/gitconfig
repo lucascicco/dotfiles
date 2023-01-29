@@ -1,14 +1,14 @@
 [user]
-    name = Lucas Vitor de Cicco
-    email = lucasciccomy@gmail.com
+	name = e804391
+	email = lucas.cicco@servexternos.santander.pt
 
 [fetch]
     prune = true
 
 [core]
 	editor = vi
-    excludesfile = ~/.gitignore
-    attributesfile = ~/.gitattributes
+  excludesfile = ~/.gitignore
+  attributesfile = ~/.gitattributes
 
 [color]
     ui = always

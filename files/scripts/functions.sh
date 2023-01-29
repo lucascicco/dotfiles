@@ -92,7 +92,7 @@ function create_symlink {
   set -x
 }
 
-function batch_source {
+function dynamic_batch_source {
   SCRIPTS=("$@")
   for SCRIPT in $SCRIPTS; do
     if [ ! -s "$SCRIPT" ]; then
@@ -102,32 +102,7 @@ function batch_source {
   done
 }
 
-function brew_install_or_update {
-  PKG="$1"
-  ARGS="$@"
-  if brew ls --versions "$PKG" >/dev/null; then
-    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade "$ARGS"
-  else
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install "$ARGS"
-  fi
-}
-
-function brew_cask_install_or_update {
-  PKG="$1"
-  ARGS="$@"
-  if brew ls --versions "$PKG" >/dev/null; then
-    HOMEBREW_NO_AUTO_UPDATE=1 brew upgrade --cask "$ARGS"
-  else
-    HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask "$ARGS"
-  fi
-}
-
-function reload_zsh {
-  ZSHRC_PATH="$HOME/.zshrc"
-  [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH
-}
-
-function dynamic_load_path {
+function dynamic_batch_load_path {
   PATHS=("$@")
   for P in $PATHS; do
     if [ ! -d "$P" ]; then
@@ -135,4 +110,24 @@ function dynamic_load_path {
     fi
     PATH="$P:$PATH"
   done
+}
+
+function brew_install_or_update {
+  PKG="$1"
+  ACTION="$(brew ls --versions bat | wc -l | xargs expr | sed 's/0/install/' | sed 's/1/upgrade/')"
+  CMD="brew"
+  CMD="$CMD $ACTION"
+  if [[ "$2" == "cask" ]]; then
+    shift 2
+    CMD="$CMD --cask"
+  else 
+    shift 1
+  fi
+  CMD="$CMD $PKG ${@}"
+  bash -c "$CMD"
+}
+
+function reload_zsh {
+  ZSHRC_PATH="$HOME/.zshrc"
+  [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH
 }

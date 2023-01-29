@@ -21,7 +21,7 @@ SOURCES=(
   # Utils
   "$DOTFILES_DIR/files/config/k8s/k8s.sh"
 )
-batch_source "${SOURCES[@]}"
+dynamic_batch_source "${SOURCES[@]}"
 
 # Functions
 function bootstrap() { (
@@ -30,6 +30,10 @@ function bootstrap() { (
   git pull origin master || true
   bash "$DOTFILES_DIR/run_bootstrap.sh" "${@}"
 ); }
+
+function switch_git_config {
+  python3 "$DOTFILES_DIR/files/scripts/github_config_user_switcher.py"
+}
 
 # Paths
 BASE_PATHS=(
@@ -40,4 +44,4 @@ BASE_PATHS=(
   "$HOME/bin"
   "$PYENV_ROOT/bin"
 )
-dynamic_load_path "${BASE_PATHS[@]}"
+dynamic_batch_load_path "${BASE_PATHS[@]}"
