@@ -12,6 +12,10 @@ PATHS=(
 dynamic_batch_load_path "${PATHS[@]}"
 export PATH
 
+function disable_umbrella () {
+   "$HOME/dotfiles/files/scripts/umbrella.sh" -d
+}
+
 # Evals
 [[ -d "$PYENV_ROOT" ]] && eval "$(pyenv init --path)"
 [[ -s "$BREW_BIN" ]] && eval "$("$BREW_BIN" shellenv)"
