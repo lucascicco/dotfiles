@@ -2,15 +2,16 @@
 
 # Constants
 export DOTFILES_DIR="$HOME/dotfiles"
+export DOTFILES_SCRIPTS_DIR="$DOTFILES_DIR/files/scripts"
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export PYENV_ROOT="$HOME/.pyenv"
 export EDITOR="lvim"
-export PYENV_VERSION="3.10-dev"
+export PYENV_VERSION="3.10.0"
 
 # Sources
-FUNCTIONS="$DOTFILES_DIR/files/scripts/functions.sh"
+FUNCTIONS="$DOTFILES_SCRIPTS_DIR/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
 SOURCES=(
   # Version Managers
@@ -32,7 +33,7 @@ function bootstrap() { (
 ); }
 
 function switch_git_config {
-  python3 "$DOTFILES_DIR/files/scripts/github_config_user_switcher.py"
+  python3 "$DOTFILES_SCRIPTS_DIR/github_config_user_switcher.py"
 }
 
 # Paths

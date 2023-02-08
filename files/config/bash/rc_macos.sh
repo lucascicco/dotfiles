@@ -12,8 +12,12 @@ PATHS=(
 dynamic_batch_load_path "${PATHS[@]}"
 export PATH
 
+# Corp functions
 function disable_umbrella () {
-   "$HOME/dotfiles/files/scripts/umbrella.sh" -d
+   "$DOTFILES_SCRIPTS_DIR/umbrella.sh" -d
+}
+function devopslibs () {
+    python3 "$DOTFILES_SCRIPTS_DIR/devopslibs_installer.py" $@
 }
 
 # Evals

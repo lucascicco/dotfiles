@@ -1,14 +1,12 @@
-from dataclasses import dataclass, field
-from itertools import cycle
-from os import walk, path, system
-
 import configparser
 import logging
 import subprocess
 
-logging.basicConfig()
+from dataclasses import dataclass, field
+from itertools import cycle
+from os import walk, path, system
+
 _logger = logging.getLogger()
-_logger.setLevel(logging.INFO)
 
 user_fields = ['name', 'email']
 github_cfg_dir = path.expanduser('~/dotfiles/files/config/git/users')
@@ -114,6 +112,9 @@ class GithubConfigUserSwitcher(GithubConfigFileOperator):
 
 
 def main():
+    logging.basicConfig()
+    _logger.setLevel(logging.INFO)
+
     gh_users_loader = GithubConfigUsersFileLoader()
     gh_users_loader.load_users()
     switcher = GithubConfigUserSwitcher(gh_users_loader.users)
