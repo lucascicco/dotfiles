@@ -45,7 +45,7 @@ class Command:
         return subprocess.check_output(
                 cmds,
                 **kwargs
-        )
+            )
 
 
 @dataclass

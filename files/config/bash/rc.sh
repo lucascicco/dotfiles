@@ -8,7 +8,7 @@ export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export PYENV_ROOT="$HOME/.pyenv"
 export EDITOR="lvim"
-export PYENV_VERSION="3.10.0"
+export PYENV_VERSION="3.11.0"
 
 # Sources
 FUNCTIONS="$DOTFILES_SCRIPTS_DIR/functions.sh"

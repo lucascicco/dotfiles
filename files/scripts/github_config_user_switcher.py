@@ -68,13 +68,15 @@ class GithubConfigUsersFileLoader:
                 parser.read(file_fp)
                 user = dict(parser.items('user'))
                 if user is None:
-                    _logger.info(f'Skipping file {f_name} since user is not defined')
+                    _logger.info(f"Skipping file {f_name} "
+                                 "since user is not defined")
                     continue
                 gh_user = GithubConfigUser()
                 for f in user_fields:
                     v = user.get(f)
                     if v is None:
-                        _logger.info(f'Skipping user in file {f} since the field {f} is missing')
+                        _logger.info(f"Skipping user in file {f} "
+                                     f"since the field {f} is missing")
                         continue
                     gh_user.__setattr__(f, v)
                 cls.users.append(gh_user)
@@ -100,15 +102,15 @@ class GithubConfigUserSwitcher(GithubConfigFileOperator):
     def switch(self):
         u = self.next_user()
         if not isinstance(u, GithubConfigUser):
-            _logger.warning('No user found to switch the main configuration')
+            _logger.warning("No user found to switch the main configuration")
             return
         keys: list[dict[str, str]] = []
         for f in user_fields:
             d: dict[str, str] = {}
             d[f] = u.__getattribute__(f)
             keys.append(d)
-        self.update_keys('user', keys)
-        _logger.info(f'Current user is now poiting to {u.name}')
+        self.update_keys("user", keys)
+        _logger.info(f"Current user is now poiting to {u.name}")
 
 
 def main():
