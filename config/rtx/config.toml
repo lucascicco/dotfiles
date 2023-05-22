@@ -1,0 +1,40 @@
+env_path = ["~/.local/bin", "~/bin"]
+
+[env]
+EDITOR = 'lvim'
+GIT_SSH = 'ssh'
+PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
+PYTHON_CFLAGS = '-march=native -mtune=native'
+PIP_REQUIRE_VIRTUALENV = 'true'
+
+[tools]
+# tools
+actionlint = 'latest'
+argocd = 'latest'
+bat = 'latest'
+doctl = 'latest'
+duf = 'latest'
+exa = 'latest'
+fd = 'latest'
+fzf = 'latest'
+github-cli = 'latest'
+helm = 'latest'
+jq = 'latest'
+kubectx = 'latest'
+kustomize = 'latest'
+lua-language-server = 'latest'
+minikube = 'latest'
+ripgrep = 'latest'
+shellcheck = 'latest'
+shfmt = 'latest'
+stylua = 'latest'
+yarn = 'latest'
+# langs
+rust = 'latest'
+node = 'latest'
+deno = 'latest'
+golang = 'latest'
+python = ['latest', 'latest!-0.1', 'latest!-0.2', 'latest!-0.3', 'latest!-0.4']
+
+[settings]
+experimental = true

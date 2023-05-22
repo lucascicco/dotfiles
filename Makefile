@@ -1,4 +1,4 @@
-export BUILD_DIR := ${HOME}/dotfiles/files/build
+export BUILD_DIR := ${HOME}/dotfiles/scripts/build
 
 .PHYONY: lint
 lint:
@@ -6,7 +6,7 @@ lint:
 
 .PHYONY: bootstrap
 bootstrap:
-	bash ./run_bootstrap.sh
+	bash ./bootstrap.sh
 
 .PHYONY: install-nvim
 install-nvim:

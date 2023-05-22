@@ -1,0 +1,86 @@
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+DOTFILES_DIR="$HOME/dotfiles"
+GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
+OS=""
+if [ -s $GET_OS_SCRIPT ]; then
+  OS="$(source $GET_OS_SCRIPT)"
+fi
+SETTINGS_FILE="$DOTFILES_DIR/config/bash/rc_$OS.sh"
+[[ -s $SETTINGS_FILE ]] && source $SETTINGS_FILE
+
+RTX_BIN="${HOME}/.local/share/rtx/bin/rtx"
+GH_COPILOT_CLI="${HOME}/.local/share/rtx/shims/github-copilot-cli"
+
+# oh-my-zsh config
+export ZSH_WAKATIME_PROJECT_DETECTION=true
+CASE_SENSITIVE="true"
+COMPLETION_WAITING_DOTS="true"
+DISABLE_AUTO_UPDATE="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
+HIST_STAMPS="yyyy-mm-dd"
+DISABLE_VENV_CD=1
+
+# antigen
+ANTIGEN_PATH="$HOME/antigen.zsh"
+if [[ ! -f "$ANTIGEN_PATH" ]]; then
+  ANTIGEN_PATH="$HOME/.antigen.zsh"
+fi
+source $ANTIGEN_PATH
+antigen use oh-my-zsh
+antigen bundle colored-man-pages
+antigen bundle colorize
+antigen bundle common-aliases
+antigen bundle docker
+antigen bundle encode64
+antigen bundle extract
+antigen bundle fzf
+antigen bundle gitfast
+antigen bundle kubectl
+antigen bundle kubectx
+antigen bundle npm
+antigen bundle pip
+antigen bundle python
+antigen bundle systemd
+antigen bundle git
+antigen bundle yarn
+antigen bundle rust
+# github
+antigen bundle sheax0r/etcdctl-zsh
+antigen bundle gantsign/zsh-plugins kubeadm
+antigen bundle sunlei/zsh-ssh
+antigen bundle zdharma-continuum/fast-syntax-highlighting
+antigen bundle jocelynmallon/zshmarks
+antigen bundle wbingli/zsh-wakatime
+antigen bundle popstas/zsh-command-time
+# theme
+antigen theme romkatv/powerlevel10k
+antigen apply
+autoload -U +X compinit && compinit
+
+# alias
+alias c="clear"
+alias tf="terraform "
+alias lg="lazygit"
+alias nvim="lvim "
+
+# p10k settings
+[[ ! -f ${DOTFILES_DIR}/config/zsh/p10k.zsh ]] || source ${DOTFILES_DIR}/config/zsh/p10k.zsh
+# kube-ps1 
+function kube-toggle() {
+  if (( ${+POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND} )); then
+    unset POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND
+  else
+    POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
+  fi
+  p10k reload
+  if zle; then
+    zle push-input
+    zle accept-line
+  fi
+}
+
+[[ ! -f "${RTX_BIN}"  ]] || eval "$(${RTX_BIN} activate -s zsh)"
+[[ ! -f "${GH_COPILOT_CLI}"  ]] || eval "$(${GH_COPILOT_CLI} alias -- "$0")"
