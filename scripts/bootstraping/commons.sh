@@ -76,6 +76,8 @@ GO_LIBS=(
   github.com/sachaos/tcpterm@latest
   github.com/stern/stern@latest
   golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+  github.com/rhysd/actionlint/cmd/actionlint@latest
+  github.com/digitalocean/doctl/cmd/doctl@latest
 )
 RUST_LIBS=(
   ripgrep

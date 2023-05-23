@@ -43,6 +43,58 @@ lvim.plugins = {
     event = "BufRead"
   },
   {
+    "zbirenbaum/copilot.lua",
+    opts = {
+      panel = {
+        enabled = false,
+      },
+      suggestion = {
+        enabled = false,
+      },
+      filetypes = {
+        ["*"] = true,
+      },
+    },
+    event = "VeryLazy",
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lua",
+      "FelipeLema/cmp-async-path",
+      "lukas-reineke/cmp-under-comparator",
+      {
+        "zbirenbaum/copilot-cmp",
+        dependencies = {
+          "copilot.lua",
+        },
+        config = true,
+      },
+      {
+        "onsails/lspkind-nvim",
+        dependencies = {
+          "nvim-treesitter/nvim-treesitter",
+        },
+        config = function()
+          require("lspkind").init({
+            preset = "codicons",
+            symbol_map = {
+              Copilot = "",
+            },
+          })
+          vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#69ae6a" })
+        end,
+      },
+    },
+    event = "InsertEnter",
+    config = function()
+      require("config.completion")
+    end,
+  },
+  {
     "folke/trouble.nvim",
     dependencies = {
       "nvim-tree/nvim-web-devicons",

@@ -13,17 +13,14 @@ APT_PACKAGES=(
   apt-transport-https
   automake
   autoconf
-  bat
   binutils
   bison
   btop
   build-essential
   ca-certificates
-  cargo
   curl
   flatpak
   fonts-powerline
-  fzf
   g++
   gcc
   git
@@ -59,7 +56,7 @@ function _packages {
   apt autoremove 
 }
 
-mkdir -p "${FONTS_DIR}"
+[[ -d "${FONTS_DIR}" ]] || mkdir -p "${FONTS_DIR}"
 
 function _fonts {
   info "installing fonts"

@@ -1,7 +1,3 @@
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
 DOTFILES_DIR="$HOME/dotfiles"
 GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
 OS=""
@@ -46,7 +42,7 @@ antigen bundle python
 antigen bundle systemd
 antigen bundle git
 antigen bundle yarn
-antigen bundle rust
+
 # github
 antigen bundle sheax0r/etcdctl-zsh
 antigen bundle gantsign/zsh-plugins kubeadm

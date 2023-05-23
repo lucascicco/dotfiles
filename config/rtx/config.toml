@@ -3,37 +3,30 @@ env_path = ["~/.local/bin", "~/bin"]
 [env]
 EDITOR = 'lvim'
 GIT_SSH = 'ssh'
-PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
-PYTHON_CFLAGS = '-march=native -mtune=native'
+# PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
+# PYTHON_CFLAGS = '-march=native -mtune=native'
 PIP_REQUIRE_VIRTUALENV = 'true'
 
 [tools]
 # tools
-actionlint = 'latest'
-argocd = 'latest'
-bat = 'latest'
-doctl = 'latest'
+argocd = '2.7.2'
 duf = 'latest'
-exa = 'latest'
 fd = 'latest'
-fzf = 'latest'
-github-cli = 'latest'
+fzf = '0.40.0'
+github-cli = '2.29.0'
 helm = 'latest'
-jq = 'latest'
-kubectx = 'latest'
+jq = '1.6'
 kustomize = 'latest'
 lua-language-server = 'latest'
 minikube = 'latest'
-ripgrep = 'latest'
-shellcheck = 'latest'
+shellcheck = '0.9.0'
 shfmt = 'latest'
 stylua = 'latest'
-yarn = 'latest'
 # langs
-rust = 'latest'
-node = 'latest'
-deno = 'latest'
-golang = 'latest'
+terraform = 'latest'
+rust = 'stable'
+node = ["latest", "20", "18", "16"]
+golang = ["latest", "1.20", "1.19", "1.18"]
 python = ['latest', 'latest!-0.1', 'latest!-0.2', 'latest!-0.3', 'latest!-0.4']
 
 [settings]

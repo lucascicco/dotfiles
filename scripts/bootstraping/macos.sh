@@ -9,27 +9,27 @@ BOOTSTRAP_COMMONS="$HOME/dotfiles/scripts/bootstraping/commons.sh"
 # Libs
 BREW_PACKAGES=(
   antigen
-  bat
   # hyperkit
   # docker-machine-driver-hyperkit
   coreutils
   curl
   wget
-  fzf
   git
-  gh
   haproxy
   htop
-  jq
   jenv
-  kubectl
   mercurial
   neovim
   nmap
-  tfenv
   zsh
   gnu-sed # spectre.nvim
   pipx
+  openssl
+  readline
+  sqlite3
+  xz
+  zlib
+  tcl-tk
 )
 BREW_CASK_PACKAGES=(
   docker

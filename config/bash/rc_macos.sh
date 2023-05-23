@@ -2,7 +2,7 @@
 
 BASE_CONFIG="$HOME/dotfiles/config/bash/rc.sh"
 [[ -s "$BASE_CONFIG" ]] && source "$BASE_CONFIG"
-CORP_SCRIPT="$HOME/dotfiles/scripts/corp/rc_corp.sh"
+CORP_SCRIPT="$HOME/dotfiles/scripts/corp/rc.sh"
 [[ -s "$CORP_SCRIPT" ]] && source "$CORP_SCRIPT"
 
 BREW_BIN="/opt/homebrew/bin/brew"
@@ -20,7 +20,6 @@ export GDAL_LIBRARY_PATH="/opt/homebrew/Cellar/gdal/3.6.3_1/lib/libgdal.dylib"
 export GEOS_LIBRARY_PATH="/opt/homebrew/Cellar/geos/3.11.2/lib/libgeos_c.dylib"
 
 # Evals
-[[ -d "$PYENV_ROOT" ]] && eval "$(pyenv init --path)"
 [[ -s "$BREW_BIN" ]] && eval "$("$BREW_BIN" shellenv)"
 [[ -s "$JENV_BIN" ]] && eval "$("$JENV_BIN" init -)"
 

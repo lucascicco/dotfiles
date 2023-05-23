@@ -3,3 +3,4 @@ taplo-cli --features lsp
 ripgrep
 fd-find
 broot
+bat
