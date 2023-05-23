@@ -1,4 +1,4 @@
-lvim.colorscheme = "onedarker"
+lvim.colorscheme = "oxocarbon"
 lvim.log.level = "warn"
 
 lvim.builtin.alpha.active = true

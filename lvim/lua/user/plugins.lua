@@ -15,6 +15,7 @@ lvim.plugins = {
   "petertriho/nvim-scrollbar",
   "jose-elias-alvarez/typescript.nvim",
   "windwp/nvim-spectre",
+  "nyoom-engineering/oxocarbon.nvim",
   {
     "sindrets/diffview.nvim",
     dependencies = 'nvim-lua/plenary.nvim'
