@@ -92,7 +92,7 @@ lvim.plugins = {
     },
     event = "InsertEnter",
     config = function()
-      require("config.completion")
+      require("user.completion")
     end,
   },
   {

@@ -1,3 +1,5 @@
+vim.list_extend(lvim.lsp.automatic_configuration.skipped_servers, { "ruff_lsp" })
+
 -- Set a formatter.
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
