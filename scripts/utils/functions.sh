@@ -83,7 +83,7 @@ function create_symlink {
   DEST_SYMLINK_PATH="$(readlink "$DEST_FILE")"
   if [ "$OS" == "Linux" ]; then
     DEST_SYMLINK_PATH="$(readlink -f "$DEST_FILE")"
-  fi 
+  fi
 
   if [ "$DEST_SYMLINK_PATH" != "$SOURCE_FILE" ]; then
     debug "updating symlink ${DEST_FILE} -> ${SOURCE_FILE}"
@@ -120,14 +120,14 @@ function brew_install_or_update {
   if [[ "$2" == "cask" ]]; then
     shift 2
     CMD="$CMD --cask"
-  else 
+  else
     shift 1
   fi
-  CMD="$CMD $PKG ${@}"
+  CMD="${CMD} ${PKG} ${*}"
   bash -c "$CMD"
 }
 
 function reload_zsh {
   ZSHRC_PATH="$HOME/.zshrc"
-  [[ -s "$ZSHRC_PATH" ]] && source $ZSHRC_PATH
+  [[ -s "$ZSHRC_PATH" ]] && source "${ZSHRC_PATH}"
 }

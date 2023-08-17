@@ -1,14 +1,14 @@
-reload "user.plugins"
-reload "user.options"
-reload "user.keymaps"
-reload "user.autocommands"
-reload "user.lsp"
-reload "user.todo-comments"
-reload "user.git"
-reload "user.zen-mode"
-reload "user.inlay-hints"
-reload "user.whichkey"
-reload "user.telescope"
-reload "user.treesitter"
-reload "user.scrollbar"
-reload "user.spectre"
+reload("user.plugins")
+reload("user.vim-options")
+reload("user.options")
+reload("user.keymaps")
+reload("user.autocommands")
+reload("user.todo-comments")
+reload("user.git")
+reload("user.zen-mode")
+reload("user.whichkey")
+reload("user.telescope")
+reload("user.treesitter")
+reload("user.scrollbar")
+reload("user.spectre")
+reload("user.lualine")

@@ -9,9 +9,16 @@ export GOBIN=$HOME/.local/bin
 export EDITOR="lvim"
 export RTX_USE_TOML=1
 
+# Dynamically loads openai api key
+export OPENAI_API_KEY_PATH="$HOME/openai_api_key"
+if [[ -f "$OPENAI_API_KEY_PATH" ]]; then
+  OPENAI_API_KEY=$(cat "$OPENAI_API_KEY_PATH")
+  export OPENAI_API_KEY=$OPENAI_API_KEY
+fi
+
 # Sources
 FUNCTIONS="$DOTFILES_SCRIPTS_DIR/utils/functions.sh"
-[[ -s "$FUNCTIONS" ]] && source "$FUNCTIONS"
+[[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
 SOURCES=(
   # Version Managers
   "$HOME/.sdkman/bin/sdkman-init.sh"

@@ -13,7 +13,7 @@ function get_os {
     'WindowsNT')
       OS='windows'
       ;;
-    'Darwin') 
+    'Darwin')
       OS='macos'
       ;;
     'SunOS')

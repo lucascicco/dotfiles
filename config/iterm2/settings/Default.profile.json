@@ -7,9 +7,9 @@
     "Blue Component": 1
   },
   "Ansi 7 Color": {
-    "Green Component": 0.73333334922790527,
-    "Red Component": 0.73333334922790527,
-    "Blue Component": 0.73333334922790527
+    "Green Component": 0.7333333492279053,
+    "Red Component": 0.7333333492279053,
+    "Blue Component": 0.7333333492279053
   },
   "Ansi 8 Color": {
     "Green Component": 0.3333333432674408,
@@ -27,19 +27,19 @@
     "Blue Component": 0.3333333432674408
   },
   "Ansi 3 Color": {
-    "Green Component": 0.73333334922790527,
-    "Red Component": 0.73333334922790527,
+    "Green Component": 0.7333333492279053,
+    "Red Component": 0.7333333492279053,
     "Blue Component": 0
   },
   "Right Option Key Sends": 0,
   "Rows": 25,
   "Default Bookmark": "No",
   "Cursor Guide Color": {
-    "Red Component": 0.70214027166366577,
+    "Red Component": 0.7021402716636658,
     "Color Space": "sRGB",
     "Blue Component": 1,
     "Alpha Component": 0.25,
-    "Green Component": 0.92681378126144409
+    "Green Component": 0.9268137812614441
   },
   "Non-ASCII Anti Aliased": true,
   "Use Bright Bold": true,
@@ -61,11 +61,11 @@
     "Blue Component": 1
   },
   "Foreground Color": {
-    "Green Component": 0.73333334922790527,
-    "Red Component": 0.73333334922790527,
-    "Blue Component": 0.73333334922790527
+    "Green Component": 0.7333333492279053,
+    "Red Component": 0.7333333492279053,
+    "Blue Component": 0.7333333492279053
   },
-  "Working Directory": "\/Users\/lucascicco",
+  "Working Directory": "/Users/lucascicco",
   "Blinking Cursor": false,
   "Disable Window Resizing": true,
   "Sync Title": false,
@@ -77,7 +77,7 @@
   "Screen": -1,
   "Selection Color": {
     "Green Component": 0.8353000283241272,
-    "Red Component": 0.70980000495910645,
+    "Red Component": 0.7098000049591064,
     "Blue Component": 1
   },
   "Columns": 80,
@@ -305,32 +305,32 @@
   },
   "Shortcut": "",
   "Cursor Color": {
-    "Green Component": 0.73333334922790527,
-    "Red Component": 0.73333334922790527,
-    "Blue Component": 0.73333334922790527
+    "Green Component": 0.7333333492279053,
+    "Red Component": 0.7333333492279053,
+    "Blue Component": 0.7333333492279053
   },
   "Transparency": 0,
   "Guid": "7FF7B13C-9C25-42BD-9B45-E16024DF3EF3",
   "Horizontal Spacing": 1,
   "Ansi 2 Color": {
-    "Green Component": 0.73333334922790527,
+    "Green Component": 0.7333333492279053,
     "Red Component": 0,
     "Blue Component": 0
   },
   "Ansi 4 Color": {
     "Green Component": 0,
     "Red Component": 0,
-    "Blue Component": 0.73333334922790527
+    "Blue Component": 0.7333333492279053
   },
   "Ansi 5 Color": {
     "Green Component": 0,
-    "Red Component": 0.73333334922790527,
-    "Blue Component": 0.73333334922790527
+    "Red Component": 0.7333333492279053,
+    "Blue Component": 0.7333333492279053
   },
   "Ansi 6 Color": {
-    "Green Component": 0.73333334922790527,
+    "Green Component": 0.7333333492279053,
     "Red Component": 0,
-    "Blue Component": 0.73333334922790527
+    "Blue Component": 0.7333333492279053
   },
   "Ansi 0 Color": {
     "Green Component": 0,
@@ -340,14 +340,14 @@
   "Normal Font": "HackNerdFontComplete-Regular 14",
   "Ansi 1 Color": {
     "Green Component": 0,
-    "Red Component": 0.73333334922790527,
+    "Red Component": 0.7333333492279053,
     "Blue Component": 0
   },
   "Custom Directory": "No",
   "Link Color": {
     "Red Component": 0,
     "Color Space": "sRGB",
-    "Blue Component": 0.73422712087631226,
+    "Blue Component": 0.7342271208763123,
     "Alpha Component": 1,
     "Green Component": 0.35915297269821167
   }

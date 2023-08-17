@@ -6,7 +6,7 @@
     prune = true
 
 [core]
-	editor = vi
+	editor = nvim
   excludesfile = ~/.gitignore
   attributesfile = ~/.gitattributes
 
@@ -16,7 +16,7 @@
 [diff]
     tool = meld
     noprefix = true
-    
+
 [difftool]
     prompt = false
 
@@ -32,8 +32,18 @@
 [merge]
  tool = nvim
 
+[gpg]
+  format = ssh
+
+[gpg "ssh"]
+    defaultKeyCommand = ssh-add -L
+    allowedSignersFile = ~/.ssh/allowed_signers
+
+[commit]
+  gpgsign = true
+
 [alias]
-    aa = git add -A 
+    aa = git add -A
     co = checkout
     br = branch
     ci = commit

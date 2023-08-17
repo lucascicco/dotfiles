@@ -18,7 +18,7 @@ function check_status {
 function switch() {
   ACTION=$1 # on/off
   echo "[INFO] Switching umbrella related plugins $ACTION"
-  for P in ${PLUGINS[@]}; do
+  for P in "${PLUGINS[@]}"; do
     set -x
     PLG="$P.dylib"
     PLG_FP="$PLUGIN_BASE_DIR/$PLG"
@@ -50,6 +50,6 @@ function main() {
   switch on && sudo rm -rf "$DISABLED_PLG_OFF_FILE"
 }
 
-main ${@}
+main "${@}"
 
 exit 0

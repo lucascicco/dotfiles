@@ -6,9 +6,9 @@ source "$DOTFILES_DIR/scripts/utils/get_os.sh"
 
 function bootstrap {
   OS=$(get_os)
-  BOOTSTRAP_SCRIPT="$DOTFILES_DIR/scripts/bootstraping/$OS.sh"
+  BOOTSTRAP_SCRIPT="$DOTFILES_DIR/scripts/bootstrapping/$OS.sh"
   if [[ -f "$BOOTSTRAP_SCRIPT" ]]; then
-    bash  "$BOOTSTRAP_SCRIPT" ${@}
+    bash  "$BOOTSTRAP_SCRIPT" "${@}"
   else
       echo "No bootstrap supported for the OS ($OS). "
       echo "Please try again on Linux or MacOs."
@@ -16,6 +16,6 @@ function bootstrap {
   fi
 }
 
-bootstrap ${@}
+bootstrap "${@}"
 
 exit 0

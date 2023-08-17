@@ -3,12 +3,9 @@ env_path = ["~/.local/bin", "~/bin"]
 [env]
 EDITOR = 'lvim'
 GIT_SSH = 'ssh'
-# PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
-# PYTHON_CFLAGS = '-march=native -mtune=native'
 PIP_REQUIRE_VIRTUALENV = 'true'
 
 [tools]
-# tools
 argocd = '2.7.2'
 duf = 'latest'
 fd = 'latest'
@@ -22,12 +19,11 @@ minikube = 'latest'
 shellcheck = '0.9.0'
 shfmt = 'latest'
 stylua = 'latest'
-# langs
 terraform = 'latest'
 rust = 'stable'
 node = ["latest", "20", "18", "16"]
 golang = ["latest", "1.20", "1.19", "1.18"]
-python = ['latest', 'latest!-0.1', 'latest!-0.2', 'latest!-0.3', 'latest!-0.4']
+python = "3.11"
 
 [settings]
 experimental = true
