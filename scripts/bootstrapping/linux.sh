@@ -105,6 +105,7 @@ function _ {
   _rust_libs "$@"
   _neovim "$@"
   _lunarvim "$@"
+  _neovim_spell_check "$@"
   _rtx_reshim "$@"
 }
 

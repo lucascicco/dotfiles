@@ -76,6 +76,7 @@ function _ {
   _golang_libs "$@"
   _rust_libs "$@"
   _lunarvim "$@"
+  _neovim_spell_check "$@"
   _rtx_reshim "$@"
 }
 

@@ -9,8 +9,8 @@ export GOBIN=$HOME/.local/bin
 export EDITOR="lvim"
 export RTX_USE_TOML=1
 
-# Dynamically loads openai api key
-export OPENAI_API_KEY_PATH="$HOME/openai_api_key"
+# Dynamically loads openai api key, if exists
+OPENAI_API_KEY_PATH="$HOME/openai_api_key"
 if [[ -f "$OPENAI_API_KEY_PATH" ]]; then
   OPENAI_API_KEY=$(cat "$OPENAI_API_KEY_PATH")
   export OPENAI_API_KEY=$OPENAI_API_KEY
@@ -34,7 +34,7 @@ dynamic_batch_source "${SOURCES[@]}"
 function bootstrap() { (
   set -e
   cd "$DOTFILES_DIR" || return
-  git pull origin master || true
+  git pull origin main || true
   bash "$DOTFILES_DIR/bootstrap.sh" "${@}"
 ); }
 
@@ -45,7 +45,6 @@ function switch_git_config {
 # Paths
 BASE_PATHS=(
   "$HOME/.cargo/bin"
-  "$HOME/.poetry/bin"
   "$HOME/.krew/bin"
   "$HOME/.local/bin"
   "$HOME/bin"

@@ -13,13 +13,13 @@ RTX_CONFIG="$HOME/.config/rtx/"
 LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
 EXTRA_ARGS="--no-install-dependencies"
 NVIM_SPELL_DIRS=(
-  "$HOME/.local/share/nvim/site/spell"
-  "$HOME/.local/share/lunarvim/site"
+  "$HOME/.config/lvim/spell"
 )
 NVIM_SPELL_LANGUAGES=(
   "en"
   "pt"
 )
+
 
 PYTHON_LIBS=(
   awscli
@@ -144,25 +144,34 @@ function _lunarvim {
     lvim --headless "+Lazy! sync" +qa
   else
     bash <(curl -s $LVIM_INSTALL_SCRIPT) $EXTRA_ARGS || exit 1
-
     # NOTE: Backup the config folder before removing it and symlink
     CURRENT_TIMESTAMP="$(date +%s)"
     /bin/cp -rf "$CONFIG_LVIM_DIR" "$CONFIG_LVIM_DIR.backup-$CURRENT_TIMESTAMP"
     rm -rf "$CONFIG_LVIM_DIR"
     create_symlink "$DOTFILES_DIR/lvim" "$CONFIG_LVIM_DIR"
+  fi
+}
 
+function _neovim_spell_check {
+  task "Download the spell check files for neovim"
+  SPELL_DONE_FILE="$CONFIG_LVIM_DIR/spell/.done"
+  if [[ -f "$SPELL_DONE_FILE" ]]; then
+    info "Spell check is already downloaded, skipping it."
+  else
     TEMP_DIR=$(mktemp -d)
     for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
       set -x
       debug "Spell check for language (${L}) is missing, downloading it..."
-      wget -N -nv "ftp://ftp.vim.org/pub/vim/runtime/spell/$L.*" --timeout=5 -P "$TEMP_DIR" || exit 1
+      wget -N -nv "ftp://ftp.vim.org/pub/vim/runtime/spell/${L}.*" \
+        --timeout=5 -P "$TEMP_DIR" || exit 1
       set +x
     done
-    for SD in "${NVIM_SPELL_DIRS[@]}"; do
-      [[ -d "$SD" ]] || mkdir -p "$SD"
+    for D in "${NVIM_SPELL_DIRS[@]}"; do
+      [[ -d "$D" ]] || mkdir -p "$D"
       # NOTE: default aliased to `cp -i`
-      /bin/cp -rf "$TEMP_DIR" "$SD/"
+      /bin/cp -rf "$TEMP_DIR/" "$D/"
     done
+    touch "$SPELL_DONE_FILE"
   fi
 }
 

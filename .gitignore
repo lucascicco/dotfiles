@@ -1,1 +1,3 @@
-files/config/lvim/plugin/packer_compiled.lua
+lvim/lazy-lock.json
+lvim/spell/*
+!lvim/spell/.done
