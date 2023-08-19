@@ -28,7 +28,6 @@ antigen use oh-my-zsh
 antigen bundle colored-man-pages
 antigen bundle colorize
 antigen bundle common-aliases
-antigen bundle docker
 antigen bundle encode64
 antigen bundle extract
 antigen bundle fzf

@@ -10,9 +10,9 @@ function bootstrap {
   if [[ -f "$BOOTSTRAP_SCRIPT" ]]; then
     bash  "$BOOTSTRAP_SCRIPT" "${@}"
   else
-      echo "No bootstrap supported for the OS ($OS). "
-      echo "Please try again on Linux or MacOs."
-      exit 1
+    echo "No bootstrap supported for the OS ($OS). "
+    echo "Please try again on Linux or MacOs."
+    exit 1
   fi
 }
 

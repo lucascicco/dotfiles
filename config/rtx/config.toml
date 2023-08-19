@@ -20,6 +20,7 @@ shellcheck = '0.9.0'
 shfmt = 'latest'
 stylua = 'latest'
 terraform = 'latest'
+deno = 'latest'
 rust = 'stable'
 node = ["latest", "20", "18", "16"]
 golang = ["latest", "1.20", "1.19", "1.18"]
