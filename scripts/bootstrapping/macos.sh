@@ -64,7 +64,7 @@ function _ {
   _packages "$@"
   _symlinks "$@"
   _fonts "$@"
-  _jenv  "$@"
+  _jenv "$@"
   _rtx "$@"
   _fonts "$@"
   _kubernetes_plugins "$@"

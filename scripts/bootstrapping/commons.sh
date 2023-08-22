@@ -20,7 +20,6 @@ NVIM_SPELL_LANGUAGES=(
   "pt"
 )
 
-
 PYTHON_LIBS=(
   awscli
   azure-cli
@@ -126,12 +125,12 @@ function _zsh {
   task "Install zsh plugins"
   ANTIGEN_SCRIPT_PATH="$HOME/antigen.zsh"
   if [[ ! -s "$ANTIGEN_SCRIPT_PATH" ]]; then
-  (
-    brew reinstall antigen &&
-    curl -L git.io/antigen > "$ANTIGEN_SCRIPT_PATH" &&
-    chmod +x "$ANTIGEN_SCRIPT_PATH"
-  )
-  reload_zsh
+    (
+      brew reinstall antigen &&
+        curl -L git.io/antigen >"$ANTIGEN_SCRIPT_PATH" &&
+        chmod +x "$ANTIGEN_SCRIPT_PATH"
+    )
+    reload_zsh
   fi
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
@@ -177,17 +176,19 @@ function _neovim_spell_check {
 
 function _kubernetes_plugins {
   task "Install and update kubernetes plugins with krew"
-  KREW_INSTALLED=$(kubectl krew version); echo "$?"
+  KREW_INSTALLED=$(kubectl krew version)
+  echo "$?"
   if [[ ! $KREW_INSTALLED ]]; then
-  (
-    set -x; cd "$(mktemp -d)" &&
-    OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-    ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-    KREW="krew-${OS}_${ARCH}" &&
-    curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-    tar zxvf "${KREW}.tar.gz" &&
-    ./"${KREW}" install krew
-  )
+    (
+      set -x
+      cd "$(mktemp -d)" &&
+        OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+        KREW="krew-${OS}_${ARCH}" &&
+        curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+        tar zxvf "${KREW}.tar.gz" &&
+        ./"${KREW}" install krew
+    )
   fi
   K8S_PLUGINS_INSTALLED=$(kubectl krew list | tail -n +2 | sort)
   for PLG in "${KUBERNETES_PLUGINS[@]}"; do

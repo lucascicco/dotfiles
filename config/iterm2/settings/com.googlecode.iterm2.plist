@@ -2,13 +2,11 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Control</key>
-	<integer>1</integer>
 	<key>Default Bookmark Guid</key>
-	<string>7FF7B13C-9C25-42BD-9B45-E16024DF3EF3</string>
-	<key>DisableFullscreenTransparency</key>
+	<string>A18D3B27-4AAE-4E06-935C-F0763F15E045</string>
+	<key>FocusFollowsMouse</key>
 	<false/>
-	<key>EnableDivisionView</key>
+	<key>FocusOnRightOrMiddleClick</key>
 	<true/>
 	<key>GlobalKeyMap</key>
 	<dict>
@@ -19,7 +17,7 @@
 			<key>Label</key>
 			<string></string>
 			<key>Text</key>
-			<string>7FF7B13C-9C25-42BD-9B45-E16024DF3EF3</string>
+			<string>A18D3B27-4AAE-4E06-935C-F0763F15E045</string>
 			<key>Version</key>
 			<integer>1</integer>
 		</dict>
@@ -53,7 +51,7 @@ Close</string>
 			<key>Label</key>
 			<string></string>
 			<key>Text</key>
-			<string>7FF7B13C-9C25-42BD-9B45-E16024DF3EF3</string>
+			<string>A18D3B27-4AAE-4E06-935C-F0763F15E045</string>
 			<key>Version</key>
 			<integer>1</integer>
 		</dict>
@@ -68,6 +66,17 @@ Close</string>
 			<key>Version</key>
 			<integer>1</integer>
 		</dict>
+		<key>0xf702-0x2a0000-0x7b</key>
+		<dict>
+			<key>Action</key>
+			<integer>2</integer>
+			<key>Label</key>
+			<string></string>
+			<key>Text</key>
+			<string></string>
+			<key>Version</key>
+			<integer>1</integer>
+		</dict>
 		<key>0xf703-0x240000-0x7c</key>
 		<dict>
 			<key>Action</key>
@@ -76,6 +85,17 @@ Close</string>
 			<string></string>
 			<key>Text</key>
 			<string>f</string>
+			<key>Version</key>
+			<integer>1</integer>
+		</dict>
+		<key>0xf703-0x2a0000-0x7c</key>
+		<dict>
+			<key>Action</key>
+			<integer>0</integer>
+			<key>Label</key>
+			<string></string>
+			<key>Text</key>
+			<string></string>
 			<key>Version</key>
 			<integer>1</integer>
 		</dict>
@@ -141,17 +161,11 @@ Close</string>
 	<false/>
 	<key>HotkeyMigratedFromSingleToMulti</key>
 	<true/>
-	<key>LeftCommand</key>
-	<integer>8</integer>
-	<key>MaxVertically</key>
-	<false/>
 	<key>New Bookmarks</key>
 	<array>
 		<dict>
 			<key>ASCII Anti Aliased</key>
 			<true/>
-			<key>ASCII Ligatures</key>
-			<false/>
 			<key>Ambiguous Double Width</key>
 			<false/>
 			<key>Ansi 0 Color</key>
@@ -311,23 +325,12 @@ Close</string>
 			</dict>
 			<key>Background Image Location</key>
 			<string></string>
-			<key>Badge Color</key>
-			<dict>
-				<key>Alpha Component</key>
-				<real>0.5</real>
-				<key>Blue Component</key>
-				<real>0.0</real>
-				<key>Color Space</key>
-				<string>sRGB</string>
-				<key>Green Component</key>
-				<real>0.14910027384757996</real>
-				<key>Red Component</key>
-				<real>1</real>
-			</dict>
 			<key>Blinking Cursor</key>
 			<false/>
 			<key>Blur</key>
 			<false/>
+			<key>Blur Radius</key>
+			<real>5.132903922872341</real>
 			<key>Bold Color</key>
 			<dict>
 				<key>Blue Component</key>
@@ -353,19 +356,6 @@ Close</string>
 				<real>0.73333334922790527</real>
 				<key>Red Component</key>
 				<real>0.73333334922790527</real>
-			</dict>
-			<key>Cursor Guide Color</key>
-			<dict>
-				<key>Alpha Component</key>
-				<real>0.25</real>
-				<key>Blue Component</key>
-				<real>1</real>
-				<key>Color Space</key>
-				<string>sRGB</string>
-				<key>Green Component</key>
-				<real>0.92681378126144409</real>
-				<key>Red Component</key>
-				<real>0.70214027166366577</real>
 			</dict>
 			<key>Cursor Text Color</key>
 			<dict>
@@ -398,11 +388,13 @@ Close</string>
 				<real>0.73333334922790527</real>
 			</dict>
 			<key>Guid</key>
-			<string>7FF7B13C-9C25-42BD-9B45-E16024DF3EF3</string>
+			<string>A18D3B27-4AAE-4E06-935C-F0763F15E045</string>
 			<key>Horizontal Spacing</key>
 			<real>1</real>
 			<key>Idle Code</key>
 			<integer>0</integer>
+			<key>Initial Use Transparency</key>
+			<true/>
 			<key>Jobs to Ignore</key>
 			<array>
 				<string>rlogin</string>
@@ -693,19 +685,6 @@ Close</string>
 					<string>[1;5F</string>
 				</dict>
 			</dict>
-			<key>Link Color</key>
-			<dict>
-				<key>Alpha Component</key>
-				<real>1</real>
-				<key>Blue Component</key>
-				<real>0.73422712087631226</real>
-				<key>Color Space</key>
-				<string>sRGB</string>
-				<key>Green Component</key>
-				<real>0.35915297269821167</real>
-				<key>Red Component</key>
-				<real>0.0</real>
-			</dict>
 			<key>Mouse Reporting</key>
 			<true/>
 			<key>Name</key>
@@ -715,7 +694,9 @@ Close</string>
 			<key>Non-ASCII Anti Aliased</key>
 			<true/>
 			<key>Normal Font</key>
-			<string>HackNF-Regular 15</string>
+			<string>HackNFM-Regular 15</string>
+			<key>Only The Default BG Color Uses Transparency</key>
+			<false/>
 			<key>Option Key Sends</key>
 			<integer>0</integer>
 			<key>Prompt Before Closing 2</key>
@@ -760,8 +741,6 @@ Close</string>
 			<string>xterm-256color</string>
 			<key>Transparency</key>
 			<real>0.0</real>
-			<key>Unicode Version</key>
-			<integer>9</integer>
 			<key>Unlimited Scrollback</key>
 			<false/>
 			<key>Use Bold Font</key>
@@ -782,14 +761,8 @@ Close</string>
 			<string>/Users/lucascicco</string>
 		</dict>
 	</array>
-	<key>OpenArrangementAtStartup</key>
-	<false/>
 	<key>OpenBookmark</key>
 	<false/>
-	<key>OpenNoWindowsAtStartup</key>
-	<false/>
-	<key>PerPaneBackgroundImage</key>
-	<true/>
 	<key>PointerActions</key>
 	<dict>
 		<key>Button,1,1,,</key>
@@ -823,12 +796,8 @@ Close</string>
 			<string>kNextWindowPointerAction</string>
 		</dict>
 	</dict>
-	<key>RightCommand</key>
-	<integer>7</integer>
-	<key>SeparateStatusBarsPerPane</key>
-	<false/>
 	<key>ShowFullScreenTabBar</key>
-	<false/>
+	<true/>
 	<key>SoundForEsc</key>
 	<false/>
 	<key>SwitchTabModifier</key>
@@ -840,12 +809,6 @@ Close</string>
 	<key>UseBorder</key>
 	<true/>
 	<key>VisualIndicatorForEsc</key>
-	<false/>
-	<key>findMode_iTerm</key>
-	<integer>0</integer>
-	<key>kCPKSelectionViewPreferredModeKey</key>
-	<integer>5</integer>
-	<key>kCPKSelectionViewShowHSBTextFieldsKey</key>
 	<false/>
 </dict>
 </plist>

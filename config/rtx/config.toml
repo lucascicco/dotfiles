@@ -13,7 +13,7 @@ fzf = '0.40.0'
 github-cli = '2.29.0'
 helm = 'latest'
 jq = '1.6'
-kustomize = 'latest'
+kustomize = '5.0.3'
 lua-language-server = 'latest'
 minikube = 'latest'
 shellcheck = '0.9.0'
@@ -24,7 +24,7 @@ deno = 'latest'
 rust = 'stable'
 node = ["latest", "20", "18", "16"]
 golang = ["latest", "1.20", "1.19", "1.18"]
-python = "3.11"
+python = ["3.11", "3.10", "3.9", "3.8"]
 
 [settings]
 experimental = true
