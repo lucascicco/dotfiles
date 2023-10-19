@@ -19,13 +19,13 @@ minikube = 'latest'
 shellcheck = '0.9.0'
 shfmt = 'latest'
 stylua = 'latest'
-terraform = 'latest'
+terraform = "1.3"
 deno = 'latest'
 rust = 'stable'
 php = ["latest", "8.1", "8.0", "7.4", "7.3"]
 node = ["latest", "20", "18", "16"]
-golang = ["latest", "1.20", "1.19", "1.18"]
-python = ["3.11", "3.10", "3.9", "3.8"]
+go = ["latest", "1.20", "1.19", "1.18"]
+python = ["3.11", "3.10", "3.9", "3.8", "3.12"]
 
 [settings]
 experimental = true

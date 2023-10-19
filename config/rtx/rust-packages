@@ -1,5 +1,5 @@
 cargo-update
-taplo-cli --features lsp
+taplo-cli --features lsp --locked
 ripgrep
 fd-find
 broot
