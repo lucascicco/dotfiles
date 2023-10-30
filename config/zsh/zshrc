@@ -68,5 +68,5 @@ alias lg="lazygit"
 alias nvim="lvim "
 
 # p10k settings
-[[ ! -f ${P10K_CONFIG} ]] || source ${P10K_CONFIG}
-[[ ! -f "${RTX_BIN}"  ]] || eval "$(${RTX_BIN} activate -s zsh)"
+[[ -s ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
+[[ -s "${RTX_BIN}"  ]] && eval "$(${RTX_BIN} activate -s zsh)"
