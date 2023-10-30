@@ -2,8 +2,6 @@
 
 BASE_CONFIG="$HOME/dotfiles/config/bash/rc.sh"
 [[ -s "$BASE_CONFIG" ]] && source "${BASE_CONFIG}"
-CORP_SCRIPT="$HOME/dotfiles/scripts/corp/rc.sh"
-[[ -s "$CORP_SCRIPT" ]] && source "${CORP_SCRIPT}"
 
 BREW_BIN="/opt/homebrew/bin/brew"
 
@@ -18,8 +16,8 @@ export PATH
 # Evals
 [[ -s "$BREW_BIN" ]] && eval "$("$BREW_BIN" shellenv)"
 
-# FIXME: https://github.com/lionheart/openradar-mirror/issues/15361#issuecomment-267367902
-{
-  eval $(ssh-agent)
-  ssh-add -A
-} &>/dev/null
+# Brew Google Cloud SDK
+BREW_GCLOUD_PATH_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+BREW_GCLOUD_COMPLETION_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+[[ -s "$BREW_GCLOUD_PATH_INC" ]] && source "$BREW_GCLOUD_PATH_INC"
+[[ -s "$BREW_GCLOUD_COMPLETION_INC" ]] && source "$BREW_GCLOUD_COMPLETION_INC"

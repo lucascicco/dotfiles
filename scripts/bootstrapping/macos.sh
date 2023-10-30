@@ -9,25 +9,27 @@ BOOTSTRAP_COMMONS="$HOME/dotfiles/scripts/bootstrapping/commons.sh"
 # Libs
 BREW_PACKAGES=(
   antigen
+  btop
   coreutils
   curl
-  wget
   git
+  gnu-sed
   haproxy
   htop
-  jenv
   mercurial
-  neovim
   nmap
-  zsh
-  gnu-sed # spectre.nvim
-  pipx
   openssl
+  pipx
   readline
+  redis
   sqlite3
-  xz
-  zlib
   tcl-tk
+  tcpdump
+  watchman
+  wget
+  xz
+  zsh
+  zlib
 )
 BREW_CASK_PACKAGES=(
   docker
@@ -44,10 +46,10 @@ function _packages {
   fi
   brew update
   for BP in "${BREW_PACKAGES[@]}"; do
-    brew_install_or_update "$BP"
+    brew_install_or_upgrade "$BP"
   done
   for BCP in "${BREW_CASK_PACKAGES[@]}"; do
-    brew_install_or_update "$BCP" cask
+    brew_install_or_upgrade "$BCP" cask
   done
   brew autoremove
 }
@@ -55,7 +57,7 @@ function _packages {
 function _fonts {
   task "Install nerd fonts"
   brew tap homebrew/cask-fonts
-  brew_install_or_update font-hack-nerd-font cask
+  brew_install_or_upgrade font-hack-nerd-font cask
   # NOTE: change the font on iTerm2 (LunarVim depends on it)
 }
 

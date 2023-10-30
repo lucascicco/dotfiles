@@ -4,8 +4,8 @@
 
 DEVOPS_SANTANDER_PT_REPO="$HOME/devops-santander-portugal-support"
 
-function disable_umbrella () {
-   "$DOTFILES_SCRIPTS_DIR/corp/umbrella.sh" -d
+function disable_umbrella() {
+  "$DOTFILES_SCRIPTS_DIR/corp/umbrella.sh" -d
 }
 
 function sync_all_devopslibs() {

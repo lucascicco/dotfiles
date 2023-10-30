@@ -43,6 +43,7 @@ APT_PACKAGES=(
   tmux
   tree
   zsh
+  zsh-antigen
   xclip
 )
 
@@ -50,7 +51,7 @@ function _packages {
   task "Install and update common apt packages"
   apt update
   for BP in "${APT_PACKAGES[@]}"; do
-    brew_install_or_update "$BP"
+    apt install --assume-yes "$BP"
   done
   apt autoclean
   apt autoremove
@@ -63,8 +64,8 @@ function _neovim {
     cd "$LOCAL_BUILD_DIR/neovim" || return
     rm -rf .deps build
     # shellcheck disable=2015
-    make CMAKE_INSTALL_PREFIX="$LOCAL_DIR" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
-      make CMAKE_INSTALL_PREFIX="$LOCAL_DIR" CMAKE_BUILD_TYPE=Release install || true
+    make CMAKE_INSTALL_PREFIX="$LOCAL_BIN_DIR" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
+      make CMAKE_INSTALL_PREFIX="$LOCAL_BIN_DIR" CMAKE_BUILD_TYPE=Release install || true
   )
 }
 

@@ -104,7 +104,7 @@ function dynamic_batch_source {
 
 function dynamic_batch_load_path {
   PATHS=("$@")
-  for P in $PATHS; do
+  for P in ${PATHS}; do
     if [ ! -d "$P" ]; then
       continue
     fi
@@ -112,7 +112,7 @@ function dynamic_batch_load_path {
   done
 }
 
-function brew_install_or_update {
+function brew_install_or_upgrade {
   PKG="$1"
   ACTION="$(brew ls --versions bat | wc -l | xargs expr | sed 's/0/install/' | sed 's/1/upgrade/')"
   CMD="brew"

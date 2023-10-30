@@ -1,13 +1,15 @@
 #!/bin/bash
 
 DOTFILES_DIR="$HOME/dotfiles"
-LOCAL_BIN_DIR="$HOME/.local"
+LOCAL_DIR="$HOME/.local"
 LOCAL_BUILD_DIR="$HOME/.local_build"
 CONFIG_DIR="$DOTFILES_DIR/config"
 FUNCTIONS="$DOTFILES_DIR/scripts/utils/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
 CONFIG_LVIM_DIR="$HOME/.config/lvim"
 RTX_CONFIG="$HOME/.config/rtx/"
+RTX_BINARY="${HOME}/.local/share/rtx/bin/rtx"
+ZSH_SITE_FUNCTIONS="$HOME/.local/share/zsh/site-functions"
 
 # LunarVim
 LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
@@ -35,15 +37,14 @@ PYTHON_LIBS=(
   mycli
   mypy
   net-tools
-  nmap
   pgcli
   pip
+  httpie
   pipx
   pre-commit
   pynvim
   ruff
   ruff-lsp
-  tcpdump
   tox
   tree
   wheel
@@ -79,7 +80,7 @@ GO_LIBS=(
   github.com/digitalocean/doctl/cmd/doctl@latest
 )
 
-mkdir -p "${LOCAL_BIN_DIR}"
+mkdir -p "${LOCAL_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
 mkdir -p "${RTX_CONFIG}"
 
@@ -106,19 +107,18 @@ function _symlinks {
 
 function _rtx {
   info "installing rtx"
-  RTX_BINARY="${HOME}/.local/share/rtx/bin/rtx"
   if [ ! -f "${RTX_BINARY}" ]; then
     curl https://rtx.pub/install.sh | sh
   fi
 
-  eval "$("${HOME}/.local/share/rtx/bin/rtx" activate bash)"
-  "${HOME}/.local/share/rtx/bin/rtx" self-update
-  "${HOME}/.local/share/rtx/bin/rtx" plugins update -a --install-missing
-  "${HOME}/.local/share/rtx/bin/rtx" install
-  "${HOME}/.local/share/rtx/bin/rtx" prune
+  eval "$("$RTX_BINARY" activate bash)"
+  "$RTX_BINARY" self-update
+  "$RTX_BINARY" plugins update -a --install-missing
+  "$RTX_BINARY" install
+  "$RTX_BINARY" prune
 
-  mkdir -p "${HOME}/.local/share/zsh/site-functions"
-  "${HOME}/.local/share/rtx/bin/rtx" complete -s zsh >"${HOME}/.local/share/zsh/site-functions/_rtx"
+  mkdir -p "${ZSH_SITE_FUNCTIONS}"
+  "$RTX_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS}/_rtx"
 }
 
 function _zsh {
@@ -126,8 +126,7 @@ function _zsh {
   ANTIGEN_SCRIPT_PATH="$HOME/antigen.zsh"
   if [[ ! -s "$ANTIGEN_SCRIPT_PATH" ]]; then
     (
-      brew reinstall antigen &&
-        curl -L git.io/antigen >"$ANTIGEN_SCRIPT_PATH" &&
+      curl -L git.io/antigen >"$ANTIGEN_SCRIPT_PATH" &&
         chmod +x "$ANTIGEN_SCRIPT_PATH"
     )
     reload_zsh
@@ -204,21 +203,17 @@ function _kubernetes_plugins {
 }
 
 # Languages packages
-
 function _python_libs {
   task "Install python libs"
   PP="${PYTHON_LIBS[*]}"
   for P in ${PP}; do
     pipx install "${P}"
   done
-
   for P in "${PYTHON_INJECTIONS[@]}"; do
     # shellcheck disable=2086
     pipx inject ${P}
   done
-
   pipx upgrade-all -f --include-injected
-
   info "installing debugpy latest version"
   if [ ! -f "${HOME}/.debugpy/bin/poetry" ]; then
     python3 -m venv "${HOME}/.debugpy"
@@ -246,5 +241,5 @@ function _node_libs {
 
 function _rtx_reshim {
   info "reshimming rtx"
-  "${HOME}/.local/share/rtx/bin/rtx" reshim
+  "$RTX_BINARY" reshim
 }

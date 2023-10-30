@@ -1,13 +1,27 @@
 DOTFILES_DIR="$HOME/dotfiles"
 GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
-OS=""
-if [ -s $GET_OS_SCRIPT ]; then
-  OS="$(source $GET_OS_SCRIPT)"
-fi
-SETTINGS_FILE="$DOTFILES_DIR/config/bash/rc_$OS.sh"
-[[ -s $SETTINGS_FILE ]] && source $SETTINGS_FILE
-
 RTX_BIN="${HOME}/.local/share/rtx/bin/rtx"
+P10K_CONFIG="$DOTFILES_DIR/config/zsh/p10k.zsh"
+ANTIGEN_PATHS=(
+  "$HOME/antigen.zsh"
+  "$HOME/.antigen.zsh"
+)
+ZSHRC_CORE="$DOTFILES_DIR/config/zsh/.zshrc_core.sh"
+[[ -s $ZSHRC_CORE ]] && source $ZSHRC_CORE
+
+# Load bashrc and antigen safely
+load_bashrc
+for ANTIGEN_PATH in "${ANTIGEN_PATHS[@]}"; do
+  if [ -s "$ANTIGEN_PATH" ]; then
+    ant_path="$ANTIGEN_PATH"
+    break
+  fi
+done
+if [[ -z $ant_path ]]; then
+  echo "Error: Could not find antigen in any of: ${ANTIGEN_PATHS[*]}"
+  return 1
+fi
+source $ant_path
 
 # oh-my-zsh config
 export ZSH_WAKATIME_PROJECT_DETECTION=true
@@ -18,12 +32,6 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"
 DISABLE_VENV_CD=1
 
-# antigen
-ANTIGEN_PATH="$HOME/antigen.zsh"
-if [[ ! -f "$ANTIGEN_PATH" ]]; then
-  ANTIGEN_PATH="$HOME/.antigen.zsh"
-fi
-source $ANTIGEN_PATH
 antigen use oh-my-zsh
 antigen bundle colored-man-pages
 antigen bundle colorize
@@ -40,7 +48,6 @@ antigen bundle python
 antigen bundle systemd
 antigen bundle git
 antigen bundle yarn
-
 # github
 antigen bundle sheax0r/etcdctl-zsh
 antigen bundle gantsign/zsh-plugins kubeadm
@@ -61,26 +68,5 @@ alias lg="lazygit"
 alias nvim="lvim "
 
 # p10k settings
-[[ ! -f ${DOTFILES_DIR}/config/zsh/p10k.zsh ]] || source ${DOTFILES_DIR}/config/zsh/p10k.zsh
-# kube-ps1
-function kube-toggle() {
-  if (( ${+POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND} )); then
-    unset POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND
-  else
-    POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
-  fi
-  p10k reload
-  if zle; then
-    zle push-input
-    zle accept-line
-  fi
-}
-
+[[ ! -f ${P10K_CONFIG} ]] || source ${P10K_CONFIG}
 [[ ! -f "${RTX_BIN}"  ]] || eval "$(${RTX_BIN} activate -s zsh)"
-
-GCLOUD_PATH_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-GCLOUD_COMPLETION_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-
-# The next line updates PATH for the Google Cloud SDK.
-[[ -f "$GCLOUD_PATH_INC" ]] && source "$GCLOUD_PATH_INC"
-[[ -f "$GCLOUD_COMPLETION_INC" ]] && source "$GCLOUD_COMPLETION_INC"
