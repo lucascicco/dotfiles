@@ -42,6 +42,7 @@ APT_PACKAGES=(
   software-properties-common
   tmux
   tree
+  vim
   zsh
   zsh-antigen
   xclip
