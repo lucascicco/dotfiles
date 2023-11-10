@@ -4,6 +4,9 @@ env_path = ["~/.local/bin", "~/bin"]
 EDITOR = 'lvim'
 GIT_SSH = 'ssh'
 PIP_REQUIRE_VIRTUALENV = 'true'
+PYTHONBREAKPOINT = 'ipdb.set_trace'
+PYTHON_CFLAGS = '-march=native -mtune=native'
+PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
 
 [tools]
 argocd = '2.7.2'
@@ -15,10 +18,13 @@ helm = 'latest'
 jq = '1.6'
 kustomize = '5.0.3'
 lua-language-server = 'latest'
+kubectl = 'latest'
 minikube = 'latest'
 shellcheck = '0.9.0'
 shfmt = 'latest'
 stylua = 'latest'
+yamlfmt = 'latest'
+yarn = 'latest'
 terraform = "1.3"
 deno = 'latest'
 rust = 'stable'

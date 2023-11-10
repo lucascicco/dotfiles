@@ -31,7 +31,6 @@ PYTHON_LIBS=(
   codespell
   flake8
   gcloud
-  haproxy
   ipython
   isort
   mycli

@@ -52,6 +52,7 @@ function _packages {
     brew_install_or_upgrade "$BCP" cask
   done
   brew autoremove
+  brew cleanup
 }
 
 function _fonts {

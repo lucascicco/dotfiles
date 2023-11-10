@@ -3,8 +3,8 @@
 FUNCTIONS="$DOTFILES_DIR/scripts/utils/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
 
-BOOTSTRAP_COMMONS="$DOTFILES_DIR/scripts/bootstrapping/commons.sh"
-[[ -s "$BOOTSTRAP_COMMONS" ]] && source "${BOOTSTRAP_COMMONS}"
+BOOTSTRAP_COMMONS="$HOME/dotfiles/scripts/bootstrapping/commons.sh"
+[[ -s "$BOOTSTRAP_COMMONS" ]] && source "$BOOTSTRAP_COMMONS"
 
 FONTS_DIR="${HOME}/.local/share/fonts"
 
@@ -49,12 +49,17 @@ APT_PACKAGES=(
 
 function _packages {
   task "Install and update common apt packages"
-  apt update
-  for BP in "${APT_PACKAGES[@]}"; do
-    apt install --assume-yes "$BP"
-  done
-  apt autoclean
-  apt autoremove
+  EXTRA_OPTS="-t unstable"
+  sudo apt update --list-cleanup
+  sudo apt dist-upgrade --purge
+  # shellcheck disable=2086
+  sudo apt dist-upgrade --purge ${EXTRA_OPTS}
+  # shellcheck disable=2086
+  sudo apt build-dep python3 ${EXTRA_OPTS}
+  # shellcheck disable=2086
+  sudo apt install --purge "${APT_PACKAGES[@]}" ${EXTRA_OPTS}
+  sudo apt autoremove --purge
+  sudo apt clean
 }
 
 function _neovim {
@@ -95,7 +100,6 @@ function _ {
   _symlinks "$@"
   _fonts "$@"
   _rtx "$@"
-  _fonts "$@"
   _kubernetes_plugins "$@"
   _zsh "$@"
   _python_libs "$@"
@@ -103,7 +107,6 @@ function _ {
   _node_libs "$@"
   _rust_libs "$@"
   _golang_libs "$@"
-  _rust_libs "$@"
   _neovim "$@"
   _lunarvim "$@"
   _neovim_spell_check "$@"
