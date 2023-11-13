@@ -17,10 +17,6 @@ fi
 # Sources
 FUNCTIONS="$DOTFILES_SCRIPTS_DIR/utils/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
-SOURCES=(
-  "$DOTFILES_DIR/config/k8s/k8s.sh"
-)
-dynamic_batch_source "${SOURCES[@]}"
 
 # Functions
 function bootstrap() { (
@@ -43,3 +39,8 @@ BASE_PATHS=(
   "$PYENV_ROOT/bin"
 )
 dynamic_batch_load_path "${BASE_PATHS[@]}"
+
+POS_PATH_SOURCES=(
+  "$DOTFILES_DIR/config/k8s/k8s.sh"
+)
+dynamic_batch_source "${POS_PATH_SOURCES[@]}"

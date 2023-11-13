@@ -1,14 +1,14 @@
 [user]
 	name = lucascicco
-	email = lucasvitorx1@gmail.com
+	email = lucas.cicco@appnovation.com
 
 [fetch]
     prune = true
 
 [core]
 	editor = nvim
-  excludesfile = ~/.gitignore
-  attributesfile = ~/.gitattributes
+    excludesfile = ~/.gitignore
+    attributesfile = ~/.gitattributes
 
 [color]
     ui = always
