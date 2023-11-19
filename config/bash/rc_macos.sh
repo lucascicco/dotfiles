@@ -17,7 +17,9 @@ export PATH
 [[ -s "$BREW_BIN" ]] && eval "$("$BREW_BIN" shellenv)"
 
 # Brew Google Cloud SDK
-BREW_GCLOUD_PATH_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-BREW_GCLOUD_COMPLETION_INC="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
-[[ -s "$BREW_GCLOUD_PATH_INC" ]] && source "$BREW_GCLOUD_PATH_INC"
-[[ -s "$BREW_GCLOUD_COMPLETION_INC" ]] && source "$BREW_GCLOUD_COMPLETION_INC"
+BREW_GCLOUD_CASKROOM_DIR="$(brew --prefix)/Caskroom/google-cloud-sdk/latest/google-cloud-sdk"
+GCLOUD_SDK_SOURCES=(
+  "$BREW_GCLOUD_CASKROOM_DIR/path.zsh.inc"
+  "$BREW_GCLOUD_CASKROOM_DIR/completion.zsh.inc"
+)
+dynamic_batch_source "${GCLOUD_SDK_SOURCES[@]}"
