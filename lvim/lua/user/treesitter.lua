@@ -18,7 +18,7 @@ lvim.builtin.treesitter.highlight = {
   use_languagetree = true,
 }
 lvim.builtin.treesitter.indent.enable = true
-lvim.builtin.treesitter.match.enable = true
+lvim.builtin.treesitter.matchup.enable = true
 
 lvim.builtin.treesitter.textobjects = {
   select = {

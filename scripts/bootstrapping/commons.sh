@@ -23,37 +23,27 @@ NVIM_SPELL_LANGUAGES=(
 )
 
 PYTHON_LIBS=(
-  awscli
-  azure-cli
   black
-  boto3
-  cmake
   codespell
+  djlint
   flake8
-  gcloud
+  ipdb
   ipython
   isort
-  mycli
   mypy
-  net-tools
-  pgcli
-  pip
-  httpie
+  pdm
   pipx
+  poetry
   pre-commit
-  pynvim
   ruff
   ruff-lsp
   tox
-  tree
-  wheel
-  whois
   yamlfix
   yamllint
 )
 PYTHON_INJECTIONS=(
   "poetry poetry-plugin-up"
-  "ipython numpy pandas requests httpx"
+  "ipython numpy pandas requests httpx openpyxl xlsxwriter"
 )
 KUBERNETES_PLUGINS=(
   ctx
@@ -91,6 +81,7 @@ SYMLINKS=(
   "$CONFIG_DIR/rtx/config.toml $HOME/.config/rtx/config.toml"
   "$CONFIG_DIR/rtx/node-packages $HOME/.default-nodejs-packages"
   "$CONFIG_DIR/rtx/rust-packages $HOME/.default-cargo-crates"
+  "$CONFIG_DIR/rtx/gcloud-components ${HOME}/.default-cloud-sdk-components"
 
   "$CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
   "$CONFIG_DIR/vim/vimrc $HOME/.vimrc"
@@ -112,7 +103,7 @@ function _rtx {
 
   eval "$("$RTX_BINARY" activate bash)"
   "$RTX_BINARY" self-update
-  "$RTX_BINARY" plugins update -a --install-missing
+  "$RTX_BINARY" plugins update -y
   "$RTX_BINARY" install
   "$RTX_BINARY" prune
 
@@ -132,6 +123,7 @@ function _zsh {
   fi
   zsh -i -c "antigen cleanup"
   zsh -i -c "antigen update"
+  zsh -i -c "antigen cache-gen"
 }
 
 function _lunarvim {

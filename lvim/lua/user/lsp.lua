@@ -1,3 +1,5 @@
+require("neodev").setup({})
+
 local nvim_lsp = require("lspconfig")
 local utils = require("user.utils")
 
@@ -52,12 +54,12 @@ local on_attach = function(client, bufnr)
 end
 
 local _util_open_floating_preview = vim.lsp.util.open_floating_preview
----@diagnostic disable-next-line
-function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+local function _my_open_floating_preview(contents, syntax, opts, ...)
   opts = opts or {}
   opts.border = opts.border or "rounded"
   return _util_open_floating_preview(contents, syntax, opts, ...)
 end
+vim.lsp.util.open_floating_preview = _my_open_floating_preview
 
 local handlers = {
   ["textDocument/publishDiagnostics"] = vim.lsp.with(function(_, result, ...)
@@ -148,13 +150,7 @@ nvim_lsp.pyright.setup({
   handlers = handlers,
   on_attach = on_attach,
   before_init = function(_, config)
-    local p
-    if vim.env.VIRTUAL_ENV then
-      p = require("null-ls.utils").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
-    else
-      p = utils.find_cmd("python3", ".venv/bin")
-    end
-    config.settings.python.pythonPath = p
+    config.settings.python.pythonPath = utils.find_python()
   end,
   settings = {
     python = {
@@ -262,13 +258,6 @@ nvim_lsp.jsonls.setup({
   },
 })
 
--- https://github.com/hangyav/textLSP
-nvim_lsp.textlsp.setup({
-  handlers = handlers,
-  capabilities = lsp_capabilities(),
-  on_attach = on_attach,
-})
-
 -- https://taplo.tamasfe.dev/cli/usage/language-server.html
 nvim_lsp.taplo.setup({
   handlers = handlers,
@@ -283,19 +272,8 @@ nvim_lsp.lua_ls.setup({
   handlers = handlers,
   settings = {
     Lua = {
-      runtime = {
-        version = "LuaJIT",
-      },
-      diagnostics = {
-        globals = { "vim" },
-      },
-      workspace = {
-        library = { vim.env.VIMRUNTIME },
-        maxPreload = 10000,
-        preloadFileSize = 1000,
-      },
-      telemetry = {
-        enable = false,
+      completion = {
+        callSnippet = "Replace",
       },
     },
   },
@@ -312,6 +290,9 @@ null_ls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
+  should_attach = function(bufnr)
+    return os.getenv("DISABLE_NULL_LS") ~= "1"
+  end,
   sources = {
     -- gitrebase code_actions,
     code_actions.gitrebase,
@@ -412,6 +393,14 @@ null_ls.setup({
           end
         end
 
+        local pyproject = utils.find_file("pyproject.toml")
+        if pyproject then
+          local file = assert(io.open(pyproject, "r"))
+          local content = file:read("*all")
+          if string.find(content, "tool.ruff.format") then
+            return false
+          end
+        end
         return true
       end),
     }),
@@ -471,6 +460,30 @@ null_ls.setup({
         return false
       end),
       extra_args = { "--unfixable", "T20,ERA001,F841" },
+    }),
+    formatting.ruff_format.with({
+      prefer_local = ".venv/bin",
+      cwd = nhelpers.cache.by_bufnr(function(params)
+        return require("null-ls.utils").root_pattern(
+          "pyproject.toml",
+          "setup.py",
+          "setup.cfg",
+          "requirements.txt",
+          "Pipfile",
+          "pyrightconfig.json"
+        )(params.bufname)
+      end),
+      runtime_condition = nhelpers.cache.by_bufnr(function()
+        local pyproject = utils.find_file("pyproject.toml")
+        if pyproject then
+          local file = assert(io.open(pyproject, "r"))
+          local content = file:read("*all")
+          if string.find(content, "tool.ruff.format") then
+            return true
+          end
+        end
+        return false
+      end),
     }),
     -- djlint
     formatting.djlint.with({
@@ -551,8 +564,6 @@ null_ls.setup({
     diagnostics.markdownlint.with({
       diagnostics_format = diagnostics_format,
     }),
-    -- sql
-    formatting.sqlformat,
     -- toml
     formatting.taplo,
   },

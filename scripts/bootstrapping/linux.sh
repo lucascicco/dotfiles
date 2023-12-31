@@ -13,9 +13,11 @@ APT_PACKAGES=(
   apt-transport-https
   automake
   autoconf
+  bat
   binutils
   bison
   btop
+  broot
   build-essential
   ca-certificates
   curl

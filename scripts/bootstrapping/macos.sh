@@ -9,30 +9,35 @@ BOOTSTRAP_COMMONS="$HOME/dotfiles/scripts/bootstrapping/commons.sh"
 # Libs
 BREW_PACKAGES=(
   antigen
+  bat
   btop
-  coreutils
+  cpanminus
   curl
+  exa
+  fzf
   git
   gnu-sed
-  haproxy
   htop
-  mercurial
-  nmap
+  jq
+  libffi
+  libtool
+  md5sha1sum
+  ninja
   openssl
+  orbstack
   pipx
   readline
-  redis
-  sqlite3
-  tcl-tk
-  tcpdump
+  rtx
+  sqlite
+  universal-ctags
   watchman
   wget
+  xmlsectool
   xz
-  zsh
   zlib
+  zsh
 )
 BREW_CASK_PACKAGES=(
-  docker
   iterm2
   minishift
   google-cloud-sdk
@@ -55,6 +60,12 @@ function _packages {
   brew cleanup
 }
 
+function _neovim {
+  info "installing neovim"
+  brew install --HEAD neovim
+  brew upgrade neovim --fetch-HEAD
+}
+
 function _fonts {
   task "Install nerd fonts"
   brew tap homebrew/cask-fonts
@@ -65,6 +76,7 @@ function _fonts {
 function _ {
   _symlinks "$@"
   _packages "$@"
+  _neovim "$@"
   _symlinks "$@"
   _fonts "$@"
   _rtx "$@"

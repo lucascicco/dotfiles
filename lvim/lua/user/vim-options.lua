@@ -1,3 +1,14 @@
+local function extend(opt, list)
+  if opt._info.flaglist then
+    local flaglist = {}
+    for _, v in ipairs(list) do
+      flaglist[v] = true
+    end
+    list = flaglist
+  end
+  return opt + list
+end
+
 vim.g.python_host_prog = "/usr/bin/python"
 vim.g.python3_host_prog = "/usr/bin/python3"
 
@@ -37,6 +48,10 @@ vim.opt.background = "dark"
 vim.opt.textwidth = 99
 vim.opt.colorcolumn = "+1"
 vim.opt.showmatch = true
+vim.opt.matchpairs = extend(vim.opt.matchpairs, { "<:>" })
+vim.opt.formatoptions = extend(vim.opt.formatoptions, { "1", "o" })
+vim.opt.whichwrap = extend(vim.opt.whichwrap, { "<", ">", "[", "]", "~" })
+vim.opt.shortmess = extend(vim.opt.shortmess, { "a" })
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
 -- Folding
@@ -53,6 +68,11 @@ vim.opt.tabstop = 4
 
 -- Spell
 vim.opt.spelllang = { "en_us", "pt_br" }
+vim.opt.dictionary = extend(vim.opt.dictionary, {
+  "/usr/share/dict/words",
+  "/usr/share/dict/brazilian",
+  "/usr/share/dict/american-english",
+})
 
 -- Search
 vim.opt.ignorecase = true

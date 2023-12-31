@@ -1,6 +1,7 @@
 local M = {}
 
 local format_enabled = true
+local diagnostics_enabled = true
 
 M.trim = function(s)
   return s:gsub("^%s*(.-)%s*$", "%1")
@@ -14,7 +15,8 @@ M.find_files = function(opts)
   if opts == nil then
     opts = {}
   end
-  opts.cwd = opts.cwd and vim.fn.expand(opts.cwd) or vim.uv.cwd()
+  local cwd = opts.cwd
+  opts.cwd = cwd and vim.fn.expand(cwd) or vim.uv.cwd()
 
   local cmd
   if lsp_util.find_git_ancestor(opts.cwd) then
@@ -38,6 +40,15 @@ M.toggle_format = function()
   print((format_enabled and "  " or "no") .. "format")
 end
 
+M.toggle_diagnostics = function()
+  if diagnostics_enabled then
+    vim.diagnostic.disable()
+  else
+    vim.diagnostic.enable()
+  end
+  diagnostics_enabled = not diagnostics_enabled
+end
+
 M.lsp_format = function(opts)
   opts = opts or {}
   if format_enabled or opts.force then
@@ -48,6 +59,8 @@ M.lsp_format = function(opts)
           jsonls = true,
           pyright = true,
           sumneko_lua = true,
+          lua_ls = true,
+          taplo = true,
           tsserver = true,
         }
         return not excluded[client.name]
@@ -85,7 +98,10 @@ M.lsp_handler = function(parser, title, action, opts)
       elseif opts.jump_type == "vsplit" then
         vim.cmd("vnew")
       end
-      vim.lsp.util.jump_to_location(result[1], vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
+      vim.lsp.util.jump_to_location(
+        result[1],
+        vim.lsp.get_client_by_id(ctx.client_id).offset_encoding
+      )
     else
       pickers
           .new(opts, {
@@ -107,7 +123,10 @@ end
 
 M.lsp_locs_handler = function(...)
   return M.lsp_handler(function(result, ctx)
-    return vim.lsp.util.locations_to_items(result, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
+    return vim.lsp.util.locations_to_items(
+      result,
+      vim.lsp.get_client_by_id(ctx.client_id).offset_encoding
+    )
   end, ...)
 end
 
@@ -219,6 +238,26 @@ M.find_cmd = function(cmd, prefixes, start_from, stop_at)
   end
 
   return found or cmd
+end
+
+M.find_python = function()
+  local p
+  if vim.env.VIRTUAL_ENV then
+    p = require("null-ls.utils").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
+  else
+    local env_info = nil
+    if M.find_file("poetry.lock") then
+      env_info =
+          vim.fn.system({ "poetry", "env", "info", "--path", "-C", vim.api.nvim_buf_get_name(0) })
+    end
+
+    if env_info ~= nil and string.find(env_info, "could not find") == nil then
+      p = require("null-ls.utils").path.join(env_info:gsub("\n", ""), "bin", "python3")
+    else
+      p = M.find_cmd("python3", ".venv/bin")
+    end
+  end
+  return p
 end
 
 return M

@@ -1,3 +1,4 @@
+# Constants
 DOTFILES_DIR="$HOME/dotfiles"
 GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
 RTX_BIN="${HOME}/.local/share/rtx/bin/rtx"
@@ -7,12 +8,20 @@ ANTIGEN_PATHS=(
   "$HOME/.antigen.zsh"
 )
 ZSHRC_CORE="$DOTFILES_DIR/config/zsh/.zshrc_core.sh"
-[[ -s $ZSHRC_CORE ]] && source $ZSHRC_CORE
+ITERM2_SHELL_INTEGRATION="$HOME/.iterm2_shell_integration.zsh"
+KUBECTL_ALIASES="$DOTFILES_DIR/config/k8s/k8s.zsh"
+
+# # Functions
+# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+# fi
+
+[[ -f $ZSHRC_CORE ]] && source $ZSHRC_CORE
 
 # Load bashrc and antigen safely
 load_bashrc
 for ANTIGEN_PATH in "${ANTIGEN_PATHS[@]}"; do
-  if [ -s "$ANTIGEN_PATH" ]; then
+  if [ -f "$ANTIGEN_PATH" ]; then
     ant_path="$ANTIGEN_PATH"
     break
   fi
@@ -23,8 +32,12 @@ if [[ -z $ant_path ]]; then
 fi
 source $ant_path
 
+[[ -f "${ITERM2_SHELL_INTEGRATION}" ]] && source "${ITERM2_SHELL_INTEGRATION}"
+[[ -f ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
+[[ -f "${RTX_BIN}"  ]] && eval "$(${RTX_BIN} activate -s zsh)"
+
 # oh-my-zsh config
-export ZSH_WAKATIME_PROJECT_DETECTION=true
+ZSH_WAKATIME_PROJECT_DETECTION="true"
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
 DISABLE_AUTO_UPDATE="true"
@@ -33,6 +46,7 @@ HIST_STAMPS="yyyy-mm-dd"
 DISABLE_VENV_CD=1
 
 antigen use oh-my-zsh
+
 antigen bundle colored-man-pages
 antigen bundle colorize
 antigen bundle common-aliases
@@ -40,25 +54,26 @@ antigen bundle encode64
 antigen bundle extract
 antigen bundle fzf
 antigen bundle gitfast
+antigen bundle git
 antigen bundle kubectx
 antigen bundle npm
 antigen bundle pip
 antigen bundle python
+antigen bundle redis-cli
+antigen bundle rust
+antigen bundle screen
 antigen bundle systemd
-antigen bundle git
 antigen bundle yarn
+
 # github
-antigen bundle sheax0r/etcdctl-zsh
-antigen bundle gantsign/zsh-plugins kubeadm
-antigen bundle sunlei/zsh-ssh
 antigen bundle zdharma-continuum/fast-syntax-highlighting
+antigen bundle zsh-users/zsh-completions
 antigen bundle jocelynmallon/zshmarks
 antigen bundle wbingli/zsh-wakatime
-antigen bundle popstas/zsh-command-time
+
 # theme
 antigen theme romkatv/powerlevel10k
 antigen apply
-autoload -U +X compinit && compinit
 
 # alias
 alias c="clear"
@@ -66,6 +81,12 @@ alias tf="terraform "
 alias lg="lazygit"
 alias nvim="lvim "
 
-# p10k settings
-[[ -s ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
-[[ -s "${RTX_BIN}"  ]] && eval "$(${RTX_BIN} activate -s zsh)"
+autoload -Uz compinit && compinit
+
+KUBE_CMD=$(command -v kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
+source <($(rtx which kubectl) completion zsh)
+[[ -f "$KUBECTL_ALIASES" ]] && source "$KUBECTL_ALIASES"
+alias k=${KUBE_CMD}
+if [[ $KUBE_CMD == "kubecolor" ]]; then
+  complete -o nospace -C /home/lucascicco/.local/bin/kubecolor kubecolor
+fi
