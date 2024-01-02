@@ -82,7 +82,6 @@ antigen apply
 alias c="clear"
 alias tf="terraform "
 alias lg="lazygit"
-alias nvim="lvim "
 
 alias appno="jump appno"
 alias wk="jump wk"

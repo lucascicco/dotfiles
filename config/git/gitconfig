@@ -26,11 +26,11 @@
 [pull]
     ff = only
 
-[mergetool "nvim"]
-  cmd = nvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
+[mergetool "lvim"]
+  cmd = lvim -f -c \"Gvdiffsplit!\" \"$MERGED\"
 
 [merge]
- tool = nvim
+ tool = lvim
 
 [gpg]
   format = ssh
