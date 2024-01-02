@@ -84,6 +84,9 @@ alias tf="terraform "
 alias lg="lazygit"
 alias nvim="lvim "
 
+alias appno="jump appno"
+alias wk="jump wk"
+
 autoload -Uz compinit && compinit
 
 KUBE_CMD=$(command -v kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
