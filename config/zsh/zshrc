@@ -11,10 +11,10 @@ ZSHRC_CORE="$DOTFILES_DIR/config/zsh/.zshrc_core.sh"
 ITERM2_SHELL_INTEGRATION="$HOME/.iterm2_shell_integration.zsh"
 KUBECTL_ALIASES="$DOTFILES_DIR/config/k8s/k8s.zsh"
 
-# # Functions
-# if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-#   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-# fi
+# Functions
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 
 [[ -f $ZSHRC_CORE ]] && source $ZSHRC_CORE
 
@@ -72,6 +72,7 @@ antigen bundle zdharma-continuum/fast-syntax-highlighting
 antigen bundle zsh-users/zsh-completions
 antigen bundle jocelynmallon/zshmarks
 antigen bundle wbingli/zsh-wakatime
+antigen bundle popstas/zsh-command-time
 
 # theme
 antigen theme romkatv/powerlevel10k

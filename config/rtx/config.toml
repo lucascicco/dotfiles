@@ -36,7 +36,7 @@ ripgrep = 'latest'
 shellcheck = 'latest'
 shfmt = 'latest'
 stylua = 'latest'
-terraform = 'latest'
+terraform = ["latest", "1.3"]
 yamlfmt = 'latest'
 
 # Languages
