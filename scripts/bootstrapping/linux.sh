@@ -100,6 +100,7 @@ function _fonts {
 
 function _ {
   _packages "$@"
+  _neovim "$@"
   _symlinks "$@"
   _fonts "$@"
   _rtx "$@"

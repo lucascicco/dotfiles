@@ -56,17 +56,9 @@ KUBERNETES_PLUGINS=(
   tree
 )
 GO_LIBS=(
-  github.com/controlplaneio/kubesec/v2@latest
-  github.com/hidetatz/kubecolor/cmd/kubecolor@latest
   github.com/ipinfo/cli/ipinfo@latest
-  github.com/jesseduffield/lazydocker@latest
-  github.com/jesseduffield/lazygit@latest
-  github.com/mikefarah/yq/v4@latest
   github.com/sachaos/tcpterm@latest
-  github.com/stern/stern@latest
   golang.stackrox.io/kube-linter/cmd/kube-linter@latest
-  github.com/rhysd/actionlint/cmd/actionlint@latest
-  github.com/digitalocean/doctl/cmd/doctl@latest
 )
 
 mkdir -p "${LOCAL_DIR}"

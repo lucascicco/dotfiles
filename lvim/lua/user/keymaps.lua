@@ -1,3 +1,5 @@
+local utils = require("user.utils")
+
 M = {}
 lvim.leader = "space"
 
@@ -20,9 +22,9 @@ keymap("n", "g#", "g#zz", opts)
 keymap("n", "<S-Right>", ":BufferLineCycleNext<CR>", opts)
 keymap("n", "<S-Left>", ":BufferLineCyclePrev<CR>", opts)
 -- telescope
-keymap("n", "<F2>", "<cmd>Telescope find_files<CR>", opts)
+keymap("n", "<F2>", utils.find_files, opts)
 keymap("n", "<C-b>", "<cmd>Telescope buffers<CR>", opts)
-keymap("n", "<C-f>", "<cmd>Telescope live_grep<CR>", opts)
+keymap("n", "<C-f>", utils.grep, opts)
 -- spell check
 keymap("n", "<F5>", ":set spell!<CR>", opts)
 keymap("n", "<F6>", ":set spelllang=pt_br<CR>", opts)

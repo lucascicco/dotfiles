@@ -8,7 +8,7 @@ PIP_REQUIRE_VIRTUALENV = 'true'
 PYTHONBREAKPOINT = 'ipdb.set_trace'
 PYTHON_CFLAGS = '-march=native -mtune=native'
 PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
-RIPGREP_CONFIG_PATH = '/home/lucascicco/dotfiles/rg/ripgreprc'
+RIPGREP_CONFIG_PATH = '$HOME/dotfiles/config/rg/ripgreprc'
 
 [tools]
 # tools
@@ -22,29 +22,38 @@ fzf = 'latest'
 gcloud = 'latest'
 github-cli = 'latest'
 helm = 'latest'
+helm-diff = 'latest'
+
+kubesec = 'latest'
+kubent = 'latest'
 kube-score = 'latest'
-kubectl = 'latest'
+kubectl = ["latest", "1.27", "1.26"]
+kubecolor = "latest"
 kubectx = 'latest'
 kubeseal = 'latest'
 kustomize = 'latest'
+k9s = 'latest'
+
 lazygit = 'latest'
 lua-language-server = 'latest'
-minikube = 'latest'
+kind = "latest"
 pdm = 'latest'
 pre-commit = 'latest'
 ripgrep = 'latest'
+stern = 'latest'
 shellcheck = 'latest'
 shfmt = 'latest'
 stylua = 'latest'
 terraform = ["latest", "1.3"]
 yamlfmt = 'latest'
+yq = 'latest'
 
 # Languages
 deno = 'latest'
 rust = 'stable'
 node = ["latest", "20", "18", "16"]
 go = ["latest", "1.20", "1.19", "1.18"]
-python = ["3.12", "3.11", "3.10", "3.9", "3.8"]
+python = ["3.12", "3.11"]
 
 [settings]
 experimental = true

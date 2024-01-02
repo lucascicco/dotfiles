@@ -37,11 +37,6 @@ BREW_PACKAGES=(
   zlib
   zsh
 )
-BREW_CASK_PACKAGES=(
-  iterm2
-  minishift
-  google-cloud-sdk
-)
 
 function _packages {
   task "Install and update common brew packages"
@@ -49,13 +44,9 @@ function _packages {
     curl -ssL -o- https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash
     reload_zsh
   fi
+  brew install "${BREW_PACKAGES[@]}"
   brew update
-  for BP in "${BREW_PACKAGES[@]}"; do
-    brew_install_or_upgrade "$BP"
-  done
-  for BCP in "${BREW_CASK_PACKAGES[@]}"; do
-    brew_install_or_upgrade "$BCP" cask
-  done
+  brew upgrade
   brew autoremove
   brew cleanup
 }
@@ -80,7 +71,6 @@ function _ {
   _symlinks "$@"
   _fonts "$@"
   _rtx "$@"
-  _fonts "$@"
   _kubernetes_plugins "$@"
   _zsh "$@"
   _python_libs "$@"
