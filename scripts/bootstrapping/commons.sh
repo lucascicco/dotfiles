@@ -59,6 +59,7 @@ GO_LIBS=(
   github.com/ipinfo/cli/ipinfo@latest
   github.com/sachaos/tcpterm@latest
   golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+  github.com/cheat/cheat/cmd/cheat@latest
 )
 
 mkdir -p "${LOCAL_DIR}"
