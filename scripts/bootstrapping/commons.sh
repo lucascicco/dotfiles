@@ -7,8 +7,8 @@ CONFIG_DIR="$DOTFILES_DIR/config"
 FUNCTIONS="$DOTFILES_DIR/scripts/utils/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
 CONFIG_LVIM_DIR="$HOME/.config/lvim"
-RTX_CONFIG="$HOME/.config/rtx/"
-RTX_BINARY="${HOME}/.local/share/rtx/bin/rtx"
+MISE_CONFIG="$HOME/.config/mise/"
+MISE_BINARY="${HOME}/.local/bin/mise"
 ZSH_SITE_FUNCTIONS="$HOME/.local/share/zsh/site-functions"
 
 # LunarVim
@@ -64,17 +64,18 @@ GO_LIBS=(
 
 mkdir -p "${LOCAL_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
-mkdir -p "${RTX_CONFIG}"
+mkdir -p "${MISE_CONFIG}"
 
 SYMLINKS=(
   "$CONFIG_DIR/git/gitattributes $HOME/.gitattributes"
   "$CONFIG_DIR/git/gitconfig $HOME/.gitconfig"
   "$CONFIG_DIR/git/gitignore $HOME/.gitignore"
 
-  "$CONFIG_DIR/rtx/config.toml $HOME/.config/rtx/config.toml"
-  "$CONFIG_DIR/rtx/node-packages $HOME/.default-nodejs-packages"
-  "$CONFIG_DIR/rtx/rust-packages $HOME/.default-cargo-crates"
-  "$CONFIG_DIR/rtx/gcloud-components ${HOME}/.default-cloud-sdk-components"
+  "$CONFIG_DIR/mise/config.toml $HOME/.config/mise/config.toml"
+  "$CONFIG_DIR/mise/settings.toml $HOME/.config/mise/settings.toml"
+  "$CONFIG_DIR/mise/node-packages $HOME/.default-nodejs-packages"
+  "$CONFIG_DIR/mise/rust-packages $HOME/.default-cargo-crates"
+  "$CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
 
   "$CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
   "$CONFIG_DIR/vim/vimrc $HOME/.vimrc"
@@ -88,20 +89,20 @@ function _symlinks {
   done
 }
 
-function _rtx {
-  info "installing rtx"
-  if [ ! -f "${RTX_BINARY}" ]; then
-    curl https://rtx.pub/install.sh | sh
+function _mise {
+  info "installing mise"
+  if [ ! -f "${MISE_BINARY}" ]; then
+    curl https://mise.run | sh
   fi
 
-  eval "$("$RTX_BINARY" activate bash)"
-  "$RTX_BINARY" self-update
-  "$RTX_BINARY" plugins update -y
-  "$RTX_BINARY" install
-  "$RTX_BINARY" prune
+  eval "$("$MISE_BINARY" activate bash)"
+  "$MISE_BINARY" self-update
+  "$MISE_BINARY" plugins update -y
+  "$MISE_BINARY" install
+  "$MISE_BINARY" prune
 
   mkdir -p "${ZSH_SITE_FUNCTIONS}"
-  "$RTX_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS}/_rtx"
+  "$MISE_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS}/_mise"
 }
 
 function _zsh {
@@ -223,7 +224,7 @@ function _node_libs {
   npm update -g
 }
 
-function _rtx_reshim {
-  info "reshimming rtx"
-  "$RTX_BINARY" reshim
+function _mise_reshim {
+  info "reshimming mise"
+  "$MISE_BINARY" reshim
 }

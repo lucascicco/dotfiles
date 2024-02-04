@@ -8,7 +8,7 @@ export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export EDITOR="lvim"
-export RTX_USE_TOML=1
+export MISE_USE_TOML=1
 
 if [ -s "$SECRET_ENV" ]; then
   source "${SECRET_ENV}"

@@ -147,6 +147,7 @@ local handlers = {
 -- https://github.com/microsoft/pyright
 nvim_lsp.pyright.setup({
   capabilities = lsp_capabilities(),
+  autostart = os.getenv("DISABLE_PYRIGHT") ~= "1",
   handlers = handlers,
   on_attach = on_attach,
   before_init = function(_, config)
@@ -215,6 +216,13 @@ nvim_lsp.bashls.setup({
 
 -- https://github.com/rcjsuen/dockerfile-language-server-nodejs
 nvim_lsp.dockerls.setup({
+  handlers = handlers,
+  capabilities = lsp_capabilities(),
+  on_attach = on_attach,
+})
+
+-- https://github.com/hashicorp/terraform-ls
+nvim_lsp.terraformls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,

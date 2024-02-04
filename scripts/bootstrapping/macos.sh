@@ -27,7 +27,7 @@ BREW_PACKAGES=(
   orbstack
   pipx
   readline
-  rtx
+  mise
   sqlite
   universal-ctags
   watchman
@@ -70,7 +70,7 @@ function _ {
   _neovim "$@"
   _symlinks "$@"
   _fonts "$@"
-  _rtx "$@"
+  _mise "$@"
   _kubernetes_plugins "$@"
   _zsh "$@"
   _python_libs "$@"
@@ -81,7 +81,7 @@ function _ {
   _rust_libs "$@"
   _lunarvim "$@"
   _neovim_spell_check "$@"
-  _rtx_reshim "$@"
+  _mise_reshim "$@"
 }
 
 echo

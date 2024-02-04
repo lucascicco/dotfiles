@@ -88,18 +88,10 @@ lvim.plugins = {
     end,
   },
   {
-    "jackMort/ChatGPT.nvim",
-    event = "VeryLazy",
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-    opts = {
-      keymaps = {
-        submit = { "<C-Enter>", "<C-Space>" },
-      },
-    },
+    "robitx/gp.nvim",
+    config = function()
+      require("gp").setup()
+    end,
   },
   {
     "Exafunction/codeium.nvim",

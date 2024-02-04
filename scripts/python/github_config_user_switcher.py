@@ -77,11 +77,12 @@ class GithubConfigUserSwitcher(GithubConfigFileOperator):
 
     def next_user(self) -> GithubConfigUser | None:
         c_email = self.get_key_value("user.email")
+        c_name = self.get_key_value("user.name")
         users = cycle(self.users)
         next_user: GithubConfigUser | None = None
         for _ in range(len(self.users)):
             u = next(users)
-            if c_email == u.email:
+            if c_email == u.email and c_name == u.name:
                 next_user = next(users)
                 break
         return next_user

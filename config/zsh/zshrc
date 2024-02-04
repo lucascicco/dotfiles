@@ -1,7 +1,7 @@
 # Constants
 DOTFILES_DIR="$HOME/dotfiles"
 GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
-RTX_BIN="${HOME}/.local/share/rtx/bin/rtx"
+MISE_BIN="${HOME}/.local/bin/mise"
 P10K_CONFIG="$DOTFILES_DIR/config/zsh/p10k.zsh"
 ANTIGEN_PATHS=(
   "$HOME/antigen.zsh"
@@ -34,7 +34,7 @@ source $ant_path
 
 [[ -f "${ITERM2_SHELL_INTEGRATION}" ]] && source "${ITERM2_SHELL_INTEGRATION}"
 [[ -f ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
-[[ -f "${RTX_BIN}"  ]] && eval "$(${RTX_BIN} activate -s zsh)"
+[[ -f "${MISE_BIN}"  ]] && eval "$(${MISE_BIN} activate -s zsh)"
 
 # oh-my-zsh config
 ZSH_WAKATIME_PROJECT_DETECTION="true"
@@ -89,7 +89,7 @@ alias wk="jump wk"
 autoload -Uz compinit && compinit
 
 KUBE_CMD=$(command -v kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
-source <($(rtx which kubectl) completion zsh)
+source <($(mise which kubectl) completion zsh)
 [[ -f "$KUBECTL_ALIASES" ]] && source "$KUBECTL_ALIASES"
 alias k=${KUBE_CMD}
 if [[ $KUBE_CMD == "kubecolor" ]]; then
