@@ -10,16 +10,14 @@ function load_bashrc() {
     OS="$(source "$GET_OS_SCRIPT")"
     if [ -n "$OS" ]; then
       SETTINGS_FILE="$DOTFILES_DIR/config/bash/rc_$OS.sh"
-      if [ -s "$SETTINGS_FILE" ]; then
-        source "$SETTINGS_FILE"
-      else
+      if [ ! -f "$SETTINGS_FILE" ]; then
         echo "Error: $SETTINGS_FILE not found"
         return 1
       fi
-    else
-      echo "Error: Failed to get OS"
-      return 1
+      source "$SETTINGS_FILE"
     fi
+    echo "Error: Failed to get OS"
+    return 1
   fi
 }
 
