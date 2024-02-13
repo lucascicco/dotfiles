@@ -1,8 +1,11 @@
 #!/bin/bash
 
 DOTFILES_DIR="$HOME/dotfiles"
+BIN_DIR="${HOME}/bin"
 LOCAL_DIR="$HOME/.local"
+LOCAL_BIN_DIR="${LOCAL_DIR}/bin"
 LOCAL_BUILD_DIR="$HOME/.local_build"
+
 CONFIG_DIR="$DOTFILES_DIR/config"
 FUNCTIONS="$DOTFILES_DIR/scripts/utils/functions.sh"
 [[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
@@ -14,9 +17,6 @@ ZSH_SITE_FUNCTIONS="$HOME/.local/share/zsh/site-functions"
 # LunarVim
 LVIM_INSTALL_SCRIPT="https://raw.githubusercontent.com/lunarvim/lunarvim/master/utils/installer/install.sh"
 EXTRA_ARGS="--no-install-dependencies"
-NVIM_SPELL_DIRS=(
-  "$HOME/.config/lvim/spell"
-)
 NVIM_SPELL_LANGUAGES=(
   "en"
   "pt"
@@ -45,16 +45,6 @@ PYTHON_INJECTIONS=(
   "poetry poetry-plugin-up"
   "ipython numpy pandas requests httpx openpyxl xlsxwriter"
 )
-KUBERNETES_PLUGINS=(
-  ctx
-  example
-  ns
-  popeye
-  reap
-  score
-  sniff
-  tree
-)
 GO_LIBS=(
   github.com/ipinfo/cli/ipinfo@latest
   github.com/sachaos/tcpterm@latest
@@ -62,7 +52,9 @@ GO_LIBS=(
   github.com/cheat/cheat/cmd/cheat@latest
 )
 
+mkdir -p "${BIN_DIR}"
 mkdir -p "${LOCAL_DIR}"
+mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
 mkdir -p "${MISE_CONFIG}"
 
@@ -72,8 +64,7 @@ SYMLINKS=(
   "$CONFIG_DIR/git/gitignore $HOME/.gitignore"
 
   "$CONFIG_DIR/mise/config.toml $HOME/.config/mise/config.toml"
-  "$CONFIG_DIR/mise/settings.toml $HOME/.config/mise/settings.toml"
-  "$CONFIG_DIR/mise/node-packages $HOME/.default-nodejs-packages"
+  "$CONFIG_DIR/mise/node-packages ${HOME}/.default-nodejs-packages"
   "$CONFIG_DIR/mise/rust-packages $HOME/.default-cargo-crates"
   "$CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
 
@@ -96,8 +87,8 @@ function _mise {
   fi
 
   eval "$("$MISE_BINARY" activate bash)"
-  "$MISE_BINARY" self-update
-  "$MISE_BINARY" plugins update -y
+  "$MISE_BINARY" self-update || true
+  "$MISE_BINARY" plugins update -y || true
   "$MISE_BINARY" install
   "$MISE_BINARY" prune
 
@@ -141,50 +132,15 @@ function _neovim_spell_check {
   if [[ -f "$SPELL_DONE_FILE" ]]; then
     info "Spell check is already downloaded, skipping it."
   else
-    TEMP_DIR=$(mktemp -d)
-    for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
-      set -x
-      debug "Spell check for language (${L}) is missing, downloading it..."
-      wget -N -nv "ftp://ftp.vim.org/pub/vim/runtime/spell/${L}.*" \
-        --timeout=5 -P "$TEMP_DIR" || exit 1
-      set +x
-    done
-    for D in "${NVIM_SPELL_DIRS[@]}"; do
-      [[ -d "$D" ]] || mkdir -p "$D"
-      # NOTE: default aliased to `cp -i`
-      /bin/cp -rf "$TEMP_DIR/" "$D/"
-    done
-    touch "$SPELL_DONE_FILE"
+    {
+      cd "$CONFIG_LVIM_DIR/spell" || exit 1
+      for L in "${NVIM_SPELL_LANGUAGES[@]}"; do
+        debug "Spell check for language (${L}) is missing, downloading it..."
+        wget -N -nv "ftp://ftp.vim.org/pub/vim/runtime/spell/${L}.*" --timeout=5 || exit 1
+      done
+      touch "$SPELL_DONE_FILE"
+    }
   fi
-}
-
-function _kubernetes_plugins {
-  task "Install and update kubernetes plugins with krew"
-  KREW_INSTALLED=$(kubectl krew version)
-  echo "$?"
-  if [[ ! $KREW_INSTALLED ]]; then
-    (
-      set -x
-      cd "$(mktemp -d)" &&
-        OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-        ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-        KREW="krew-${OS}_${ARCH}" &&
-        curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-        tar zxvf "${KREW}.tar.gz" &&
-        ./"${KREW}" install krew
-    )
-  fi
-  K8S_PLUGINS_INSTALLED=$(kubectl krew list | tail -n +2 | sort)
-  for PLG in "${KUBERNETES_PLUGINS[@]}"; do
-    if [[ "$K8S_PLUGINS_INSTALLED" != *"$PLG"* ]]; then
-      set -x
-      debug "Installing $PLG since it's missing on system"
-      kubectl krew install "$PLG"
-      continue
-      set +x
-    fi
-    kubectl krew upgrade "$PLG"
-  done
 }
 
 # Languages packages
@@ -217,11 +173,6 @@ function _golang_libs {
 function _rust_libs {
   info "update rust libs"
   cargo install-update -a
-}
-
-function _node_libs {
-  info "update node libs"
-  npm update -g
 }
 
 function _mise_reshim {

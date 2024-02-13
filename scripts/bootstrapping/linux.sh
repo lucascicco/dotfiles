@@ -84,14 +84,9 @@ function _packages {
 
 function _neovim {
   info "installing neovim"
-  git_clone_or_pull "$LOCAL_BUILD_DIR/neovim" https://github.com/neovim/neovim master
-  (
-    cd "$LOCAL_BUILD_DIR/neovim" || return
-    rm -rf .deps build
-    # shellcheck disable=2015
-    make CMAKE_INSTALL_PREFIX="$LOCAL_BIN_DIR" CMAKE_BUILD_TYPE=Release -j4 -Wno-dev &&
-      make CMAKE_INSTALL_PREFIX="$LOCAL_BIN_DIR" CMAKE_BUILD_TYPE=Release install || true
-  )
+  download_executable \
+    "${BIN_DIR}/nvim" \
+    https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage
 }
 
 function _fonts {
@@ -110,8 +105,8 @@ function _fonts {
     "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
     https://github.com/ryanoasis/nerd-fonts/blob/master/patched-fonts/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf?raw=true
 
-  if [ "$(gsettings get org.gnome.desktop.interface monospace-font-name)" != "'Hack Nerd Font 10'" ]; then
-    gsettings set org.gnome.desktop.interface monospace-font-name 'Hack Nerd Font 10'
+  if [ "$(gsettings get org.gnome.desktop.interface monospace-font-name)" != "'Hack Nerd Font 11'" ]; then
+    gsettings set org.gnome.desktop.interface monospace-font-name 'Hack Nerd Font 11'
   fi
 }
 
@@ -121,11 +116,9 @@ function _ {
   _symlinks "$@"
   _fonts "$@"
   _mise "$@"
-  _kubernetes_plugins "$@"
   _zsh "$@"
   _python_libs "$@"
   _golang_libs "$@"
-  _node_libs "$@"
   _rust_libs "$@"
   _golang_libs "$@"
   _lunarvim "$@"

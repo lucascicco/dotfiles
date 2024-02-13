@@ -1,14 +1,16 @@
-env_path = ["~/.local/bin", "~/bin"]
+[settings]
+experimental = true
 
 [env]
+_.path = ["~/.local/bin", "~/bin"]
 EDITOR = 'lvim'
 GIT_SSH = 'ssh'
 PERL_LOCAL_LIB_ROOT = '{{env.HOME}}/.local/perl'
 PIP_REQUIRE_VIRTUALENV = 'true'
 PYTHONBREAKPOINT = 'ipdb.set_trace'
+RIPGREP_CONFIG_PATH = '{{env.HOME}}/dotfiles/config/rg/ripgreprc'
 PYTHON_CFLAGS = '-march=native -mtune=native'
 PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
-RIPGREP_CONFIG_PATH = '{{env.HOME}}/dotfiles/config/rg/ripgreprc'
 
 [tools]
 # tools
@@ -25,6 +27,7 @@ github-cli = 'latest'
 helm = 'latest'
 helm-diff = 'latest'
 
+# Kubernetes tools
 kubesec = 'latest'
 kubent = 'latest'
 kube-score = 'latest'
@@ -50,6 +53,30 @@ terraform-ls = "latest"
 terraformer = "latest"
 yamlfmt = 'latest'
 yq = 'latest'
+
+# npm tools
+"npm:@astrojs/language-server" = "latest"
+"npm:bash-language-server" = "latest"
+"npm:cloc" = "latest"
+"npm:cspell" = "latest"
+"npm:dockerfile-language-server-nodejs" = "latest"
+"npm:eslint" = "latest"
+"npm:eslint_d" = "latest"
+"npm:fixjson" = "latest"
+"npm:graphql" = "latest"
+"npm:graphql-language-service-cli" = "latest"
+"npm:markdownlint-cli" = "latest"
+"npm:opencollective" = "latest"
+"npm:patch-package" = "latest"
+"npm:prettier" = "latest"
+"npm:pyright" = "latest"
+"npm:stylelint" = "latest"
+"npm:tree-sitter-cli" = "latest"
+"npm:ts-server" = "latest"
+"npm:typescript" = "latest"
+"npm:typescript-language-server" = "latest"
+"npm:vscode-langservers-extracted" = "latest"
+"npm:yaml-language-server" = "latest"
 
 # Languages
 deno = 'latest'

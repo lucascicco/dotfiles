@@ -55,9 +55,11 @@ antigen bundle common-aliases
 antigen bundle encode64
 antigen bundle extract
 antigen bundle fzf
+antigen bundle gh
 antigen bundle gitfast
 antigen bundle git
 antigen bundle kubectx
+antigen bundle mise
 antigen bundle npm
 antigen bundle pip
 antigen bundle python
@@ -93,5 +95,5 @@ source <($(mise which kubectl) completion zsh)
 [[ -f "$KUBECTL_ALIASES" ]] && source "$KUBECTL_ALIASES"
 alias k=${KUBE_CMD}
 if [[ $KUBE_CMD == "kubecolor" ]]; then
-  complete -o nospace -C /home/lucascicco/.local/bin/kubecolor kubecolor
+  complete -o nospace -C "$HOME/.local/bin/kubecolor kubecolor"
 fi

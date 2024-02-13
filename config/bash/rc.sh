@@ -8,7 +8,15 @@ export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
 export EDITOR="lvim"
+export LANG="en_US.UTF-8"
 export MISE_USE_TOML=1
+export MISE_EXPERIMENTAL=1
+
+MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf/latest/"
+if [ -d "$MISE_FZF_BASE_DIR" ]; then
+  # If the fzf installed with mise exists, we use it.
+  export FZF_BASE="$MISE_FZF_BASE_DIR"
+fi
 
 if [ -s "$SECRET_ENV" ]; then
   source "${SECRET_ENV}"
@@ -36,6 +44,5 @@ BASE_PATHS=(
   "$HOME/.krew/bin"
   "$HOME/.local/bin"
   "$HOME/bin"
-  "$PYENV_ROOT/bin"
 )
 dynamic_batch_load_path "${BASE_PATHS[@]}"

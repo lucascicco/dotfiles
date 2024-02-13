@@ -7,9 +7,6 @@ source "$DOTFILES_DIR/scripts/utils/get_os.sh"
 function bootstrap {
   OS=$(get_os)
   BOOTSTRAP_FILE="$OS"
-  if [[ -f "/etc/fedora-release" ]]; then
-    BOOTSTRAP_FILE="${BOOTSTRAP_FILE}_fedora"
-  fi
   echo "Bootstrapping using $BOOTSTRAP_FILE"
   BOOTSTRAP_SCRIPT="$DOTFILES_DIR/scripts/bootstrapping/$BOOTSTRAP_FILE.sh"
   if [[ -f "$BOOTSTRAP_SCRIPT" ]]; then
