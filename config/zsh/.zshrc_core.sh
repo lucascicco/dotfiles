@@ -15,6 +15,7 @@ function load_bashrc() {
         return 1
       fi
       source "$SETTINGS_FILE"
+      return 0
     fi
     echo "Error: Failed to get OS"
     return 1
