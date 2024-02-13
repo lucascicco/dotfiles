@@ -85,8 +85,8 @@ alias c="clear"
 alias tf="terraform "
 alias lg="lazygit"
 
-alias appno="jump appno"
 alias wk="jump wk"
+alias lf="jump lf"
 
 autoload -Uz compinit && compinit
 
