@@ -3,7 +3,10 @@
 # Constants
 export DOTFILES_DIR="$HOME/dotfiles"
 export DOTFILES_SCRIPTS_DIR="$DOTFILES_DIR/scripts"
+
+export CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
 export SECRET_ENV="$HOME/.secret_env.sh"
+
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
@@ -20,6 +23,12 @@ fi
 
 if [ -s "$SECRET_ENV" ]; then
   source "${SECRET_ENV}"
+fi
+
+if [ -d "$CORP_EXTRA_SCRIPTS_DIR" ]; then
+  find "$CORP_EXTRA_SCRIPTS_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
+    source "$file"
+  done
 fi
 
 # Sources

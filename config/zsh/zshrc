@@ -59,7 +59,6 @@ antigen bundle gh
 antigen bundle gitfast
 antigen bundle git
 antigen bundle kubectx
-antigen bundle mise
 antigen bundle npm
 antigen bundle pip
 antigen bundle python

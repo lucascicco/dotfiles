@@ -21,6 +21,7 @@ APT_PACKAGES=(
   build-essential
   ca-certificates
   curl
+  dnsutils
   flatpak
   fonts-powerline
   g++
@@ -29,6 +30,8 @@ APT_PACKAGES=(
   gitk
   gitg
   gnupg
+  inotify-tools
+  iputils-ping
   htop
   kubetail
   libbz2-dev
@@ -54,7 +57,9 @@ APT_PACKAGES=(
   python3-dev
   python3-pip
   python3-pynvim
+  rsync
   ncdu
+  netcat
   sed
   sox
   software-properties-common
