@@ -7,7 +7,7 @@ from os import path, system, walk
 
 _logger = logging.getLogger()
 
-USER_FIELDS = ["name", "email"]
+USER_FIELDS = ["name", "email", "signingkey"]
 GITHUB_USERS_DIR = path.expanduser("~/dotfiles/config/git/users")
 
 
@@ -15,6 +15,7 @@ GITHUB_USERS_DIR = path.expanduser("~/dotfiles/config/git/users")
 class GithubConfigUser:
     name: str
     email: str
+    signingkey: str | None = None
 
 
 class GithubConfigFileOperator:
@@ -30,6 +31,11 @@ class GithubConfigFileOperator:
         for p in pairs:
             k, v = p
             cmd = self._build_git_cmd(f"{section}.{k}", value=v, action="set")
+            system(cmd)
+
+    def remove_keys(self, section: str, keys: list[str]) -> None:
+        for k in keys:
+            cmd = f"git config --global --unset {section}.{k}"
             system(cmd)
 
     def get_key_value(self, key: str) -> str:
@@ -55,17 +61,14 @@ class GithubConfigUsersFileLoader:
                 u_fields = {}
                 for f in USER_FIELDS:
                     v = user.get(f)
-                    if v is None:
-                        _logger.warn(
-                            f"Skipping user in file {f} "
-                            f"since the field {f} is missing"
-                        )
-                        continue
+                    if v == "":
+                        v = None
                     u_fields[f] = v
                 cls.users.append(
                     GithubConfigUser(
                         name=u_fields["name"],
                         email=u_fields["email"],
+                        signingkey=u_fields.get("signingkey"),
                     )
                 )
                 parser.clear()
@@ -78,11 +81,16 @@ class GithubConfigUserSwitcher(GithubConfigFileOperator):
     def next_user(self) -> GithubConfigUser | None:
         c_email = self.get_key_value("user.email")
         c_name = self.get_key_value("user.name")
+        c_signingkey = self.get_key_value("user.signingkey") or None
         users = cycle(self.users)
         next_user: GithubConfigUser | None = None
         for _ in range(len(self.users)):
             u = next(users)
-            if c_email == u.email and c_name == u.name:
+            if (
+                    c_email == u.email and
+                    c_name == u.name and
+                    c_signingkey == u.signingkey
+            ):
                 next_user = next(users)
                 break
         return next_user
@@ -92,11 +100,20 @@ class GithubConfigUserSwitcher(GithubConfigFileOperator):
         if not isinstance(u, GithubConfigUser):
             _logger.warning("No user found to switch the main configuration")
             return
+
         keys: list[tuple[str, str]] = []
         for f in USER_FIELDS:
-            keys.append((f, getattr(u, f)))
+            v = getattr(u, f)
+            if v is not None:
+                keys.append((f, getattr(u, f)))
+
         self.update_keys("user", keys)
-        _logger.info(f"Current user is now pointing to {u.name} / {u.email}")
+        if u.signingkey:
+            self.update_keys("commit", [("gpgsign", "true")])
+        else:
+            self.update_keys("commit", [("gpgsign", "false")])
+            self.remove_keys("user", ["signingkey"])
+        _logger.info(f"Current user is now pointing to {u.name} / {u.email} / SK: {u.signingkey}")
 
 
 def main():
