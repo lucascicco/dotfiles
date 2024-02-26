@@ -89,7 +89,7 @@ alias lf="jump lf"
 
 autoload -Uz compinit && compinit
 
-KUBE_CMD=$(command -v kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
+KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
 source <($(mise which kubectl) completion zsh)
 [[ -f "$KUBECTL_ALIASES" ]] && source "$KUBECTL_ALIASES"
 alias k=${KUBE_CMD}

@@ -1,7 +1,7 @@
 # kubectl alias
 alias k='${KUBE_CMD}'
-alias kctx='kubectl-ctx'
-alias kns='kubectl-ns'
+alias kctx='kubectx'
+alias kns='kubens'
 alias kgctx='${KUBE_CMD} config get-contexts -o name'
 alias kct='kubectl config use-context '
 alias kn='kubectl config set-context --current --namespace '

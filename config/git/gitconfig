@@ -1,6 +1,7 @@
 [user]
 	name = lucascicco
 	email = lucasvitorx1@gmail.com
+    signingkey = 316B5072CC4BD298
 
 [fetch]
     prune = true
@@ -33,15 +34,8 @@
  tool = lvim
  conflictstyle = diff3
 
-[gpg]
-  format = ssh
-
-[gpg "ssh"]
-    defaultKeyCommand = ssh-add -L
-    allowedSignersFile = ~/.ssh/allowed_signers
-
 [commit]
-  gpgsign = false
+  gpgsign = true
 
 [alias]
     aa = git add -A

@@ -14,6 +14,7 @@ export EDITOR="lvim"
 export LANG="en_US.UTF-8"
 export MISE_USE_TOML=1
 export MISE_EXPERIMENTAL=1
+export GPG_TTY=$(tty)
 
 MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf/latest/"
 if [ -d "$MISE_FZF_BASE_DIR" ]; then
