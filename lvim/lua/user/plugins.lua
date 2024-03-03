@@ -193,8 +193,7 @@ lvim.plugins = {
 		},
 	},
 	{
-		"ls-devs/nvim-notify",
-		branch = "fix/fix_index_value",
+        "rcarriga/nvim-notify",
 		config = function()
 			local notify = require("notify")
 			notify.setup({

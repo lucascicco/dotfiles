@@ -1,7 +1,6 @@
 [user]
 	name = lucascicco
 	email = lucasvitorx1@gmail.com
-	signingkey = 316B5072CC4BD298
 
 [fetch]
     prune = true
@@ -35,7 +34,7 @@
  conflictstyle = diff3
 
 [commit]
-	gpgsign = true
+	gpgsign = false
 
 [alias]
     aa = git add -A
