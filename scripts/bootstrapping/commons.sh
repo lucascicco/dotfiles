@@ -97,6 +97,11 @@ function _mise {
   "$MISE_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS}/_mise"
 }
 
+function _gh {
+  gh extension install github/gh-copilot
+  gh extension upgrade --all
+}
+
 function _zsh {
   task "Install zsh plugins"
   ANTIGEN_SCRIPT_PATH="$HOME/antigen.zsh"

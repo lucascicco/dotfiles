@@ -8,9 +8,9 @@ M.trim = function(s)
 end
 
 M.find_files = function(opts)
-  local lsp_util = require("lspconfig.util")
-  local t_builtin = require("telescope.builtin")
-  local t_themes = require("telescope.themes")
+  local lsp_util = require "lspconfig.util"
+  local t_builtin = require "telescope.builtin"
+  local t_themes = require "telescope.themes"
 
   if opts == nil then
     opts = {}
@@ -29,8 +29,8 @@ M.find_files = function(opts)
 end
 
 M.spell_suggest = function(opts)
-  local t_builtin = require("telescope.builtin")
-  local t_themes = require("telescope.themes")
+  local t_builtin = require "telescope.builtin"
+  local t_themes = require "telescope.themes"
   return t_builtin.spell_suggest(t_themes.get_cursor(opts))
 end
 
@@ -52,7 +52,7 @@ end
 M.lsp_format = function(opts)
   opts = opts or {}
   if format_enabled or opts.force then
-    vim.lsp.buf.format({
+    vim.lsp.buf.format {
       filter = function(client)
         local excluded = {
           html = true,
@@ -65,15 +65,15 @@ M.lsp_format = function(opts)
         }
         return not excluded[client.name]
       end,
-    })
+    }
   end
 end
 
 M.lsp_handler = function(parser, title, action, opts)
   local function handle_result(err, result, ctx, ...)
-    local pickers = require("telescope.pickers")
-    local finders = require("telescope.finders")
-    local make_entry = require("telescope.make_entry")
+    local pickers = require "telescope.pickers"
+    local finders = require "telescope.finders"
+    local make_entry = require "telescope.make_entry"
     local conf = require("telescope.config").values
 
     if err then
@@ -92,30 +92,27 @@ M.lsp_handler = function(parser, title, action, opts)
       return
     elseif #result == 1 and opts.jump_type ~= "never" then
       if opts.jump_type == "tab" then
-        vim.cmd("tabedit")
+        vim.cmd "tabedit"
       elseif opts.jump_type == "split" then
-        vim.cmd("new")
+        vim.cmd "new"
       elseif opts.jump_type == "vsplit" then
-        vim.cmd("vnew")
+        vim.cmd "vnew"
       end
-      vim.lsp.util.jump_to_location(
-        result[1],
-        vim.lsp.get_client_by_id(ctx.client_id).offset_encoding
-      )
+      vim.lsp.util.jump_to_location(result[1], vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
     else
       pickers
-          .new(opts, {
-            prompt_title = title,
-            finder = finders.new_table({
-              results = parser(result, ctx),
-              entry_maker = opts.entry_maker or make_entry.gen_from_quickfix(opts),
-            }),
-            previewer = conf.qflist_previewer(opts),
-            sorter = conf.generic_sorter(opts),
-            push_cursor_on_edit = true,
-            push_tagstack_on_edit = true,
-          })
-          :find()
+        .new(opts, {
+          prompt_title = title,
+          finder = finders.new_table {
+            results = parser(result, ctx),
+            entry_maker = opts.entry_maker or make_entry.gen_from_quickfix(opts),
+          },
+          previewer = conf.qflist_previewer(opts),
+          sorter = conf.generic_sorter(opts),
+          push_cursor_on_edit = true,
+          push_tagstack_on_edit = true,
+        })
+        :find()
     end
   end
   return handle_result
@@ -123,10 +120,7 @@ end
 
 M.lsp_locs_handler = function(...)
   return M.lsp_handler(function(result, ctx)
-    return vim.lsp.util.locations_to_items(
-      result,
-      vim.lsp.get_client_by_id(ctx.client_id).offset_encoding
-    )
+    return vim.lsp.util.locations_to_items(result, vim.lsp.get_client_by_id(ctx.client_id).offset_encoding)
   end, ...)
 end
 
@@ -168,16 +162,16 @@ M.grep = function()
         pattern = nil
       end
 
-      require("telescope.builtin").live_grep({
+      require("telescope.builtin").live_grep {
         search_dirs = { dir },
         glob_pattern = pattern,
-      })
+      }
     end)
   end)
 end
 
 M.find_file = function(file, prefixes, start_from, stop_at)
-  local util = require("null-ls.utils")
+  local util = require "null-ls.utils"
 
   if start_from == nil then
     start_from = vim.api.nvim_buf_get_name(0)
@@ -205,7 +199,7 @@ M.find_file = function(file, prefixes, start_from, stop_at)
 end
 
 M.find_cmd = function(cmd, prefixes, start_from, stop_at)
-  local util = require("null-ls.utils")
+  local util = require "null-ls.utils"
 
   if start_from == nil then
     start_from = vim.api.nvim_buf_get_name(0)
@@ -246,9 +240,8 @@ M.find_python = function()
     p = require("null-ls.utils").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
   else
     local env_info = nil
-    if M.find_file("poetry.lock") then
-      env_info =
-          vim.fn.system({ "poetry", "env", "info", "--path", "-C", vim.api.nvim_buf_get_name(0) })
+    if M.find_file "poetry.lock" then
+      env_info = vim.fn.system { "poetry", "env", "info", "--path", "-C", vim.api.nvim_buf_get_name(0) }
     end
 
     if env_info ~= nil and string.find(env_info, "could not find") == nil then

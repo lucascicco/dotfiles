@@ -2,7 +2,7 @@ local status_ok, spectre = pcall(require, "spectre")
 if not status_ok then
   return
 end
-spectre.setup({
+spectre.setup {
   color_devicons = true,
   highlight = {
     ui = "String",
@@ -130,5 +130,5 @@ spectre.setup({
   },
   replace_vim_cmd = "cdo",
   is_open_target_win = true, --open file on opener window
-  is_insert_mode = false,   -- start open panel on is_insert_mode
-})
+  is_insert_mode = false, -- start open panel on is_insert_mode
+}

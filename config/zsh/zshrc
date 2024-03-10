@@ -83,7 +83,6 @@ antigen apply
 alias c="clear"
 alias tf="terraform "
 alias lg="lazygit"
-
 alias wk="jump wk"
 alias lf="jump lf"
 

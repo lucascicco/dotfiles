@@ -51,7 +51,6 @@ function switch_git_config {
 # Paths
 BASE_PATHS=(
   "$HOME/.cargo/bin"
-  "$HOME/.krew/bin"
   "$HOME/.local/bin"
   "$HOME/bin"
 )

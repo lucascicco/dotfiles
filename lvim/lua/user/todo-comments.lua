@@ -3,7 +3,7 @@ if not status_ok then
   return
 end
 
-local icons = require("user.icons")
+local icons = require "user.icons"
 
 local error_red = "#F44747"
 local warning_orange = "#ff8800"
@@ -12,14 +12,14 @@ local hint_blue = "#4FC1FF"
 local perf_purple = "#7C3AED"
 local note_green = "#10B981"
 
-todo_comments.setup({
-  signs = true,     -- show icons in the signs column
+todo_comments.setup {
+  signs = true, -- show icons in the signs column
   sign_priority = 8, -- sign priority
   -- keywords recognized as todo comments
   keywords = {
     FIX = {
-      icon = icons.ui.Bug,                     -- icon used for the sign, and in search results
-      color = error_red,                       -- can be a hex color, or a named color (see below)
+      icon = icons.ui.Bug, -- icon used for the sign, and in search results
+      color = error_red, -- can be a hex color, or a named color (see below)
       alt = { "FIXME", "BUG", "FIXIT", "ISSUE" }, -- a set of other keywords that all map to this FIX keywords
       -- signs = false, -- configure signs for some keywords individually
     },
@@ -30,14 +30,14 @@ todo_comments.setup({
     NOTE = { icon = icons.ui.Note, color = note_green, alt = { "INFO" } },
   },
   highlight = {
-    before = "",                   -- "fg" or "bg" or empty
+    before = "", -- "fg" or "bg" or empty
     -- keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
-    keyword = "wide",              -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
-    after = "fg",                  -- "fg" or "bg" or empty
+    keyword = "wide", -- "fg", "bg", "wide" or empty. (wide is the same as bg, but will also highlight surrounding characters)
+    after = "fg", -- "fg" or "bg" or empty
     pattern = [[.*<(KEYWORDS)\s*:]], -- pattern or table of patterns, used for highlightng (vim regex)
-    comments_only = true,          -- uses treesitter to match keywords in comments only
-    max_line_len = 400,            -- ignore lines longer than this
-    exclude = { "markdown" },      -- list of file types to exclude highlighting
+    comments_only = true, -- uses treesitter to match keywords in comments only
+    max_line_len = 400, -- ignore lines longer than this
+    exclude = { "markdown" }, -- list of file types to exclude highlighting
   },
   search = {
     command = "rg",
@@ -53,4 +53,4 @@ todo_comments.setup({
     pattern = [[\b(KEYWORDS):]], -- ripgrep regex
     -- pattern = [[\b(KEYWORDS)\b]], -- match without the extra colon. You'll likely get false positives
   },
-})
+}

@@ -1,18 +1,18 @@
-reload("user.plugins")
-reload("user.autocmds")
-reload("user.cmds")
-reload("user.vim-options")
-reload("user.options")
-reload("user.keymaps")
-reload("user.todo-comments")
-reload("user.git")
-reload("user.zen-mode")
-reload("user.whichkey")
-reload("user.telescope")
-reload("user.treesitter")
-reload("user.scrollbar")
-reload("user.spectre")
-reload("user.lualine")
-reload("user.lsp")
-reload("user.dap")
-reload("user.completion")
+reload "user.plugins"
+reload "user.autocmds"
+reload "user.cmds"
+reload "user.vim-options"
+reload "user.options"
+reload "user.keymaps"
+reload "user.todo-comments"
+reload "user.git"
+reload "user.zen-mode"
+reload "user.whichkey"
+reload "user.telescope"
+reload "user.treesitter"
+reload "user.scrollbar"
+reload "user.spectre"
+reload "user.lualine"
+reload "user.lsp"
+reload "user.dap"
+reload "user.completion"

@@ -3,18 +3,17 @@
 DOTFILES_DIR="$HOME/dotfiles"
 GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
 
-
 # Load bashrc default settings based on the current OS
 function load_bashrc() {
   if [ -s "${GET_OS_SCRIPT}" ]; then
-    OS="$(source "$GET_OS_SCRIPT")"
-    if [ -n "$OS" ]; then
-      SETTINGS_FILE="$DOTFILES_DIR/config/bash/rc_$OS.sh"
-      if [ ! -f "$SETTINGS_FILE" ]; then
-        echo "Error: $SETTINGS_FILE not found"
+    current_os="$(source "$GET_OS_SCRIPT")"
+    if [ -n "$current_os" ]; then
+      local -r settings_file="$DOTFILES_DIR/config/bash/rc_$current_os.sh"
+      if [ ! -f "$settings_file" ]; then
+        echo "Error: $settings_file not found"
         return 1
       fi
-      source "$SETTINGS_FILE"
+      source "$settings_file"
       return 0
     fi
     echo "Error: Failed to get OS"
