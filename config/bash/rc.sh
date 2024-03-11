@@ -44,6 +44,16 @@ function bootstrap() { (
   bash "$DOTFILES_DIR/bootstrap.sh" "${@}"
 ); }
 
+function create_kind_cluster_with_local_registry() {
+  set -x
+  local -r script_path="$DOTFILES_SCRIPTS_DIR/utils/create_kind_cluster_with_local_registry.sh"
+  if [ ! -f "$script_path" ]; then
+    echo -e "The script does not exist: $script_path"
+    return 1
+  fi
+  bash "$script_path"
+}
+
 function switch_git_config {
   python3 "$DOTFILES_SCRIPTS_DIR/python/github_config_user_switcher.py"
 }
