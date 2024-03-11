@@ -52,6 +52,7 @@ APT_PACKAGES=(
   make
   mercurial
   meld
+  net-tools
   ninja-build
   pipx
   python3-dev
