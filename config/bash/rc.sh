@@ -4,8 +4,12 @@
 export DOTFILES_DIR="$HOME/dotfiles"
 export DOTFILES_SCRIPTS_DIR="$DOTFILES_DIR/scripts"
 
-export CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
-export SECRET_ENV="$HOME/.secret_env.sh"
+readonly CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
+readonly SECRET_ENV_SCRIPT="$HOME/.secret_env.sh"
+readonly FUNCTIONS_SCRIPT="$DOTFILES_SCRIPTS_DIR/utils/functions.sh"
+
+export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
+export GITCONFIG_FILE="$DOTFILES_DIR/config/git/gitconfig"
 
 export GIT_SSH=ssh
 export PROJECT_HOME=$HOME/projects
@@ -22,19 +26,25 @@ if [ -d "$MISE_FZF_BASE_DIR" ]; then
   export FZF_BASE="$MISE_FZF_BASE_DIR"
 fi
 
-if [ -s "$SECRET_ENV" ]; then
-  source "${SECRET_ENV}"
-fi
-
-if [ -d "$CORP_EXTRA_SCRIPTS_DIR" ]; then
-  find "$CORP_EXTRA_SCRIPTS_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
-    source "$file"
+_load_source_files() {
+  local -ra source_files=("$@")
+  for file in "${source_files[@]}"; do
+    if [ -s "$file" ]; then
+      source "$file"
+    fi
   done
-fi
+}
 
-# Sources
-FUNCTIONS="$DOTFILES_SCRIPTS_DIR/utils/functions.sh"
-[[ -s "$FUNCTIONS" ]] && source "${FUNCTIONS}"
+_load_corp_extra_scripts() {
+  if [ -d "$CORP_EXTRA_SCRIPTS_DIR" ]; then
+    find "$CORP_EXTRA_SCRIPTS_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
+      source "$file"
+    done
+  fi
+}
+
+_load_source_files "$SECRET_ENV_SCRIPT" "$FUNCTIONS_SCRIPT"
+_load_corp_extra_scripts
 
 # Functions
 function bootstrap() { (
@@ -44,18 +54,8 @@ function bootstrap() { (
   bash "$DOTFILES_DIR/bootstrap.sh" "${@}"
 ); }
 
-function create_kind_cluster_with_local_registry() {
-  set -x
-  local -r script_path="$DOTFILES_SCRIPTS_DIR/utils/create_kind_cluster_with_local_registry.sh"
-  if [ ! -f "$script_path" ]; then
-    echo -e "The script does not exist: $script_path"
-    return 1
-  fi
-  bash "$script_path"
-}
-
-function switch_git_config {
-  python3 "$DOTFILES_SCRIPTS_DIR/python/github_config_user_switcher.py"
+function switch_git_config() {
+  switch_git_user "$GIT_USERS_DIR" "$GITCONFIG_FILE"
 }
 
 # Paths
@@ -64,4 +64,5 @@ BASE_PATHS=(
   "$HOME/.local/bin"
   "$HOME/bin"
 )
-dynamic_batch_load_path "${BASE_PATHS[@]}"
+load_dynamic_paths "${BASE_PATHS[@]}"
+export PATH

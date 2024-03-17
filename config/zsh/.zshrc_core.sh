@@ -1,24 +1,20 @@
 #!/bin/bash
 
-DOTFILES_DIR="$HOME/dotfiles"
-GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
+readonly GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
+
+if [ -s "${GET_OS_SCRIPT}" ]; then
+  source "${GET_OS_SCRIPT}"
+fi
 
 # Load bashrc default settings based on the current OS
 function load_bashrc() {
-  if [ -s "${GET_OS_SCRIPT}" ]; then
-    current_os="$(source "$GET_OS_SCRIPT")"
-    if [ -n "$current_os" ]; then
-      local -r settings_file="$DOTFILES_DIR/config/bash/rc_$current_os.sh"
-      if [ ! -f "$settings_file" ]; then
-        echo "Error: $settings_file not found"
-        return 1
-      fi
-      source "$settings_file"
-      return 0
-    fi
-    echo "Error: Failed to get OS"
+  local -r current_os="$(get_current_os_in_lowercase)"
+  local -r settings_file="$DOTFILES_DIR/config/bash/rc_$current_os.sh"
+  if [ ! -s "$settings_file" ]; then
+    echo -e "ERROR: $settings_file not found"
     return 1
   fi
+  source "$settings_file"
 }
 
 function kube-toggle() {

@@ -75,15 +75,15 @@ APT_PACKAGES=(
 
 function _packages {
   task "Install and update common apt packages"
-  EXTRA_OPTS="-t unstable"
+  local -r extra_opts="-t unstable -y"
   sudo apt update --list-cleanup
   sudo apt dist-upgrade --purge
   # shellcheck disable=2086
-  sudo apt dist-upgrade --purge ${EXTRA_OPTS}
+  sudo apt dist-upgrade --purge ${extra_opts}
   # shellcheck disable=2086
-  sudo apt build-dep python3 ${EXTRA_OPTS}
+  sudo apt build-dep python3 ${extra_opts}
   # shellcheck disable=2086
-  sudo apt install --purge "${APT_PACKAGES[@]}" ${EXTRA_OPTS}
+  sudo apt install --purge "${APT_PACKAGES[@]}" ${extra_opts}
   sudo apt autoremove --purge
   sudo apt clean
 }

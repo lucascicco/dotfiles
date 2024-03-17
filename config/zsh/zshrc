@@ -85,6 +85,7 @@ alias tf="terraform "
 alias lg="lazygit"
 alias wk="jump wk"
 alias lf="jump lf"
+alias "?"="gh copilot suggest -t shell"
 
 autoload -Uz compinit && compinit
 

@@ -7,148 +7,176 @@ function debug {
 }
 
 function info {
-  set +x
-  echo
-  echo "=== ${1} ==="
-  echo
-  set -x
+  echo -e "[INFO] ${1}"
 }
 
 function task {
-  set +x
-  echo
-  echo "[TASK] ${1}"
-  echo
-  set -x
+  echo -e "[TASK] ${1}"
 }
 
 function warning {
-  set +x
-  echo
-  echo "!!! ${1} !!!"
-  echo
-  set -x
+  echo -e "[WARN] ${1}"
+}
+
+function fatal {
+  echo -e "[FATAL] ${1}"
 }
 
 function git_clone_or_pull {
   set +x
-  DIR=${1}
-  REPO=${2}
-  BRANCH=${3}
+  local -r dir=${1}
+  local -r repo=${2}
+  local -r branch=${3}
   set -x
 
-  if [ ! -d "${DIR}" ]; then
-    git clone -b "${BRANCH}" "${REPO}" "${DIR}"
+  if [ ! -d "${dir}" ]; then
+    git clone -b "${branch}" "${repo}" "${dir}"
   fi
   (
-    cd "${DIR}" || return 1
-    git pull origin "${BRANCH}"
+    cd "${dir}" || return 1
+    git pull origin "${branch}"
     git submodule update --init --recursive
   )
 }
 
 function download_file {
   set +x
-  DEST=${1}
-  URL=${2}
+  dest=${1}
+  url=${2}
   set -x
 
-  TMP=$(mktemp)
-  curl -4 -sSL -o "${TMP}" "${URL}"
+  tmp=$(mktemp)
+  curl -4 -sSL -o "${tmp}" "${url}"
 
-  if [ -f "${DEST}" ]; then
-    OLD_MD5=$(md5sum "${DEST}" | cut -d ' ' -f 1)
-    NEW_MD5=$(md5sum "${TMP}" | cut -d ' ' -f 1)
+  if [ -f "${dest}" ]; then
+    OLD_MD5=$(md5sum "${dest}" | cut -d ' ' -f 1)
+    NEW_MD5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
     if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
       TMP2=$(mktemp)
-      mv "${DEST}" "${TMP2}"
+      mv "${dest}" "${TMP2}"
     fi
   fi
 
-  mv "${TMP}" "${DEST}"
+  mv "${tmp}" "${dest}"
 }
 
 function download_executable {
   set +x
-  DEST=${1}
-  URL=${2}
+  local -r dest=${1}
+  local -r url=${2}
   set -x
 
-  TMP=$(mktemp)
-  curl -sSL -o "${TMP}" "${URL}"
-  chmod +x "${TMP}"
+  local -r tmp=$(mktemp)
+  curl -sSL -o "${tmp}" "${url}"
+  chmod +x "${tmp}"
 
-  if [ -f "${DEST}" ]; then
-    OLD_MD5=$(md5sum "${DEST}" | cut -d ' ' -f 1)
-    NEW_MD5=$(md5sum "${TMP}" | cut -d ' ' -f 1)
-    if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
-      TMP2=$(mktemp)
-      mv "${DEST}" "${TMP2}"
+  if [ -f "${dest}" ]; then
+    local -r old_md5=$(md5sum "${dest}" | cut -d ' ' -f 1)
+    local -r new_md5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
+    if [ "${old_md5}" != "${new_md5}" ]; then
+      local -r tmp2=$(mktemp)
+      mv "${dest}" "${tmp2}"
     fi
   fi
 
-  mv "${TMP}" "${DEST}"
+  mv "${tmp}" "${dest}"
 }
 
 function create_symlink {
   set +x
-  SOURCE_FILE=${1}
-  DEST_FILE=${2}
+  local -r source_file=${1}
+  local -r dest_file=${2}
 
-  if [ ! -f "$SOURCE_FILE" ] && [ ! -d "$SOURCE_FILE" ]; then
-    warning "${SOURCE_FILE} is missing"
+  if [ ! -f "$source_file" ] && [ ! -d "$source_file" ]; then
+    warning "${source_file} is missing"
     return 1
   fi
 
-  OS="$(uname)"
-  DEST_SYMLINK_PATH="$(readlink "$DEST_FILE")"
-  if [ "$OS" == "Linux" ]; then
-    DEST_SYMLINK_PATH="$(readlink -f "$DEST_FILE")"
+  local -r os="$(uname)"
+  local dest_symlink_path="$(readlink "$dest_file")"
+  if [ "$os" == "Linux" ]; then
+    dest_symlink_path="$(readlink -f "$dest_file")"
   fi
 
-  if [ "$DEST_SYMLINK_PATH" != "$SOURCE_FILE" ]; then
-    debug "updating symlink ${DEST_FILE} -> ${SOURCE_FILE}"
-    ln -f -s "$SOURCE_FILE" "$DEST_FILE"
+  if [ "$dest_symlink_path" != "$source_file" ]; then
+    debug "updating symlink ${dest_file} -> ${source_file}"
+    ln -f -s "$source_file" "$dest_file"
   fi
   set -x
 }
 
 function dynamic_batch_source {
-  SCRIPTS=("$@")
-  for SCRIPT in $SCRIPTS; do
-    if [ ! -s "$SCRIPT" ]; then
+  local -ra scripts=("$@")
+  for s in "${scripts[@]}"; do
+    if [ ! -s "$s" ]; then
+      debug "Skipping $s. It does not exist."
       continue
     fi
-    source "$SCRIPT"
+    source "$s"
   done
 }
 
-function dynamic_batch_load_path {
-  PATHS=("$@")
-  for P in ${PATHS}; do
-    if [ ! -d "$P" ]; then
+function _generate_dynamic_path {
+  local -r paths=("$@")
+  local new_path=""
+  for p in "${paths[@]}"; do
+    if [ ! -e "$p" ]; then
       continue
     fi
-    PATH="$P:$PATH"
+    new_path="$new_path:$p"
   done
+  echo "$new_path"
 }
 
-function brew_install_or_upgrade {
-  PKG="$1"
-  ACTION="$(brew ls --versions bat | wc -l | xargs expr | sed 's/0/install/' | sed 's/1/upgrade/')"
-  CMD="brew"
-  CMD="$CMD $ACTION"
-  if [[ "$2" == "cask" ]]; then
-    shift 2
-    CMD="$CMD --cask"
-  else
-    shift 1
+function load_dynamic_paths() {
+  local -ra paths=("$@")
+  local -r dynamic_paths=$(_generate_dynamic_path "${paths[@]}")
+  if [ -n "$dynamic_paths" ]; then
+    PATH="$PATH$dynamic_paths"
   fi
-  CMD="${CMD} ${PKG} ${*}"
-  bash -c "$CMD"
 }
 
 function reload_zsh {
-  ZSHRC_PATH="$HOME/.zshrc"
-  [[ -s "$ZSHRC_PATH" ]] && source "${ZSHRC_PATH}"
+  zshrc_path="$HOME/.zshrc"
+  [[ -s "$zshrc_path" ]] && source "${zshrc_path}"
+}
+
+function switch_git_user() {
+  local -r git_users_dir="$1"
+  local -r gitconfig_file="$2"
+
+  if [ ! -d "$git_users_dir" ]; then
+    fatal "The directory $git_users_dir does not exist"
+    return 1
+  fi
+
+  local -r target_config=$(
+    ls -t "$git_users_dir" | fzf --preview "cat $git_users_dir/{}"
+  )
+  if [ -z "$target_config" ]; then
+    fatal "No file selected"
+    return 1
+  fi
+
+  local -r target_config_file="$git_users_dir/$target_config"
+  if [ ! -f "$target_config_file" ]; then
+    fatal "The file $target_config_file does not exist"
+    return 1
+  fi
+
+  info "Switching to $target_config"
+  cp -f "$target_config_file" "$gitconfig_file"
+  ln -f -s "$gitconfig_file" "$HOME/.gitconfig"
+  info "Switched to $target_config with success!"
+
+  info "Git user: $(git config user.name)"
+  info "Git email: $(git config user.email)"
+
+  local -r git_signingkey="$(git config user.signingkey)"
+  local -r gpgsign_enabled="$(git config commit.gpgsign)"
+
+  if [ -n "$git_signingkey" ]; then
+    info "Git signingkey: $git_signingkey"
+    info "GPG sign is enabled: $gpgsign_enabled"
+  fi
 }

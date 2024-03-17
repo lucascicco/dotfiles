@@ -1,28 +1,6 @@
 #!/bin/bash
 
-# Detect the platform (similar to $OSTYPE)
-function get_os {
-  OS=$(uname)
-  case $OS in
-  'Linux')
-    OS='linux'
-    ;;
-  'FreeBSD')
-    OS='freeBSD'
-    ;;
-  'WindowsNT')
-    OS='windows'
-    ;;
-  'Darwin')
-    OS='macos'
-    ;;
-  'SunOS')
-    OS='solaris'
-    ;;
-  'AIX') ;;
-  *) ;;
-  esac
-  echo "$OS"
+function get_current_os_in_lowercase() {
+  local -r current_os=$(uname)
+  echo "${current_os}" | tr '[:upper:]' '[:lower:]'
 }
-
-get_os

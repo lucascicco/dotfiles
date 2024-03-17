@@ -57,6 +57,7 @@ mkdir -p "${LOCAL_DIR}"
 mkdir -p "${LOCAL_BIN_DIR}"
 mkdir -p "${LOCAL_BUILD_DIR}"
 mkdir -p "${MISE_CONFIG}"
+mkdir -p "${ZSH_SITE_FUNCTIONS}"
 
 SYMLINKS=(
   "$CONFIG_DIR/git/gitattributes $HOME/.gitattributes"
@@ -83,17 +84,25 @@ function _symlinks {
 function _mise {
   info "installing mise"
   if [ ! -f "${MISE_BINARY}" ]; then
-    curl https://mise.run | sh
+    curl https://mise.jdx.dev/install.sh | sh
   fi
 
   eval "$("$MISE_BINARY" activate bash)"
+
+  local -r today=$(date +%Y-%m-%d)
+  local -r marker_file="${HOME}/.cache/mise-last-cache-clear"
+  local -r last_run_date=$(cat "$marker_file")
+  if [ ! -e "$marker_file" ] || [ "$last_run_date" != "$today"]; then
+    "${MISE_BINARY}" cache clear
+    echo "$today" >"$marker_file"
+  fi
+
   "$MISE_BINARY" self-update || true
   "$MISE_BINARY" plugins update -y || true
   "$MISE_BINARY" install -y
   "$MISE_BINARY" upgrade -y
   "$MISE_BINARY" prune -y
 
-  mkdir -p "${ZSH_SITE_FUNCTIONS}"
   "$MISE_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS}/_mise"
 }
 

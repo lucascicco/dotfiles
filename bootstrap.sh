@@ -15,11 +15,11 @@ fi
 
 source "$GET_OS_SCRIPT"
 
-function bootstrap {
-  local -r current_os=$(get_os)
+function bootstrap() {
+  local -r current_os=$(get_current_os_in_lowercase)
   echo -e "Bootstrapping using $current_os"
-  bootstrap_file="$DOTFILES_DIR/scripts/bootstrapping/$current_os.sh"
-  if [[ ! -f "$bootstrap_file" ]]; then
+  local -r bootstrap_file="$DOTFILES_DIR/scripts/bootstrapping/$current_os.sh"
+  if [ ! -s "$bootstrap_file" ]; then
     echo -e "No bootstrap supported for the OS ($OS). "
     echo -e "Please try again on Linux or MacOs."
     exit 1
@@ -28,5 +28,4 @@ function bootstrap {
 }
 
 bootstrap "${@}"
-
 exit 0
