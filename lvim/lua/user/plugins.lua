@@ -128,12 +128,22 @@ lvim.plugins = {
       require "user.dap"
     end,
     dependencies = {
+      { "ofirgall/goto-breakpoints.nvim" },
+      {
+        "theHamsta/nvim-dap-virtual-text",
+        opts = {
+          all_frames = true,
+        },
+      },
       {
         "mfussenegger/nvim-dap-python",
         config = false,
       },
       {
         "rcarriga/nvim-dap-ui",
+        dependencies = {
+          "nvim-neotest/nvim-nio",
+        },
         config = true,
       },
     },
@@ -144,6 +154,7 @@ lvim.plugins = {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
+      "nvim-neotest/nvim-nio",
       "nvim-neotest/neotest-python",
     },
     config = function()

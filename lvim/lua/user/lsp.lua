@@ -131,7 +131,8 @@ nvim_lsp.pyright.setup {
   },
 }
 
-nvim_lsp.ruff_lsp.setup {
+local ruff_lsp = os.getenv "USE_RUFF_LSP" == "1" and nvim_lsp.ruff_lsp or nvim_lsp.ruff
+ruff_lsp.setup {
   capabilities = lsp_capabilities(),
   autostart = os.getenv "USE_RUFF" == "1" or os.getenv "USE_RUFF" == nil,
   handlers = handlers,
@@ -210,6 +211,24 @@ nvim_lsp.dockerls.setup {
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
+}
+
+-- https://github.com/golang/tools/tree/master/gopls
+nvim_lsp.gopls.setup {
+  handlers = handlers,
+  capabilities = lsp_capabilities(),
+  on_attach = on_attach,
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+        shadow = true,
+        fillreturns = true,
+      },
+      staticcheck = true,
+      gofumpt = true,
+    },
+  },
 }
 
 -- https://github.com/hashicorp/terraform-ls
