@@ -11,7 +11,7 @@ if not status_ok then
   return
 end
 
-gitlinker.setup {
+gitlinker.setup({
   opts = {
     callbacks = {
       ["git.comcast.com"] = require("gitlinker.hosts").get_github_type_url,
@@ -21,4 +21,4 @@ gitlinker.setup {
     print_url = false,
     mappings = "<leader>gy",
   },
-}
+})

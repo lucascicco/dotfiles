@@ -7,33 +7,40 @@ lvim.plugins = {
     "neovim/nvim-lspconfig",
     event = "BufReadPost",
     dependencies = {
+      {
+        "folke/neodev.nvim",
+        opts = {},
+      },
       "nvimtools/none-ls.nvim",
       "b0o/schemastore.nvim",
       "SmiteshP/nvim-navic",
-      {
-        "ray-x/lsp_signature.nvim",
-        opts = {
-          hint_enable = false,
-          toggle_key = "<C-K>",
-        },
-      },
     },
     config = function()
-      require "user.lsp"
+      require("user.lsp")
     end,
   },
   {
     "folke/trouble.nvim",
+    branch = "dev",
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    cmd = { "TroubleToggle", "Trouble" },
+    cmd = { "Trouble" },
     opts = {
-      close = "<C-q>",
-      padding = false,
-      auto_preview = false,
-      use_diagnostic_signs = true,
-      cycle_results = true,
+      modes = {
+        diagnostics = {
+          sort = { "severity", "pos", "filename", "message" },
+        },
+        telescope = {
+          sort = { "pos", "filename", "severity", "message" },
+        },
+        quickfix = {
+          sort = { "pos", "filename", "severity", "message" },
+        },
+        loclist = {
+          sort = { "pos", "filename", "severity", "message" },
+        },
+      },
     },
   },
 
@@ -72,12 +79,12 @@ lvim.plugins = {
           "nvim-treesitter/nvim-treesitter",
         },
         config = function()
-          require("lspkind").init {
+          require("lspkind").init({
             symbol_map = {
               Copilot = "",
               Codeium = "",
             },
-          }
+          })
           vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#69ae6a" })
           vim.api.nvim_set_hl(0, "CmpItemKindCodeium", { fg = "#69ae6a" })
         end,
@@ -91,7 +98,7 @@ lvim.plugins = {
     },
     event = "InsertEnter",
     config = function()
-      require "user.completion"
+      require("user.completion")
     end,
   },
   {
@@ -106,26 +113,13 @@ lvim.plugins = {
       },
     },
   },
-  {
-    "jackMort/ChatGPT.nvim",
-    config = function()
-      require("chatgpt").setup()
-    end,
-    cmd = { "ChatGPT", "ChatGPTEditWithInstruction", "ChatGPTRun" },
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "folke/trouble.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-  },
 
   -- Testing
   {
     "mfussenegger/nvim-dap",
     event = "BufReadPost",
     config = function()
-      require "user.dap"
+      require("user.dap")
     end,
     dependencies = {
       { "ofirgall/goto-breakpoints.nvim" },
@@ -158,11 +152,11 @@ lvim.plugins = {
       "nvim-neotest/neotest-python",
     },
     config = function()
-      require("neotest").setup {
+      require("neotest").setup({
         adapters = {
-          require "neotest-python" {
+          require("neotest-python")({
             args = { "-vvv", "--no-cov", "--disable-warnings" },
-          },
+          }),
         },
         quickfix = {
           enabled = false,
@@ -177,7 +171,7 @@ lvim.plugins = {
           signs = true,
           virtual_text = true,
         },
-      }
+      })
     end,
   },
 
@@ -220,11 +214,11 @@ lvim.plugins = {
   {
     "rcarriga/nvim-notify",
     config = function()
-      local notify = require "notify"
-      notify.setup {
+      local notify = require("notify")
+      notify.setup({
         background_colour = "#000000",
-        timeout = 2000,
-      }
+        timeout = 5000,
+      })
       vim.notify = notify
     end,
   },
@@ -263,11 +257,76 @@ lvim.plugins = {
   },
   "folke/todo-comments.nvim",
   "folke/zen-mode.nvim",
-  "ghillb/cybu.nvim",
+
+  -- File browsing
+  {
+    "nvim-telescope/telescope.nvim",
+    lazy = true,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+        config = function()
+          require("telescope").load_extension("fzf")
+        end,
+      },
+    },
+    config = function()
+      local actions = require("telescope.actions")
+      local open_with_trouble = require("trouble.sources.telescope").open
+      local add_to_trouble = require("trouble.sources.telescope").add
+      require("telescope").setup({
+        defaults = {
+          layout_strategy = "horizontal",
+          layout_config = {
+            prompt_position = "top",
+          },
+          sorting_strategy = "ascending",
+          prompt_prefix = "🔍 ",
+          selection_caret = " ",
+          dynamic_preview_title = true,
+          mappings = {
+            i = {
+              ["<Esc>"] = actions.close,
+              ["<c-q>"] = open_with_trouble,
+              ["<c-s>"] = add_to_trouble,
+            },
+            n = {
+              ["<c-q>"] = open_with_trouble,
+              ["<c-s>"] = add_to_trouble,
+            },
+          },
+        },
+        pickers = {
+          buffers = {
+            mappings = {
+              i = {
+                ["<A-d>"] = actions.delete_buffer + actions.move_to_top,
+              },
+            },
+          },
+        },
+        extensions = {
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = "smart_case",
+          },
+        },
+      })
+    end,
+  },
 
   -- Git
-  "ruifm/gitlinker.nvim",
-  "f-person/git-blame.nvim",
+  {
+    "ruifm/gitlinker.nvim",
+    event = "BufReadPost",
+  },
+  { "f-person/git-blame.nvim", event = "BufReadPost" },
   {
     "sindrets/diffview.nvim",
     dependencies = "nvim-lua/plenary.nvim",
@@ -277,6 +336,83 @@ lvim.plugins = {
   {
     "ggandor/lightspeed.nvim",
     event = "BufRead",
+  },
+  {
+    "willothy/moveline.nvim",
+    build = "make",
+  },
+  {
+    "tpope/vim-repeat",
+    keys = { "." },
+  },
+  {
+    "mbbill/undotree",
+    cmd = "UndotreeToggle",
+    init = function()
+      vim.g.undotree_CursorLine = 0
+    end,
+  },
+  {
+    "monaqa/dial.nvim",
+    event = "BufReadPost",
+  },
+  {
+    "wakatime/vim-wakatime",
+    event = "VeryLazy",
+  },
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {
+      modes = {
+        search = {
+          enabled = false,
+        },
+      },
+    },
+  },
+  {
+    "mg979/vim-visual-multi",
+    config = function()
+      vim.g.VM_silent_exit = 1
+      vim.g.VM_quit_after_leaving_insert_mode = 1
+      vim.g.VM_show_warnings = 0
+    end,
+    branch = "master",
+    keys = { "<C-n>" },
+  },
+  {
+    "ethanholz/nvim-lastplace",
+    opts = {
+      lastplace_ignore_buftype = { "quickfix", "nofile", "help", "Trouble" },
+      lastplace_ignore_filetype = {
+        "gitcommit",
+        "gitrebase",
+        "neo-tree",
+        "neotest-summary",
+        "undotree",
+      },
+    },
+  },
+  {
+    "numToStr/Comment.nvim",
+    config = true,
+    keys = { { "gcc" }, { "gc", mode = "v" } },
+  },
+  {
+    "andymass/vim-matchup",
+    event = "BufReadPost",
+  },
+  {
+    "nvim-pack/nvim-spectre",
+    cmd = "Spectre",
+  },
+  {
+    "kylechui/nvim-surround",
+    event = "VeryLazy",
+    config = function()
+      require("nvim-surround").setup({})
+    end,
   },
 
   -- Utils
@@ -290,6 +426,4 @@ lvim.plugins = {
       vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
     end,
   },
-  "windwp/nvim-spectre",
-  "wakatime/vim-wakatime",
 }

@@ -33,6 +33,7 @@ lvim.builtin.lualine.sections = {
     "fileformat",
     "filetype",
     "progress",
+    "location",
   },
 }
 lvim.builtin.lualine.extensions = {

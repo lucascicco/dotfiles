@@ -78,6 +78,7 @@ yq = 'latest'
 "npm:markdownlint-cli" = "latest"
 "npm:opencollective" = "latest"
 "npm:patch-package" = "latest"
+"npm:pnpm" = "latest"
 "npm:prettier" = "latest"
 "npm:pyright" = "latest"
 "npm:stylelint" = "latest"
@@ -90,7 +91,7 @@ yq = 'latest'
 
 # Languages
 deno = 'latest'
-rust = 'stable'
+rust = 'latest'
 node = ["latest", "20", "18", "16"]
 go = ["latest", "1.20", "1.19", "1.18"]
 python = ["3.12", "3.11"]

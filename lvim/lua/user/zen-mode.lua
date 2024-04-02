@@ -3,7 +3,7 @@ if not status_ok then
   return
 end
 
-zen_mode.setup {
+zen_mode.setup({
   window = {
     backdrop = 1,
     height = 0.9,
@@ -23,4 +23,4 @@ zen_mode.setup {
     tmux = { enabled = false },
     twilight = { enabled = false },
   },
-}
+})

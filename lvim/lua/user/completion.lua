@@ -1,13 +1,13 @@
-local cmp = require "cmp"
+local cmp = require("cmp")
 
 local has_words_before = function()
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match "^%s*$" == nil
+  return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
 end
 
-local default_format = require("lspkind").cmp_format { with_text = false }
+local default_format = require("lspkind").cmp_format({ with_text = false })
 
-cmp.setup {
+cmp.setup({
   sources = cmp.config.sources({
     { name = "copilot" },
     { name = "nvim_lsp" },
@@ -30,7 +30,7 @@ cmp.setup {
       return default_format(entry, vim_item)
     end,
   },
-  mapping = cmp.mapping.preset.insert {
+  mapping = cmp.mapping.preset.insert({
     ["<C-Space>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.core:reset()
@@ -50,7 +50,7 @@ cmp.setup {
 
       local is_ai = selected.source.name == "codeium" or selected.source.name == "copilot"
       local behavior = is_ai and cmp.ConfirmBehavior.Replace or cmp.ConfirmBehavior.Select
-      if not cmp.confirm { behavior = behavior, select = false } then
+      if not cmp.confirm({ behavior = behavior, select = false }) then
         fallback()
       end
     end, { "i", "s" }),
@@ -76,7 +76,7 @@ cmp.setup {
         fallback()
       end
     end, { "i", "s" }),
-  },
+  }),
   sorting = {
     priority_weight = 2,
     comparators = {
@@ -95,14 +95,15 @@ cmp.setup {
     },
   },
   window = {
-    completion = cmp.config.window.bordered {},
-    documentation = cmp.config.window.bordered {},
+    follow_cursor = true,
+    completion = cmp.config.window.bordered({}),
+    documentation = cmp.config.window.bordered({}),
   },
   experimental = {
     ghost_text = {
       hl_group = "Comment",
     },
   },
-}
+})
 
 cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())

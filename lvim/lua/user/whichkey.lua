@@ -42,13 +42,13 @@ local new_maps = {
     },
     q = {
       function()
-        require("trouble").previous { skip_groups = true, jump = true }
+        require("trouble").previous({ skip_groups = true, jump = true })
       end,
       "Previous trouble result",
     },
     Q = {
       function()
-        require("trouble").first { skip_groups = true, jump = true }
+        require("trouble").first({ skip_groups = true, jump = true })
       end,
       "First trouble result",
     },
@@ -62,13 +62,13 @@ local new_maps = {
     },
     q = {
       function()
-        require("trouble").next { skip_groups = true, jump = true }
+        require("trouble").next({ skip_groups = true, jump = true })
       end,
       "Next trouble result",
     },
     Q = {
       function()
-        require("trouble").last { skip_groups = true, jump = true }
+        require("trouble").last({ skip_groups = true, jump = true })
       end,
       "Last trouble result",
     },
@@ -79,26 +79,6 @@ local new_maps = {
         require("smart-splits").start_resize_mode()
       end,
       "Smart resize",
-    },
-  },
-  ["<C-g>"] = {
-    name = "ChatGPT",
-    c = { "<cmd>ChatGPT<CR>", "ChatGPT" },
-    e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
-    g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-    t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-    k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-    d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-    a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-    o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-    s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-    f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-    x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-    r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-    l = {
-      "<cmd>ChatGPTRun code_readability_analysis<CR>",
-      "Code Readability Analysis",
-      mode = { "n", "v" },
     },
   },
 }
@@ -120,7 +100,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
     vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
-    which_key.register {
+    which_key.register({
       K = { vim.lsp.buf.hover, "LSP hover", buffer = ev.buf, silent = true },
       ["<C-K>"] = {
         vim.lsp.buf.signature_help,
@@ -175,7 +155,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
         },
         r = {
           function()
-            require("telescope.builtin").lsp_references { jump_type = "never" }
+            require("telescope.builtin").lsp_references({ jump_type = "never" })
           end,
           "LSP references",
           buffer = ev.buf,
@@ -239,6 +219,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
           },
         },
       },
-    }
+    })
   end,
 })

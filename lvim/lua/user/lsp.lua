@@ -1,7 +1,7 @@
-require("neodev").setup {}
+require("neodev").setup({})
 
-local nvim_lsp = require "lspconfig"
-local utils = require "user.utils"
+local nvim_lsp = require("lspconfig")
+local utils = require("user.utils")
 
 local augroup_formatting = vim.api.nvim_create_augroup("LspFormatting", {})
 local augroup_codelens = vim.api.nvim_create_augroup("LspCodelens", {})
@@ -29,18 +29,18 @@ local on_attach = function(client, bufnr)
   end
 
   if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_clear_autocmds { group = augroup_formatting, buffer = bufnr }
+    vim.api.nvim_clear_autocmds({ group = augroup_formatting, buffer = bufnr })
     vim.api.nvim_create_autocmd("BufWritePre", {
       buffer = bufnr,
       callback = function()
-        require("user.utils").lsp_format { bufnr = bufnr }
+        require("user.utils").lsp_format({ bufnr = bufnr })
       end,
       group = augroup_formatting,
     })
   end
 
   if client.server_capabilities.codeLensProvider then
-    vim.api.nvim_clear_autocmds { group = augroup_codelens, buffer = bufnr }
+    vim.api.nvim_clear_autocmds({ group = augroup_codelens, buffer = bufnr })
     vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
       buffer = bufnr,
       callback = vim.lsp.codelens.refresh,
@@ -84,7 +84,7 @@ local handlers = {
 
     if result and result.documentChanges then
       local fname
-      local old = vim.fn.expand "<cword>"
+      local old = vim.fn.expand("<cword>")
       local new = "<unknown>"
       local root = vim.uv.cwd()
       for _, c in pairs(result.documentChanges) do
@@ -100,7 +100,7 @@ local handlers = {
     if not vim.tbl_isempty(msg) then
       vim.notify(table.concat(msg, "\n"), vim.log.levels.INFO, { title = title })
       -- Save the modified files after the rename
-      vim.cmd "wall"
+      vim.cmd("wall")
     end
 
     return ret
@@ -108,9 +108,9 @@ local handlers = {
 }
 
 -- https://github.com/microsoft/pyright
-nvim_lsp.pyright.setup {
+nvim_lsp.pyright.setup({
   capabilities = lsp_capabilities(),
-  autostart = os.getenv "DISABLE_PYRIGHT" ~= "1",
+  autostart = os.getenv("DISABLE_PYRIGHT") ~= "1",
   handlers = handlers,
   on_attach = on_attach,
   before_init = function(initialize_params, config)
@@ -129,92 +129,92 @@ nvim_lsp.pyright.setup {
       },
     },
   },
-}
+})
 
-local ruff_lsp = os.getenv "USE_RUFF_LSP" == "1" and nvim_lsp.ruff_lsp or nvim_lsp.ruff
-ruff_lsp.setup {
+local ruff_lsp = os.getenv("USE_RUFF_LSP") == "1" and nvim_lsp.ruff_lsp or nvim_lsp.ruff
+ruff_lsp.setup({
   capabilities = lsp_capabilities(),
-  autostart = os.getenv "USE_RUFF" == "1" or os.getenv "USE_RUFF" == nil,
+  autostart = os.getenv("USE_RUFF") == "1" or os.getenv("USE_RUFF") == nil,
   handlers = handlers,
   on_attach = function(client, bufnr)
     client.server_capabilities.hoverProvider = false
     on_attach(client, bufnr)
   end,
   before_init = function(initialize_params, config)
-    local ruff_path = utils.find_python_cmd "ruff"
+    local ruff_path = utils.find_python_cmd("ruff")
     if ruff_path then
       config.settings.path = { ruff_path }
       utils.ensure_tables(initialize_params.initializationOptions, "settings")
       initialize_params.initializationOptions.settings.path = { ruff_path }
     end
   end,
-}
+})
 
 -- https://github.com/withastro/language-tools/tree/main/packages/language-server
-nvim_lsp.astro.setup {
+nvim_lsp.astro.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/theia-ide/typescript-language-server
-nvim_lsp.tsserver.setup {
+nvim_lsp.tsserver.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli
-nvim_lsp.graphql.setup {
+nvim_lsp.graphql.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
-nvim_lsp.eslint.setup {
+nvim_lsp.eslint.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/iamcco/vim-language-server
-nvim_lsp.vimls.setup {
+nvim_lsp.vimls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
-nvim_lsp.cssls.setup {
+nvim_lsp.cssls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
-nvim_lsp.html.setup {
+nvim_lsp.html.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/bash-lsp/bash-language-server
-nvim_lsp.bashls.setup {
+nvim_lsp.bashls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/rcjsuen/dockerfile-language-server-nodejs
-nvim_lsp.dockerls.setup {
+nvim_lsp.dockerls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/golang/tools/tree/master/gopls
-nvim_lsp.gopls.setup {
+nvim_lsp.gopls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
@@ -229,17 +229,17 @@ nvim_lsp.gopls.setup {
       gofumpt = true,
     },
   },
-}
+})
 
 -- https://github.com/hashicorp/terraform-ls
-nvim_lsp.terraformls.setup {
+nvim_lsp.terraformls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/redhat-developer/yaml-language-server
-nvim_lsp.yamlls.setup {
+nvim_lsp.yamlls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
@@ -258,10 +258,10 @@ nvim_lsp.yamlls.setup {
       },
     },
   },
-}
+})
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
-nvim_lsp.jsonls.setup {
+nvim_lsp.jsonls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
@@ -274,17 +274,17 @@ nvim_lsp.jsonls.setup {
       validate = { enable = true },
     },
   },
-}
+})
 
 -- https://taplo.tamasfe.dev/cli/usage/language-server.html
-nvim_lsp.taplo.setup {
+nvim_lsp.taplo.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
-}
+})
 
 -- https://github.com/LuaLS/lua-language-server
-nvim_lsp.lua_ls.setup {
+nvim_lsp.lua_ls.setup({
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
   handlers = handlers,
@@ -295,21 +295,21 @@ nvim_lsp.lua_ls.setup {
       },
     },
   },
-}
+})
 
 -- https://github.com/jose-elias-alvarez/null-ls.nvim
 local diagnostics_format = "[#{c}] #{m} (#{s})"
-local null_ls = require "null-ls"
-local nhelpers = require "null-ls.helpers"
+local null_ls = require("null-ls")
+local nhelpers = require("null-ls.helpers")
 local formatting = null_ls.builtins.formatting
 local diagnostics = null_ls.builtins.diagnostics
 local code_actions = null_ls.builtins.code_actions
-null_ls.setup {
+null_ls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
   should_attach = function(bufnr)
-    return os.getenv "DISABLE_NULL_LS" ~= "1"
+    return os.getenv("DISABLE_NULL_LS") ~= "1"
   end,
   sources = {
     -- gitrebase code_actions,
@@ -317,7 +317,7 @@ null_ls.setup {
     -- github actioins
     diagnostics.actionlint,
     -- djlint
-    formatting.djlint.with {
+    formatting.djlint.with({
       prefer_local = ".venv/bin",
       cwd = nhelpers.cache.by_bufnr(function(params)
         return require("null-ls.utils").root_pattern(
@@ -330,8 +330,8 @@ null_ls.setup {
           "pyrightconfig.json"
         )(params.bufname)
       end),
-    },
-    diagnostics.djlint.with {
+    }),
+    diagnostics.djlint.with({
       prefer_local = ".venv/bin",
       cwd = nhelpers.cache.by_bufnr(function(params)
         return require("null-ls.utils").root_pattern(
@@ -345,25 +345,25 @@ null_ls.setup {
         )(params.bufname)
       end),
       diagnostics_format = diagnostics_format,
-    },
+    }),
     -- javascript/typescript
-    formatting.prettier.with {
+    formatting.prettier.with({
       prefer_local = "node_modules/.bin",
-    },
+    }),
     -- sh/bash
-    formatting.shfmt.with {
+    formatting.shfmt.with({
       extra_args = function(params)
         return { "-i", tostring(vim.opt_local.shiftwidth:get()) }
       end,
-    },
+    }),
     -- lua
-    formatting.stylua.with {
+    formatting.stylua.with({
       condition = function(utils)
-        return utils.root_has_file { "stylua.toml", ".stylua.toml" }
+        return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
       end,
-    },
+    }),
     -- yaml
-    diagnostics.yamllint.with {
+    diagnostics.yamllint.with({
       diagnostics_format = diagnostics_format,
       extra_args = function(params)
         return {
@@ -371,8 +371,8 @@ null_ls.setup {
           string.format("{extends: default, rules: {line-length: {max: %d}}}", vim.opt_local.textwidth:get() + 1),
         }
       end,
-    },
-    formatting.yamlfix.with {
+    }),
+    formatting.yamlfix.with({
       env = function(params)
         return {
           YAMLFIX_LINE_LENGTH = tostring(vim.opt_local.textwidth:get() + 1),
@@ -381,10 +381,10 @@ null_ls.setup {
           YAMLFIX_SEQUENCE_STYLE = "block_style",
         }
       end,
-    },
+    }),
     -- markdown
-    diagnostics.markdownlint.with {
+    diagnostics.markdownlint.with({
       diagnostics_format = diagnostics_format,
-    },
+    }),
   },
-}
+})

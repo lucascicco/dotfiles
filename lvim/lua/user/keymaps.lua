@@ -1,4 +1,4 @@
-local utils = require "user.utils"
+local utils = require("user.utils")
 
 M = {}
 lvim.leader = "space"
