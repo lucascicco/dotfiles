@@ -35,6 +35,7 @@ PYTHON_LIBS=(
   pipx
   poetry
   pre-commit
+  pylint
   ruff
   ruff-lsp
   tox

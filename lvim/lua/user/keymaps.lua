@@ -44,7 +44,7 @@ keymap("n", "gS", vim.lsp.buf.workspace_symbol, opts)
 keymap("n", "gt", vim.lsp.buf.type_definition, opts)
 keymap("n", ",rn", vim.lsp.buf.rename, opts)
 -- trouble
-keymap("n", "<F3>", "<cmd>TroubleToggle<cr>", opts)
+keymap("n", "<F3>", "<cmd>Trouble<cr>", opts)
 -- diagnostic
 keymap("n", "[d", vim.diagnostic.goto_prev, opts)
 keymap("n", "]d", vim.diagnostic.goto_next, opts)

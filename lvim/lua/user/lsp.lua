@@ -71,7 +71,8 @@ local handlers = {
     end, result.diagnostics)
     return vim.lsp.handlers["textDocument/publishDiagnostics"](_, result, ...)
   end, {
-    virtual_text = false,
+    virtual_text = true,
+    signs = true,
     underline = {
       severity = {
         min = vim.diagnostic.severity.WARN,
@@ -131,7 +132,7 @@ nvim_lsp.pyright.setup({
   },
 })
 
-local ruff_lsp = os.getenv("USE_RUFF_LSP") == "1" and nvim_lsp.ruff_lsp or nvim_lsp.ruff
+local ruff_lsp = os.getenv("USE_PURE_RUFF") == "1" and nvim_lsp.ruff or nvim_lsp.ruff_lsp
 ruff_lsp.setup({
   capabilities = lsp_capabilities(),
   autostart = os.getenv("USE_RUFF") == "1" or os.getenv("USE_RUFF") == nil,
@@ -377,7 +378,8 @@ null_ls.setup({
         return {
           YAMLFIX_LINE_LENGTH = tostring(vim.opt_local.textwidth:get() + 1),
           YAMLFIX_SECTION_WHITELINES = "1",
-          YAMLFIX_quote_representation = '"',
+          YAMLFIX_preserve_quotes = "true",
+          YAMLFIX_EXPLICIT_START = "false",
           YAMLFIX_SEQUENCE_STYLE = "block_style",
         }
       end,

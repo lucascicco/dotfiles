@@ -115,7 +115,7 @@ require("scrollbar").setup({
   },
   handlers = {
     cursor = true,
-    diagnostic = false,
+    diagnostic = true,
     gitsigns = false, -- Requires gitsigns
     handle = true,
     search = false, -- Requires hlslens
