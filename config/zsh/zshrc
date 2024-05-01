@@ -32,6 +32,7 @@ if [[ -z $ant_path ]]; then
 fi
 source $ant_path
 
+
 [[ -f "${ITERM2_SHELL_INTEGRATION}" ]] && source "${ITERM2_SHELL_INTEGRATION}"
 [[ -f ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
 [[ -f "${MISE_BIN}"  ]] && eval "$(${MISE_BIN} activate -s zsh)"
@@ -96,3 +97,5 @@ alias k=${KUBE_CMD}
 if [[ $KUBE_CMD == "kubecolor" ]]; then
   complete -o nospace -C "$HOME/.local/bin/kubecolor kubecolor"
 fi
+
+export TERRAGRUNT_TFPATH="$(mise which tofu)"
