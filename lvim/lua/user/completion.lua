@@ -9,7 +9,6 @@ local default_format = require("lspkind").cmp_format({ with_text = false })
 
 cmp.setup({
   sources = cmp.config.sources({
-    { name = "copilot" },
     { name = "nvim_lsp" },
     { name = "luasnip" },
   }, {
@@ -17,6 +16,10 @@ cmp.setup({
     { name = "async_path" },
     { name = "buffer" },
   }),
+  completion = {
+    autocomplete = false,
+  },
+  ---@diagnostic disable-next-line: missing-fields
   formatting = {
     format = function(entry, vim_item)
       if vim.tbl_contains({ "path", "async_path" }, entry.source.name) then
@@ -57,8 +60,10 @@ cmp.setup({
     ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_next_item()
-      elseif vim.snippet.jumpable(1) then
+      elseif vim.snippet.active({ direction = 1 }) then
         vim.snippet.jump(1)
+      elseif require("copilot.suggestion").is_visible() then
+        require("copilot.suggestion").accept()
       elseif has_words_before() then
         cmp.complete()
       else
@@ -68,7 +73,7 @@ cmp.setup({
     ["<S-Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then
         cmp.select_prev_item()
-      elseif vim.snippet.jumpable(-1) then
+      elseif vim.snippet.active({ direction = -1 }) then
         vim.snippet.jump(-1)
       elseif has_words_before() then
         cmp.complete()
@@ -107,3 +112,11 @@ cmp.setup({
 })
 
 cmp.event:on("confirm_done", require("nvim-autopairs.completion.cmp").on_confirm_done())
+
+cmp.event:on("menu_opened", function()
+  vim.b.copilot_suggestion_hidden = true
+end)
+
+cmp.event:on("menu_closed", function()
+  vim.b.copilot_suggestion_hidden = false
+end)

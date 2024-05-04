@@ -1,7 +1,6 @@
 local M = {}
 
 local format_enabled = true
-local diagnostics_enabled = true
 local inside_git_dir = {}
 local lsp_excluded = {
   html = true,
@@ -62,12 +61,7 @@ M.toggle_format = function()
 end
 
 M.toggle_diagnostics = function()
-  if diagnostics_enabled then
-    vim.diagnostic.disable()
-  else
-    vim.diagnostic.enable()
-  end
-  diagnostics_enabled = not diagnostics_enabled
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end
 
 M.lsp_format = function(opts)
@@ -102,70 +96,6 @@ M.grep = function()
   end)
 end
 
-M.find_file = function(file, prefixes, start_from, stop_at)
-  local util = require("null-ls.utils")
-
-  if start_from == nil then
-    start_from = vim.api.nvim_buf_get_name(0)
-  end
-
-  if prefixes == nil then
-    prefixes = { "" }
-  elseif type(prefixes) == "string" then
-    prefixes = { prefixes }
-  end
-
-  for _, prefix in ipairs(prefixes) do
-    local full_cmd = prefix and util.path.join(prefix, file) or file
-
-    for dir in vim.fs.parents(start_from) do
-      local maybe_file = util.path.join(dir, full_cmd)
-      if vim.fn.filereadable(maybe_file) == 1 then
-        return maybe_file
-      end
-      if dir == stop_at then
-        break
-      end
-    end
-  end
-end
-
-M.find_cmd = function(cmd, prefixes, start_from, stop_at)
-  local util = require("null-ls.utils")
-
-  if start_from == nil then
-    start_from = vim.api.nvim_buf_get_name(0)
-  end
-
-  if prefixes == nil then
-    prefixes = { "" }
-  elseif type(prefixes) == "string" then
-    prefixes = { prefixes }
-  end
-
-  local found
-  for _, prefix in ipairs(prefixes) do
-    local full_cmd = prefix and util.path.join(prefix, cmd) or cmd
-
-    for dir in vim.fs.parents(start_from) do
-      local maybe_executable = util.path.join(dir, full_cmd)
-      if util.is_executable(maybe_executable) then
-        found = maybe_executable
-        break
-      end
-      if dir == stop_at then
-        break
-      end
-    end
-
-    if found ~= nil then
-      break
-    end
-  end
-
-  return found or cmd
-end
-
 local python_path = nil
 local python_cmds = {}
 
@@ -176,17 +106,29 @@ M.find_python = function()
 
   local p
   if vim.env.VIRTUAL_ENV then
-    p = require("null-ls.utils").path.join(vim.env.VIRTUAL_ENV, "bin", "python3")
+    p = vim.fs.joinpath(vim.env.VIRTUAL_ENV, "bin", "python3")
   else
     local env_info = nil
-    if M.find_file("poetry.lock") then
-      env_info = vim.fn.system({ "poetry", "env", "info", "--path", "-C", vim.api.nvim_buf_get_name(0) })
+
+    local poetry_root = vim.fs.root(0, { "poetry.lock" })
+    if poetry_root then
+      env_info = vim.fn.system({ "poetry", "env", "info", "--path", "-C", poetry_root })
     end
 
     if env_info ~= nil and string.find(env_info, "could not find") == nil then
-      p = require("null-ls.utils").path.join(env_info:gsub("\n", ""), "bin", "python3")
+      p = vim.fs.joinpath(env_info:gsub("\n", ""), "bin", "python3")
     else
-      p = M.find_cmd("python3", ".venv/bin")
+      local venv_dir = vim.fs.find(".venv", {
+        upward = true,
+        type = "directory",
+        path = vim.fs.dirname(vim.api.nvim_buf_get_name(0)),
+      })
+
+      if #venv_dir > 0 then
+        p = vim.fs.joinpath(venv_dir[1], "bin", "python3")
+      else
+        p = "python3"
+      end
     end
   end
 
@@ -203,7 +145,7 @@ M.find_python_cmd = function(cmd)
   local python_bin = M.find_python()
   local python_dir = python_bin:match("(.*/)")
 
-  local maybe_executable = require("null-ls.utils").path.join(python_dir, cmd)
+  local maybe_executable = vim.fs.joinpath(python_dir, cmd)
   if vim.fn.filereadable(maybe_executable) == 1 then
     python_cmds[cmd] = maybe_executable
     return maybe_executable

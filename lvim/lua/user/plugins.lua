@@ -27,6 +27,7 @@ lvim.plugins = {
     },
     cmd = { "Trouble" },
     opts = {
+      auto_preview = false,
       modes = {
         diagnostics = {
           sort = { "severity", "pos", "filename", "message" },
@@ -106,7 +107,7 @@ lvim.plugins = {
     build = ":Copilot auth",
     event = "VeryLazy",
     opts = {
-      suggestion = { enabled = false },
+      suggestion = { enabled = true, auto_trigger = true },
       panel = { enabled = false },
       filetypes = {
         ["*"] = true,
@@ -393,11 +394,6 @@ lvim.plugins = {
         "undotree",
       },
     },
-  },
-  {
-    "numToStr/Comment.nvim",
-    config = true,
-    keys = { { "gcc" }, { "gc", mode = "v" } },
   },
   {
     "andymass/vim-matchup",

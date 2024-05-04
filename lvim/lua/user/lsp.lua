@@ -124,7 +124,8 @@ nvim_lsp.pyright.setup({
     python = {
       analysis = {
         autoSearchPaths = true,
-        diagnosticMode = "workspace",
+        diagnosticMode = os.getenv("PYRIGHT_DIAGNOSTIC_MODE") or "workspace",
+        typeCheckingMode = os.getenv("PYRIGHT_TYPE_CHECKING_MODE") or "standard",
         useLibraryCodeForTypes = true,
         disableOrganizeImports = true,
       },
@@ -135,7 +136,7 @@ nvim_lsp.pyright.setup({
 local ruff_lsp = os.getenv("USE_PURE_RUFF") == "1" and nvim_lsp.ruff or nvim_lsp.ruff_lsp
 ruff_lsp.setup({
   capabilities = lsp_capabilities(),
-  autostart = os.getenv("USE_RUFF") == "1" or os.getenv("USE_RUFF") == nil,
+  autostart = os.getenv("DISABLE_RUFF") ~= "1",
   handlers = handlers,
   on_attach = function(client, bufnr)
     client.server_capabilities.hoverProvider = false
@@ -378,9 +379,10 @@ null_ls.setup({
         return {
           YAMLFIX_LINE_LENGTH = tostring(vim.opt_local.textwidth:get() + 1),
           YAMLFIX_SECTION_WHITELINES = "1",
+          YAMLFIX_WHITELINES = "1",
           YAMLFIX_preserve_quotes = "true",
           YAMLFIX_EXPLICIT_START = "false",
-          YAMLFIX_SEQUENCE_STYLE = "block_style",
+          YAMLFIX_SEQUENCE_STYLE = "keep_style",
         }
       end,
     }),

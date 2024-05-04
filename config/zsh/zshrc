@@ -87,6 +87,7 @@ alias lg="lazygit"
 alias wk="jump wk"
 alias lf="jump lf"
 alias "?"="gh copilot suggest -t shell"
+alias tg="terragrunt"
 
 autoload -Uz compinit && compinit
 

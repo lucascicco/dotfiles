@@ -22,30 +22,6 @@ NVIM_SPELL_LANGUAGES=(
   "pt"
 )
 
-PYTHON_LIBS=(
-  black
-  codespell
-  djlint
-  flake8
-  ipdb
-  ipython
-  isort
-  mypy
-  pdm
-  pipx
-  poetry
-  pre-commit
-  pylint
-  ruff
-  ruff-lsp
-  tox
-  yamlfix
-  yamllint
-)
-PYTHON_INJECTIONS=(
-  "poetry poetry-plugin-up"
-  "ipython numpy pandas requests httpx openpyxl xlsxwriter"
-)
 GO_LIBS=(
   github.com/ipinfo/cli/ipinfo@latest
   github.com/sachaos/tcpterm@latest
@@ -161,16 +137,6 @@ function _neovim_spell_check {
 
 # Languages packages
 function _python_libs {
-  task "Install python libs"
-  PP="${PYTHON_LIBS[*]}"
-  for P in ${PP}; do
-    pipx install "${P}"
-  done
-  for P in "${PYTHON_INJECTIONS[@]}"; do
-    # shellcheck disable=2086
-    pipx inject ${P}
-  done
-  pipx upgrade-all -f --include-injected
   info "installing debugpy latest version"
   if [ ! -f "${HOME}/.debugpy/bin/poetry" ]; then
     python3 -m venv "${HOME}/.debugpy"
@@ -188,7 +154,7 @@ function _golang_libs {
 
 function _rust_libs {
   info "update rust libs"
-  cargo install-update -a
+  cargo install taplo-cli --features lsp --locked
 }
 
 function _mise_reshim {
