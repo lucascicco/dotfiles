@@ -69,7 +69,7 @@ function _mise {
   local -r today=$(date +%Y-%m-%d)
   local -r marker_file="${HOME}/.cache/mise-last-cache-clear"
   local -r last_run_date=$(cat "$marker_file")
-  if [ ! -e "$marker_file" ] || [ "$last_run_date" != "$today"]; then
+  if [ ! -e "$marker_file" ] || [ "$last_run_date" != "$today" ]; then
     "${MISE_BINARY}" cache clear
     echo "$today" >"$marker_file"
   fi
