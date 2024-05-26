@@ -1,38 +1,21 @@
 return {
   -- Theme
   {
-    "nyoom-engineering/oxocarbon.nvim",
-    name = "oxocarbon",
+    "rose-pine/neovim",
+    name = "rose-pine",
     lazy = false,
     priority = 1000,
+    config = function()
+      require("rose-pine").setup({
+        styles = {
+          bold = false,
+          italic = false,
+          transparency = false,
+        },
+      })
+      vim.cmd("colorscheme rose-pine")
+    end,
   },
-  -- {
-  --   "rebelot/kanagawa.nvim",
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     require("kanagawa").setup({
-  --       transparent = false,
-  --       terminalColors = false,
-  --       globalStatus = true,
-  --       theme = "dragon",
-  --       background = "",
-  --       colors = {
-  --         theme = {
-  --           all = {
-  --             syn = {
-  --               parameter = "yellow",
-  --             },
-  --             ui = {
-  --               bg_gutter = "none",
-  --             },
-  --           },
-  --         },
-  --       },
-  --     })
-  --     vim.cmd("colorscheme kanagawa")
-  --   end,
-  -- },
 
   -- Treesitter
   {
@@ -562,5 +545,24 @@ return {
     config = function()
       require("nvim-surround").setup({})
     end,
+  },
+
+  -- Git
+
+  {
+    "kdheepak/lazygit.nvim",
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    keys = {
+      { "<C-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+    },
   },
 }

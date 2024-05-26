@@ -179,6 +179,13 @@ wk.register({
     end,
     "Toggle neotest summary",
   },
+  ["<C-g>"] = {
+    function()
+      require("lazygit").lazygit()
+    end,
+    "Lazygit",
+    mode = { "n" },
+  },
   g = {
     K = {
       function()
