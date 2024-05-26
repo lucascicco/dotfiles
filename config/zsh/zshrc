@@ -3,8 +3,8 @@
 export DOTFILES_DIR="$HOME/dotfiles"
 export ZSH_CONFIG_DIR="${DOTFILES_DIR}/config/zsh"
 
-export ZSHRC_CORE="${DOTFILES_DIR}/config/zsh/.zshrc_core.sh"
 # zsh
+export ZSHRC_CORE="${DOTFILES_DIR}/config/zsh/.zshrc_core.sh"
 export ALIAS_ZSH="${ZSH_CONFIG_DIR}/alias.zsh"
 
 # p10k
@@ -13,10 +13,7 @@ export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
 export P10K_CACHE="${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
 
 # Sources #
-
-if [[ -r "${P10K_CACHE}" ]]; then
-  source "${P10K_CACHE}"
-fi
+[[ -r "${P10K_CACHE}" ]] && source "${P10K_CACHE}"
 
 if [[ ! -s "${ZSHRC_CORE}" ]]; then
   echo "Cannot find ${ZSHRC_CORE}" >&2
@@ -25,18 +22,15 @@ fi
 source "${ZSHRC_CORE}"
 
 # Load bashrc and antigen safely
-load_bashrc
-antigen_path="$(find_antigen)"
-
-if [[ -z "${antigen_path}" ]]; then
+ANTIGEN_PATH="$(find_antigen)"
+if [[ -z "${ANTIGEN_PATH}" ]]; then
   echo "Cannot find antigen" >&2
   return 1
 fi
-source "${antigen_path}"
+source "${ANTIGEN_PATH}"
 
-if [[ -s "${P10K_CONFIG}" ]]; then
-  source "${P10K_CONFIG}"
-fi
+load_bashrc
+[[ -s ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
 
 # oh-my-zsh config #
 
@@ -62,6 +56,7 @@ antigen bundle encode64
 antigen bundle extract
 antigen bundle fzf
 antigen bundle gh
+antigen bundle git
 antigen bundle gitfast
 antigen bundle httpie
 antigen bundle iterm2

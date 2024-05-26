@@ -7,13 +7,12 @@ EDITOR = 'nvim'
 GIT_SSH = 'ssh'
 PERL_LOCAL_LIB_ROOT = '{{env.HOME}}/.local/perl'
 PIP_REQUIRE_VIRTUALENV = 'true'
-PYTHONBREAKPOINT = 'ipdb.set_trace'
 RIPGREP_CONFIG_PATH = '{{env.HOME}}/dotfiles/config/rg/ripgreprc'
+# python build settings
 PYTHON_CFLAGS = '-march=native -mtune=native'
 PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
 
 [tools]
-
 # tools
 actionlint = 'latest'
 argocd = 'latest'
@@ -66,67 +65,10 @@ teleport-community = "12.4.34"
 yamlfmt = 'latest'
 yq = 'latest'
 
-# npm tools
-"npm:@astrojs/language-server" = "latest"
-"npm:@biomejs/biome" = "latest"
-"npm:bash-language-server" = "latest"
-"npm:cloc" = "latest"
-"npm:cspell" = "latest"
-"npm:dockerfile-language-server-nodejs" = "latest"
-"npm:eslint" = "latest"
-"npm:eslint_d" = "latest"
-"npm:fixjson" = "latest"
-"npm:graphql" = "latest"
-"npm:graphql-language-service-cli" = "latest"
-"npm:markdownlint-cli" = "latest"
-"npm:opencollective" = "latest"
-"npm:patch-package" = "latest"
-"npm:pnpm" = "latest"
-"npm:prettier" = "latest"
-"npm:pyright" = "latest"
-"npm:stylelint" = "latest"
-"npm:tree-sitter-cli" = "latest"
-"npm:ts-server" = "latest"
-"npm:typescript" = "latest"
-"npm:typescript-language-server" = "latest"
-"npm:vscode-langservers-extracted" = "latest"
-"npm:yaml-language-server" = "latest"
-
-# pipx tools
-"pipx:basedpyright" = "latest"
-"pipx:black" = "latest"
-"pipx:codespell" = "latest"
-"pipx:djlint" = "latest"
-"pipx:flake8" = "latest"
-"pipx:ipdb" = "latest"
-"pipx:ipython" = "latest"
-"pipx:isort" = "latest"
-"pipx:mypy" = "latest"
-"pipx:pdm" = "latest"
-"pipx:pipx" = "latest"
-"pipx:poetry" = "latest"
-"pipx:ruff" = "latest"
-"pipx:ruff-lsp" = "latest"
-"pipx:tox" = "latest"
-"pipx:uv" = "latest"
-"pipx:yamlfix" = "latest"
-"pipx:yamllint" = "latest"
-
-# rust tools
-"cargo:choose" = "latest"
-"cargo:sd" = "latest"
-"cargo:gctx" = "latest"
-
-# golang libs
-"go:github.com/ipinfo/cli/ipinfo" = "latest"
-"go:github.com/cheat/cheat/cmd/cheat" = "latest"
-"go:github.com/sachaos/tcpterm" = "latest"
-"go:golang.stackrox.io/kube-linter/cmd/kube-linter" = "latest"
 
 # langs
 deno = 'latest'
-rust = 'latest'
-node = ["latest", "20", "18", "16"]
 go = ["latest", "1.20", "1.19", "1.18"]
-python = ["3.12", "3.11"]
-java = ["adoptopenjdk-11.0.21+9"]
+node = ["latest", "20", "18", "16"]
+python = ['latest', 'sub-0.1:latest', 'sub-0.2:latest', 'sub-0.3:latest', 'sub-0.4:latest']
+rust = 'latest'

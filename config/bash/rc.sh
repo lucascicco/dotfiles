@@ -45,6 +45,12 @@ export LANG="en_US.UTF-8"
 export MISE_USE_TOML=1
 export MISE_EXPERIMENTAL=1
 
+# tf
+TERRAGRUNT_TFPATH="$(mise which tofu)"
+export TERRAGRUNT_TFPATH
+
+# Sources #
+
 # gpg
 GPG_TTY=$(tty)
 export GPG_TTY

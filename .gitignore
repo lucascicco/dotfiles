@@ -1,4 +1,4 @@
 lvim/lazy-lock.json
 lvim/spell/*
-!lvim/spell/.done
+!lvim/spell/.downloaded
 config/git/gitconfig

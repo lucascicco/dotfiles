@@ -42,11 +42,10 @@ readonly -a SYMLINKS=(
   "$DOTFILES_CONFIG_DIR/git/gitignore $HOME/.gitignore"
 
   "$DOTFILES_CONFIG_DIR/mise/config.toml $HOME/.config/mise/config.toml"
-  "$DOTFILES_CONFIG_DIR/mise/node-packages ${HOME}/.default-nodejs-packages"
   "$DOTFILES_CONFIG_DIR/mise/rust-packages $HOME/.default-cargo-crates"
   "$DOTFILES_CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
 
-  "$NVIM_SOURCE_DIR} ${HOME}/.config/nvim"
+  "$NVIM_SOURCE_DIR ${HOME}/.config/nvim"
 
   "$DOTFILES_CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
   "$DOTFILES_CONFIG_DIR/vim/vimrc $HOME/.vimrc"
