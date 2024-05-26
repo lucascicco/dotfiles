@@ -10,31 +10,32 @@ else
 fi
 
 readonly NVIM_APP_IMAGE_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
+readonly NVIM_BIN_PATH="${BIN_DIR}/nvim"
 
 APT_PACKAGES="$(get_packages "${PACKAGES_DIR}" apt)"
 readonly APT_PACKAGES
+readonly APT_EXTRA_OPTIONS="-t unstable"
 
 # Libs
 function _packages {
   task "APT" "installing packages"
 
-  local -r extra_opts="-t unstable -y"
-
   sudo apt update --list-cleanup
   sudo apt dist-upgrade --purge
   # shellcheck disable=2086
-  sudo apt dist-upgrade --purge ${extra_opts}
+  sudo apt dist-upgrade --purge ${APT_EXTRA_OPTIONS}
   # shellcheck disable=2086
-  sudo apt build-dep python3 ${extra_opts}
+  sudo apt build-dep python3 ${APT_EXTRA_OPTIONS}
   # shellcheck disable=2086
-  sudo apt install --purge "${APT_PACKAGES[@]}" ${extra_opts}
+  sudo apt install --purge ${APT_EXTRA_OPTIONS} ${APT_PACKAGES}
   sudo apt autoremove --purge
   sudo apt clean
 }
 
 function _neovim {
   task "Neovim" "installing neovim"
-  download_executable "${BIN_DIR}/nvim" "$NVIM_APP_IMAGE_URL"
+
+  download_executable "${NVIM_BIN_PATH}" "$NVIM_APP_IMAGE_URL"
 }
 
 function _ {
