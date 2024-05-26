@@ -83,8 +83,8 @@ antigen bundle popstas/zsh-command-time
 # theme
 antigen theme romkatv/powerlevel10k
 antigen apply
-# aliases
 
+# aliases
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
 alias k=${KUBE_CMD}
 [[ -s ${ALIAS_ZSH} ]] && source ${ALIAS_ZSH}

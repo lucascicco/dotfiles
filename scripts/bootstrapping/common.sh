@@ -21,7 +21,6 @@ readonly LOCAL_BUILD_DIR="${HOME}/.local_build"
 
 # Neovim
 readonly NVIM_SOURCE_DIR="${DOTFILES_DIR}/nvim"
-
 readonly NVIM_SPELL_URL="ftp://ftp.vim.org/pub/vim/runtime/spell"
 readonly NVIM_SPELL_DIR="${NVIM_SOURCE_DIR}/spell"
 readonly DOWNLOADED_SPELL_FILE="${NVIM_SPELL_DIR}/.downloaded"
@@ -34,6 +33,13 @@ readonly MISE_BINARY
 # ZSH
 readonly ZSH_SITE_FUNCTIONS_DIR="${HOME}/.local/share/zsh/site-functions"
 readonly ANTIGEN_SCRIPT_PATH="${HOME}/antigen.zsh"
+
+# Fonts
+readonly NERD_FONTS_REPO="https://github.com/ryanoasis/nerd-fonts/blob/master"
+readonly NERD_FONTS_PATCHED_FONTS="${NERD_FONTS_REPO}/patched-fonts"
+readonly MICROSOFT_VSCODE_FONTS_REPO="https://github.com/microsoft/vscode-codicons/blob/main"
+FONTS_DIR="$(get_fonts_directory)"
+readonly FONTS_DIR
 
 # Symlinks
 readonly -a SYMLINKS=(
@@ -58,6 +64,7 @@ readonly -a CORE_DIRS=(
   "${LOCAL_BUILD_DIR}"
   "${MISE_CONFIG_DIR}"
   "${ZSH_SITE_FUNCTIONS_DIR}"
+  "${FONTS_DIR}"
 )
 
 MACHINE_OS="$(uname -s)"
@@ -85,35 +92,33 @@ function _symlinks {
 function _mise {
   task "Mise" "Installing mise"
 
-  local -r mise_binary="${MISE_BINARY}"
-
   if [ "${MACHINE_OS}" = "Linux" ]; then
-    if [ ! -f "${mise_binary}" ]; then
+    if [ ! -f "${MISE_BINARY}" ]; then
       curl https://mise.run | sh
     fi
   fi
 
-  eval "$("$mise_binary" activate bash)"
+  eval "$("$MISE_BINARY" activate bash)"
 
   local -r today=$(date +%Y-%m-%d)
   local -r marker_file="${HOME}/.cache/mise-last-cache-clear"
   local -r last_run_date=$(cat "$marker_file")
   if [ ! -e "$marker_file" ] || [ "$last_run_date" != "$today" ]; then
-    "${mise_binary}" cache clear
+    "${MISE_BINARY}" cache clear
     echo "$today" >"$marker_file"
   fi
 
   if [ "${MACHINE_OS}" = "Linux" ]; then
-    "${mise_binary}" self-update || true
+    "${MISE_BINARY}" self-update || true
   fi
 
-  "$mise_binary" plugins update -y || true
-  "$mise_binary" install -y
-  "$mise_binary" upgrade -y
-  "$mise_binary" prune -y
+  "$MISE_BINARY" plugins update -y || true
+  "$MISE_BINARY" install -y
+  "$MISE_BINARY" upgrade -y
+  "$MISE_BINARY" prune -y
 
   mkdir -p "${HOME}/.local/share/zsh/site-functions"
-  "$mise_binary" complete -s zsh >"${ZSH_SITE_FUNCTIONS_DIR}/_mise"
+  "$MISE_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS_DIR}/_mise"
 }
 
 function _mise_reshim {
@@ -189,30 +194,19 @@ function _neovim_spell_check {
 function _fonts {
   task "Fonts" "Downloading fonts"
 
-  local fonts_dir="${HOME}/.local/share/fonts"
-  if [ "${MACHINE_OS}" == "Darwin" ]; then
-    fonts_dir="${HOME}/Library/Fonts"
-  fi
-
-  [[ -d "${fonts_dir}" ]] || mkdir -p "${fonts_dir}"
-
-  local -r nerd_fonts_repo="https://github.com/ryanoasis/nerd-fonts/blob/master"
-  local -r nerd_fonts_patched_fonts="${nerd_fonts_repo}/patched-fonts"
-  local -r microsoft_vscode_fonts_repo="https://github.com/microsoft/vscode-codicons/blob/main"
-
-  download_file "${fonts_dir}/codicon.ttf" "${microsoft_vscode_fonts_repo}/dist/codicon.ttf?raw=true"
+  download_file "${FONTS_DIR}/codicon.ttf" "${MICROSOFT_VSCODE_FONTS_REPO}/dist/codicon.ttf?raw=true"
 
   download_file \
-    "${fonts_dir}/Hack Regular Nerd Font Complete.ttf" \
-    "${nerd_fonts_patched_fonts}/Hack/Regular/HackNerdFont-Regular.ttf?raw=true"
+    "${FONTS_DIR}/Hack Regular Nerd Font Complete.ttf" \
+    "${NERD_FONTS_PATCHED_FONTS}/Hack/Regular/HackNerdFont-Regular.ttf?raw=true"
 
   download_file \
-    "${fonts_dir}/Inconsolata Nerd Font Complete.otf" \
-    "${nerd_fonts_patched_fonts}/Inconsolata/Regular/InconsolataNerdFont-Regular.ttf?raw=true"
+    "${FONTS_DIR}/Inconsolata Nerd Font Complete.otf" \
+    "${NERD_FONTS_PATCHED_FONTS}/Inconsolata/Regular/InconsolataNerdFont-Regular.ttf?raw=true"
 
-  download_file \
-    "${fonts_dir}/Fira Code Regular Nerd Font Complete.ttf" \
-    "${nerd_fonts_patched_fonts}/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf?raw=true"
+  "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
+    download_file \
+    "${NERD_FONTS_PATCHED_FONTS}/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf?raw=true"
 
   if [ "${MACHINE_OS}" == "Linux" ]; then
     fc-cache -f -v

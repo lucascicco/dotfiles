@@ -206,6 +206,22 @@ function get_mise_binary_path() {
   echo "$mise_binary"
 }
 
+function get_fonts_directory() {
+  local -r os="$(uname)"
+  local fonts_dir
+
+  if [ "${os}" = "Darwin" ]; then
+    fonts_dir="${HOME}/Library/Fonts"
+  elif [ "${os}" = "Linux" ]; then
+    fonts_dir="${HOME}/.local/share/fonts"
+  else
+    fatal "Unsupported OS: ${os}"
+    return 1
+  fi
+
+  echo "$fonts_dir"
+}
+
 function get_packages() {
   local -r packages_dir="${1}"
   local -r packages_file="${2}"
@@ -216,7 +232,8 @@ function get_packages() {
     return 1
   fi
 
-  echo "$(tr '\n' ' ' <"$package_file_path")"
+  local -r package_list=$(tr '\n' ' ' <"$package_file_path")
+  echo "$package_list"
 }
 
 function recursive_load_scripts() {
