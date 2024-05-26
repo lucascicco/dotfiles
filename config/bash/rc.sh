@@ -84,8 +84,8 @@ bootstrap() {
 
   echo "[BOOTSTRAP] Bootstrap file: $bootstrap_file"
 
-  git -C "$DOTFILES_DIR" pull origin main
-  bash "$bootstrap_file" "${@}"
+  git -C "$DOTFILES_DIR" pull origin main &&
+    bash "$bootstrap_file" "${@}"
 }
 
 switch_git_config() {
