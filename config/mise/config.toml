@@ -3,7 +3,7 @@ experimental = true
 
 [env]
 _.path = ["~/.local/bin", "~/bin"]
-EDITOR = 'lvim'
+EDITOR = 'nvim'
 GIT_SSH = 'ssh'
 PERL_LOCAL_LIB_ROOT = '{{env.HOME}}/.local/perl'
 PIP_REQUIRE_VIRTUALENV = 'true'
@@ -13,14 +13,6 @@ PYTHON_CFLAGS = '-march=native -mtune=native'
 PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
 
 [tools]
-
-# langs
-deno = 'latest'
-rust = 'latest'
-node = ["latest", "20", "18", "16"]
-go = ["latest", "1.20", "1.19", "1.18"]
-python = ["3.12", "3.11"]
-java = ["adoptopenjdk-11.0.21+9"]
 
 # tools
 actionlint = 'latest'
@@ -76,6 +68,7 @@ yq = 'latest'
 
 # npm tools
 "npm:@astrojs/language-server" = "latest"
+"npm:@biomejs/biome" = "latest"
 "npm:bash-language-server" = "latest"
 "npm:cloc" = "latest"
 "npm:cspell" = "latest"
@@ -100,6 +93,7 @@ yq = 'latest'
 "npm:yaml-language-server" = "latest"
 
 # pipx tools
+"pipx:basedpyright" = "latest"
 "pipx:black" = "latest"
 "pipx:codespell" = "latest"
 "pipx:djlint" = "latest"
@@ -114,6 +108,7 @@ yq = 'latest'
 "pipx:ruff" = "latest"
 "pipx:ruff-lsp" = "latest"
 "pipx:tox" = "latest"
+"pipx:uv" = "latest"
 "pipx:yamlfix" = "latest"
 "pipx:yamllint" = "latest"
 
@@ -121,3 +116,17 @@ yq = 'latest'
 "cargo:choose" = "latest"
 "cargo:sd" = "latest"
 "cargo:gctx" = "latest"
+
+# golang libs
+"go:github.com/ipinfo/cli/ipinfo" = "latest"
+"go:github.com/cheat/cheat/cmd/cheat" = "latest"
+"go:github.com/sachaos/tcpterm" = "latest"
+"go:golang.stackrox.io/kube-linter/cmd/kube-linter" = "latest"
+
+# langs
+deno = 'latest'
+rust = 'latest'
+node = ["latest", "20", "18", "16"]
+go = ["latest", "1.20", "1.19", "1.18"]
+python = ["3.12", "3.11"]
+java = ["adoptopenjdk-11.0.21+9"]

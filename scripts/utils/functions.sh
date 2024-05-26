@@ -11,7 +11,10 @@ function info {
 }
 
 function task {
-  echo -e "[TASK] ${1}"
+  local -r task_name=$(echo "${1}" | tr '[:lower:]' '[:upper:]')
+  local -r task_description="${2}"
+
+  echo -e "[TASK] ${task_name} - ${task_description}"
 }
 
 function warning {
@@ -41,19 +44,19 @@ function git_clone_or_pull {
 
 function download_file {
   set +x
-  dest=${1}
-  url=${2}
+  local -r dest=${1}
+  local -r url=${2}
   set -x
 
-  tmp=$(mktemp)
+  local -r tmp=$(mktemp)
   curl -4 -sSL -o "${tmp}" "${url}"
 
   if [ -f "${dest}" ]; then
-    OLD_MD5=$(md5sum "${dest}" | cut -d ' ' -f 1)
-    NEW_MD5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
-    if [ "${OLD_MD5}" != "${NEW_MD5}" ]; then
-      TMP2=$(mktemp)
-      mv "${dest}" "${TMP2}"
+    local -r old_md5=$(md5sum "${dest}" | cut -d ' ' -f 1)
+    local -r new_md5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
+    if [ "${old_md5}" != "${new_md5}" ]; then
+      local -r tmp2=$(mktemp)
+      mv "${dest}" "${tmp2}"
     fi
   fi
 
@@ -93,7 +96,8 @@ function create_symlink {
   fi
 
   local -r os="$(uname)"
-  local dest_symlink_path="$(readlink "$dest_file")"
+  local dest_symlink_path
+  dest_symlink_path="$(readlink "$dest_file")"
   if [ "$os" == "Linux" ]; then
     dest_symlink_path="$(readlink -f "$dest_file")"
   fi
@@ -112,6 +116,7 @@ function dynamic_batch_source {
       debug "Skipping $s. It does not exist."
       continue
     fi
+    # shellcheck disable=1090
     source "$s"
   done
 }
@@ -131,14 +136,18 @@ function _generate_dynamic_path {
 function load_dynamic_paths() {
   local -ra paths=("$@")
   local -r dynamic_paths=$(_generate_dynamic_path "${paths[@]}")
+
   if [ -n "$dynamic_paths" ]; then
     PATH="$PATH$dynamic_paths"
   fi
 }
 
 function reload_zsh {
-  zshrc_path="$HOME/.zshrc"
-  [[ -s "$zshrc_path" ]] && source "${zshrc_path}"
+  local -r zshrc_path="$HOME/.zshrc"
+  if [ -s "$zshrc_path" ]; then
+    # shellcheck disable=1090
+    source "$zshrc_path"
+  fi
 }
 
 function switch_git_user() {
@@ -151,14 +160,14 @@ function switch_git_user() {
   fi
 
   local -r target_config=$(
-    ls -t "$git_users_dir" | fzf --preview "cat $git_users_dir/{}"
+    find "$git_users_dir" -type f -name "*.cfg" | fzf --preview "cat {}"
   )
   if [ -z "$target_config" ]; then
     fatal "No file selected"
     return 1
   fi
 
-  local -r target_config_file="$git_users_dir/$target_config"
+  local -r target_config_file="$target_config"
   if [ ! -f "$target_config_file" ]; then
     fatal "The file $target_config_file does not exist"
     return 1
@@ -178,5 +187,45 @@ function switch_git_user() {
   if [ -n "$git_signingkey" ]; then
     info "Git signingkey: $git_signingkey"
     info "GPG sign is enabled: $gpgsign_enabled"
+  fi
+}
+
+function get_mise_binary_path() {
+  local -r os="$(uname)"
+  local mise_binary
+
+  if [ "${os}" = "Darwin" ]; then
+    mise_binary="/opt/homebrew/bin/mise"
+  elif [ "${os}" = "Linux" ]; then
+    mise_binary="${HOME}/.local/bin/mise"
+  else
+    fatal "Unsupported OS: ${os}"
+    return 1
+  fi
+
+  echo "$mise_binary"
+}
+
+function get_packages() {
+  local -r packages_dir="${1}"
+  local -r packages_file="${2}"
+
+  local -r package_file_path="${packages_dir}/${packages_file}"
+  if [ ! -f "$package_file_path" ]; then
+    fatal "The file $package_file_path does not exist"
+    return 1
+  fi
+
+  echo "$(tr '\n' ' ' <"$package_file_path")"
+}
+
+function recursive_load_scripts() {
+  local -r root_scripts_dir="${1}"
+
+  if [ -d "$root_scripts_dir" ]; then
+    find "$root_scripts_dir" -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
+      # shellcheck disable=1090
+      source "$file"
+    done
   fi
 }

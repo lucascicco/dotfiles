@@ -1,20 +1,36 @@
 #!/bin/bash
 
-readonly GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
+export DOTFILES_DIR="$HOME/dotfiles"
+export RC_SCRIPTS_DIR="$DOTFILES_DIR/config/bash"
 
-if [ -s "${GET_OS_SCRIPT}" ]; then
-  source "${GET_OS_SCRIPT}"
-fi
+readonly -a ANTIGEN_PATHS=(
+  "${HOME}/antigen.zsh"
+  "${HOME}/.antigen.zsh"
+  "/opt/homebrew/share/antigen/antigen.zsh"
+  "/usr/share/zsh-antigen/antigen.zsh"
+)
 
-# Load bashrc default settings based on the current OS
 function load_bashrc() {
-  local -r current_os="$(get_current_os_in_lowercase)"
-  local -r settings_file="$DOTFILES_DIR/config/bash/rc_$current_os.sh"
-  if [ ! -s "$settings_file" ]; then
-    echo -e "ERROR: $settings_file not found"
+  local -r current_os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  local -r rc_file="$RC_SCRIPTS_DIR/rc_${current_os}.sh"
+
+  if [ ! -s "$rc_file" ]; then
+    echo -e "[RC] ERROR: $rc_file not found" >&2
     return 1
   fi
-  source "$settings_file"
+
+  # shellcheck disable=1090
+  source "$rc_file"
+}
+
+function find_antigen() {
+  for antigen_path in "${ANTIGEN_PATHS[@]}"; do
+    if [ -s "$antigen_path" ]; then
+      echo "$antigen_path"
+      return 0
+    fi
+  done
+  return 1
 }
 
 function kube-toggle() {

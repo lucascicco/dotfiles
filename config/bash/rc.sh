@@ -1,68 +1,87 @@
 #!/bin/bash
 
-# Constants
+# CONSTANTS #
+
 export DOTFILES_DIR="$HOME/dotfiles"
-export DOTFILES_SCRIPTS_DIR="$DOTFILES_DIR/scripts"
+export BOOTSTRAP_SCRIPTS_DIR="$DOTFILES_DIR/scripts/bootstrapping"
+readonly FUNCTIONS_SCRIPT="${DOTFILES_DIR}/scripts/utils/functions.sh"
+if [ -s "${FUNCTIONS_SCRIPT}" ]; then
+  # shellcheck source=scripts/utils/functions.sh
+  source "${FUNCTIONS_SCRIPT}"
+else
+  echo "Error: ${FUNCTIONS_SCRIPT} not found" >&2
+  exit 1
+fi
 
-readonly CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
+# scripts
 readonly SECRET_ENV_SCRIPT="$HOME/.secret_env.sh"
-readonly FUNCTIONS_SCRIPT="$DOTFILES_SCRIPTS_DIR/utils/functions.sh"
+readonly CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
 
-export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
-export GITCONFIG_FILE="$DOTFILES_DIR/config/git/gitconfig"
+# paths
+readonly -a SOURCE_SCRIPT_PATHS=(
+  "$SECRET_ENV_SCRIPT"
+)
+readonly -a BASE_PATHS=(
+  "$HOME/.local/bin"
+  "$HOME/bin"
+)
 
+# EXPORTS #
+
+# git
 export GIT_SSH=ssh
+export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
+export GIT_CONFIG_FILE="$DOTFILES_DIR/config/git/gitconfig"
+
+# paths
 export PROJECT_HOME=$HOME/projects
 export GOBIN=$HOME/.local/bin
-export EDITOR="lvim"
+
+# os
+export EDITOR="nvim"
 export LANG="en_US.UTF-8"
+
+# mise
 export MISE_USE_TOML=1
 export MISE_EXPERIMENTAL=1
-export GPG_TTY=$(tty)
 
-MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf/latest/"
+# gpg
+GPG_TTY=$(tty)
+export GPG_TTY
+
+# fzf
+readonly MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf/latest/"
 if [ -d "$MISE_FZF_BASE_DIR" ]; then
   # If the fzf installed with mise exists, we use it.
   export FZF_BASE="$MISE_FZF_BASE_DIR"
 fi
 
-_load_source_files() {
-  local -ra source_files=("$@")
-  for file in "${source_files[@]}"; do
-    if [ -s "$file" ]; then
-      source "$file"
-    fi
-  done
-}
-
-_load_corp_extra_scripts() {
-  if [ -d "$CORP_EXTRA_SCRIPTS_DIR" ]; then
-    find "$CORP_EXTRA_SCRIPTS_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d '' file; do
-      source "$file"
-    done
-  fi
-}
-
-_load_source_files "$SECRET_ENV_SCRIPT" "$FUNCTIONS_SCRIPT"
-_load_corp_extra_scripts
-
-# Functions
-function bootstrap() { (
-  set -e
-  cd "$DOTFILES_DIR" || return
-  git pull origin main || true
-  bash "$DOTFILES_DIR/bootstrap.sh" "${@}"
-); }
-
-function switch_git_config() {
-  switch_git_user "$GIT_USERS_DIR" "$GITCONFIG_FILE"
-}
-
-# Paths
-BASE_PATHS=(
-  "$HOME/.cargo/bin"
-  "$HOME/.local/bin"
-  "$HOME/bin"
-)
 load_dynamic_paths "${BASE_PATHS[@]}"
+
 export PATH
+
+# SOURCES #
+
+dynamic_batch_source "${SOURCE_SCRIPT_PATHS[@]}"
+recursive_load_scripts "$CORP_EXTRA_SCRIPTS_DIR"
+
+# FUNCTIONS #
+
+bootstrap() {
+  local -r current_os="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  local -r bootstrap_file="${BOOTSTRAP_SCRIPTS_DIR}/${current_os}.sh"
+
+  if [ ! -s "$bootstrap_file" ]; then
+    echo "[BOOTSTRAP] Error: $bootstrap_file not found" >&2
+    return 1
+  fi
+
+  echo "[BOOTSTRAP] Bootstrap file: $bootstrap_file"
+
+  git -C "$DOTFILES_DIR" pull origin main
+  bash "$bootstrap_file" "${@}"
+}
+
+switch_git_config() {
+  switch_git_user "$GIT_USERS_DIR" "$GIT_CONFIG_FILE"
+}

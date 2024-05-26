@@ -1,73 +1,82 @@
-# Constants
-DOTFILES_DIR="$HOME/dotfiles"
-GET_OS_SCRIPT="$DOTFILES_DIR/scripts/utils/get_os.sh"
-MISE_BIN="${HOME}/.local/bin/mise"
-P10K_CONFIG="$DOTFILES_DIR/config/zsh/p10k.zsh"
-ANTIGEN_PATHS=(
-  "$HOME/antigen.zsh"
-  "$HOME/.antigen.zsh"
-)
-ZSHRC_CORE="$DOTFILES_DIR/config/zsh/.zshrc_core.sh"
-ITERM2_SHELL_INTEGRATION="$HOME/.iterm2_shell_integration.zsh"
-KUBECTL_ALIASES="$DOTFILES_DIR/config/k8s/k8s.zsh"
+# Constants #
 
-# Functions
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+export DOTFILES_DIR="$HOME/dotfiles"
+export ZSH_CONFIG_DIR="${DOTFILES_DIR}/config/zsh"
+
+export ZSHRC_CORE="${DOTFILES_DIR}/config/zsh/.zshrc_core.sh"
+# zsh
+export ALIAS_ZSH="${ZSH_CONFIG_DIR}/alias.zsh"
+
+# p10k
+export P10K_CONFIG="${DOTFILES_DIR}/config/zsh/p10k.zsh"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export P10K_CACHE="${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
+
+# Sources #
+
+if [[ -r "${P10K_CACHE}" ]]; then
+  source "${P10K_CACHE}"
 fi
 
-[[ -f $ZSHRC_CORE ]] && source $ZSHRC_CORE
+if [[ ! -s "${ZSHRC_CORE}" ]]; then
+  echo "Cannot find ${ZSHRC_CORE}" >&2
+  return 1
+fi
+source "${ZSHRC_CORE}"
 
 # Load bashrc and antigen safely
 load_bashrc
-for ANTIGEN_PATH in "${ANTIGEN_PATHS[@]}"; do
-  if [ -f "$ANTIGEN_PATH" ]; then
-    ant_path="$ANTIGEN_PATH"
-    break
-  fi
-done
-if [[ -z $ant_path ]]; then
-  echo "Error: Could not find antigen in any of: ${ANTIGEN_PATHS[*]}"
+antigen_path="$(find_antigen)"
+
+if [[ -z "${antigen_path}" ]]; then
+  echo "Cannot find antigen" >&2
   return 1
 fi
-source $ant_path
+source "${antigen_path}"
 
+if [[ -s "${P10K_CONFIG}" ]]; then
+  source "${P10K_CONFIG}"
+fi
 
-[[ -f "${ITERM2_SHELL_INTEGRATION}" ]] && source "${ITERM2_SHELL_INTEGRATION}"
-[[ -f ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
-[[ -f "${MISE_BIN}"  ]] && eval "$(${MISE_BIN} activate -s zsh)"
+# oh-my-zsh config #
 
-# oh-my-zsh config
 ZSH_WAKATIME_PROJECT_DETECTION="true"
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
 DISABLE_AUTO_UPDATE="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"
+DISABLE_VENV_CD=1
+
+HISTFILE=$HOME/.zsh_history
 HISTSIZE=1000000000
 SAVEHIST=$HISTSIZE
-DISABLE_VENV_CD=1
 
 antigen use oh-my-zsh
 
 antigen bundle colored-man-pages
 antigen bundle colorize
 antigen bundle common-aliases
+antigen bundle docker
 antigen bundle encode64
 antigen bundle extract
 antigen bundle fzf
 antigen bundle gh
 antigen bundle gitfast
-antigen bundle git
+antigen bundle httpie
+antigen bundle iterm2
+antigen bundle kubectl
 antigen bundle kubectx
+antigen bundle mise
 antigen bundle npm
 antigen bundle pip
+antigen bundle poetry
 antigen bundle python
 antigen bundle redis-cli
 antigen bundle rust
 antigen bundle screen
-antigen bundle systemd
 antigen bundle yarn
+antigen bundle systemd
 
 # github
 antigen bundle zdharma-continuum/fast-syntax-highlighting
@@ -79,24 +88,10 @@ antigen bundle popstas/zsh-command-time
 # theme
 antigen theme romkatv/powerlevel10k
 antigen apply
-
-# alias
-alias c="clear"
-alias tf="terraform "
-alias lg="lazygit"
-alias wk="jump wk"
-alias lf="jump lf"
-alias "?"="gh copilot suggest -t shell"
-alias tg="terragrunt"
-
-autoload -Uz compinit && compinit
+# aliases
 
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
-source <($(mise which kubectl) completion zsh)
-[[ -f "$KUBECTL_ALIASES" ]] && source "$KUBECTL_ALIASES"
 alias k=${KUBE_CMD}
-if [[ $KUBE_CMD == "kubecolor" ]]; then
-  complete -o nospace -C "$HOME/.local/bin/kubecolor kubecolor"
-fi
+[[ -s ${ALIAS_ZSH} ]] && source ${ALIAS_ZSH}
 
-export TERRAGRUNT_TFPATH="$(mise which tofu)"
+autoload -U compinit && compinit
