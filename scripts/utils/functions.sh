@@ -1,9 +1,7 @@
 #!/bin/bash
 
 function debug {
-  set +x
   echo "~ ${1} ~"
-  set -x
 }
 
 function info {
@@ -69,6 +67,11 @@ function download_executable {
   local -r url=${2}
   set -x
 
+  if [ -z "${dest}" ] || [ -z "${url}" ]; then
+    fatal "dest and url must be provided"
+    return 1
+  fi
+
   local -r tmp=$(mktemp)
   curl -sSL -o "${tmp}" "${url}"
   chmod +x "${tmp}"
@@ -90,6 +93,11 @@ function create_symlink {
   local -r source_file=${1}
   local -r dest_file=${2}
 
+  if [ -z "${source_file}" ] || [ -z "${dest_file}" ]; then
+    fatal "source_file and dest_file must be provided"
+    return 1
+  fi
+
   if [ ! -f "$source_file" ] && [ ! -d "$source_file" ]; then
     warning "${source_file} is missing"
     return 1
@@ -106,6 +114,7 @@ function create_symlink {
     debug "updating symlink ${dest_file} -> ${source_file}"
     ln -f -s "$source_file" "$dest_file"
   fi
+
   set -x
 }
 

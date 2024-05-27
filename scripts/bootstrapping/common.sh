@@ -71,17 +71,18 @@ MACHINE_OS="$(uname -s)"
 readonly MACHINE_OS
 
 function _create_core_dirs {
-  task "Core directories" "Creating core directories"
+  task "Core directories" "creating core directories"
 
   for dir in "${CORE_DIRS[@]}"; do
     if [ ! -d "${dir}" ]; then
+      info "Creating directory: ${dir}"
       mkdir -p "${dir}"
     fi
   done
 }
 
 function _symlinks {
-  task "Symlinks" "Creating symlinks"
+  task "Symlinks" "creating symlinks"
 
   for sfile in "${SYMLINKS[@]}"; do
     # shellcheck disable=2086
@@ -90,7 +91,7 @@ function _symlinks {
 }
 
 function _mise {
-  task "Mise" "Installing mise"
+  task "Mise" "installing mise"
 
   if [ "${MACHINE_OS}" = "Linux" ]; then
     if [ ! -f "${MISE_BINARY}" ]; then
@@ -128,7 +129,7 @@ function _mise_reshim {
 }
 
 function _gh {
-  task "Git Hub" "Installing gh extensions"
+  task "Git Hub" "installing gh extensions"
 
   gh extension install github/gh-copilot
   gh extension upgrade --all
@@ -151,7 +152,7 @@ function _zsh {
 }
 
 function _python_libs {
-  task "Python" "Installing python libraries"
+  task "Python" "installing python libraries"
 
   if [ ! -f "${HOME}/.debugpy/bin/python3" ]; then
     python3 -m venv "${HOME}/.debugpy"
@@ -162,11 +163,10 @@ function _python_libs {
 }
 
 function _neovim_spell_check {
-  task "Neovim" "Downloading spell check files"
+  task "Neovim" "downloading spell check files"
 
   _download_spell_files() {
     local -r spell_lang="${1}"
-
     local -r spell_dir="${2:-$NVIM_SPELL_DIR}"
     local spell_url="${3:-$NVIM_SPELL_URL}"
 
@@ -178,11 +178,15 @@ function _neovim_spell_check {
       mkdir -p "${spell_dir}"
     fi
 
+    set -x
     wget -N -nv "${spell_url}" --directory-prefix="${spell_dir}" --timeout=5
+    set +x
     return $?
   }
 
   if [ ! -f "${DOWNLOADED_SPELL_FILE}" ]; then
+    info "Downloaded spell files not found, downloading..."
+
     (
       _download_spell_files en || exit 1
       _download_spell_files pt || exit 1
@@ -192,7 +196,11 @@ function _neovim_spell_check {
 }
 
 function _fonts {
-  task "Fonts" "Downloading fonts"
+  task "Fonts" "downloading fonts"
+
+  info "Fonts directory: ${FONTS_DIR}"
+  info "Nerd fonts patched fonts: ${NERD_FONTS_PATCHED_FONTS}"
+  info "Microsoft vscode fonts repo: ${MICROSOFT_VSCODE_FONTS_REPO}"
 
   download_file "${FONTS_DIR}/codicon.ttf" "${MICROSOFT_VSCODE_FONTS_REPO}/dist/codicon.ttf?raw=true"
 
@@ -202,14 +210,14 @@ function _fonts {
 
   download_file \
     "${FONTS_DIR}/Inconsolata Nerd Font Complete.otf" \
-    "${NERD_FONTS_PATCHED_FONTS}/Inconsolata/Regular/InconsolataNerdFont-Regular.ttf?raw=true"
+    "${NERD_FONTS_PATCHED_FONTS}/Inconsolata/InconsolataNerdFont-Regular.ttf?raw=true"
 
-  "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
-    download_file \
+  download_file \
+    "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
     "${NERD_FONTS_PATCHED_FONTS}/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf?raw=true"
 
   if [ "${MACHINE_OS}" == "Linux" ]; then
-    fc-cache -f -v
+    fc-cache -f -v >/dev/null 2>&1
     if [ "$(gsettings get org.gnome.desktop.interface monospace-font-name)" != "'Hack Nerd Font 11'" ]; then
       gsettings set org.gnome.desktop.interface monospace-font-name 'Hack Nerd Font 11'
     fi

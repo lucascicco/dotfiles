@@ -19,7 +19,7 @@ function _packages {
   task "Brew" "installing packages"
 
   if ! command -v brew; then
-    curl -ssL -o- "$BREW_INSTALL_SCRIPT_URL" | bash
+    curl -ssL -o- "${BREW_INSTALL_SCRIPT_URL}" | bash
     reload_zsh
   fi
 
@@ -52,6 +52,4 @@ function _ {
   _mise_reshim "$@"
 }
 
-echo
-set -x
 "_${1}" "$@"

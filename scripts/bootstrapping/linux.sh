@@ -14,20 +14,27 @@ readonly NVIM_BIN_PATH="${BIN_DIR}/nvim"
 
 APT_PACKAGES="$(get_packages "${PACKAGES_DIR}" apt)"
 readonly APT_PACKAGES
-readonly APT_EXTRA_OPTIONS="-t unstable"
+readonly ENABLE_UNSTABLE="${ENABLE_UNSTABLE:-false}"
 
 # Libs
 function _packages {
   task "APT" "installing packages"
 
+  info "APT packages: ${APT_PACKAGES}"
+
+  local apt_extra_options=""
+  if [ "${ENABLE_UNSTABLE}" = "true" ]; then
+    apt_extra_options="-t unstable"
+  fi
+
   sudo apt update --list-cleanup
   sudo apt dist-upgrade --purge
   # shellcheck disable=2086
-  sudo apt dist-upgrade --purge ${APT_EXTRA_OPTIONS}
+  sudo apt dist-upgrade --purge ${apt_extra_options}
   # shellcheck disable=2086
-  sudo apt build-dep python3 ${APT_EXTRA_OPTIONS}
+  sudo apt build-dep python3 ${apt_extra_options}
   # shellcheck disable=2086
-  sudo apt install --purge ${APT_EXTRA_OPTIONS} ${APT_PACKAGES}
+  sudo apt install --purge ${apt_extra_options} ${APT_PACKAGES}
   sudo apt autoremove --purge
   sudo apt clean
 }
@@ -35,7 +42,7 @@ function _packages {
 function _neovim {
   task "Neovim" "installing neovim"
 
-  download_executable "${NVIM_BIN_PATH}" "$NVIM_APP_IMAGE_URL"
+  download_executable "${NVIM_BIN_PATH}" "${NVIM_APP_IMAGE_URL}"
 }
 
 function _ {
@@ -53,6 +60,4 @@ function _ {
   _mise_reshim "$@"
 }
 
-echo
-set -x
 "_${1}" "$@"
