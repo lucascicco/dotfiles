@@ -61,7 +61,7 @@ terraform-docs = 'latest'
 terraform-ls = 'latest'
 terraformer = "latest"
 terragrunt = "0.57.2"
-teleport-community = "12.4.34"
+teleport-community = "15.1.4"
 yamlfmt = 'latest'
 yq = 'latest'
 
