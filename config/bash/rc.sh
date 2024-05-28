@@ -24,6 +24,7 @@ readonly -a SOURCE_SCRIPT_PATHS=(
 readonly -a BASE_PATHS=(
   "$HOME/.local/bin"
   "$HOME/bin"
+  "$HOME/.krew/bin"
 )
 
 # EXPORTS #
