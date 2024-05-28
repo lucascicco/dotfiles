@@ -180,6 +180,25 @@ nvim_lsp.biome.setup({
   on_attach = on_attach,
 })
 
+-- https://github.com/golang/tools/blob/master/gopls
+nvim_lsp.gopls.setup({
+  capabilities = lsp_capabilities(),
+  handlers = handlers,
+  on_attach = on_attach,
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_dir = nvim_lsp.util.root_pattern("go.work", "go.mod"),
+  settings = {
+    gopls = {
+      completeUnimported = true,
+      usePlaceholders = true,
+      analyses = {
+        unusedparams = true,
+      },
+    },
+  },
+})
+
 -- https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli
 nvim_lsp.graphql.setup({
   capabilities = lsp_capabilities(),
@@ -312,7 +331,7 @@ null_ls.setup({
   sources = {
     -- gitrebase code_actions,
     code_actions.gitrebase,
-    -- github actioins
+    -- github actions
     diagnostics.actionlint,
     -- javascript/typescript
     formatting.prettier.with({
@@ -331,6 +350,22 @@ null_ls.setup({
     formatting.stylua.with({
       condition = function(utils)
         return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
+      end,
+    }),
+    -- golang
+    formatting.gofumpt.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
+      end,
+    }),
+    formatting.golines.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
+      end,
+    }),
+    formatting.goimports_reviser.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
       end,
     }),
     -- yaml

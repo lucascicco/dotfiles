@@ -50,6 +50,7 @@ readonly -a SYMLINKS=(
   "$DOTFILES_CONFIG_DIR/mise/config.toml $HOME/.config/mise/config.toml"
   "$DOTFILES_CONFIG_DIR/mise/rust-packages $HOME/.default-cargo-crates"
   "$DOTFILES_CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
+  "$DOTFILES_CONFIG_DIR/mise/golang-packages ${HOME}/.default-go-packages"
 
   "$NVIM_SOURCE_DIR ${HOME}/.config/nvim"
 
