@@ -1,5 +1,3 @@
-require("neodev").setup({})
-
 local nvim_lsp = require("lspconfig")
 local utils = require("utils")
 
@@ -305,6 +303,25 @@ nvim_lsp.lua_ls.setup({
   capabilities = lsp_capabilities(),
   on_attach = on_attach,
   handlers = handlers,
+  on_init = function(client)
+    local path = client.workspace_folders[1].name
+    if vim.uv.fs_stat(path .. "/.luarc.json") or vim.uv.fs_stat(path .. "/.luarc.jsonc") then
+      return
+    end
+
+    client.config.settings.Lua = vim.tbl_deep_extend("force", client.config.settings.Lua, {
+      runtime = {
+        version = "LuaJIT",
+      },
+      workspace = {
+        checkThirdParty = false,
+        library = {
+          utils.get_root_path(),
+          vim.env.VIMRUNTIME,
+        },
+      },
+    })
+  end,
   settings = {
     Lua = {
       completion = {
@@ -338,12 +355,17 @@ null_ls.setup({
       prefer_local = "node_modules/.bin",
       condition = function(utils)
         return not utils.root_has_file({ "biome.json", "biome.jsonc" })
+          and os.getenv("DISABLE_PRETTIER") ~= "1"
       end,
     }),
     -- sh/bash
     formatting.shfmt.with({
       extra_args = function(params)
+        ---@diagnostic disable-next-line: undefined-field
         return { "-i", tostring(vim.opt_local.shiftwidth:get()) }
+      end,
+      condition = function(utils)
+        return os.getenv("DISABLE_SHFMT") ~= "1"
       end,
     }),
     -- lua
@@ -389,6 +411,9 @@ null_ls.setup({
           YAMLFIX_quote_representation = '"',
           YAMLFIX_SEQUENCE_STYLE = "block_style",
         }
+      end,
+      condition = function(utils)
+        return os.getenv("DISABLE_YAMLFIX") ~= "1"
       end,
     }),
     -- markdown

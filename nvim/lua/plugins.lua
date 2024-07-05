@@ -42,10 +42,6 @@ return {
     "neovim/nvim-lspconfig",
     event = "BufReadPost",
     dependencies = {
-      {
-        "folke/neodev.nvim",
-        opts = {},
-      },
       "nvimtools/none-ls.nvim",
       "b0o/schemastore.nvim",
       "SmiteshP/nvim-navic",
@@ -53,6 +49,25 @@ return {
     config = function()
       require("config.lsp")
     end,
+  },
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    init = function()
+      vim.g.lazydev_enabled = true
+    end,
+    opts = {
+      library = {
+        "luvit-meta/library",
+      },
+    },
+    dependencies = {
+      "neovim/nvim-lspconfig",
+    },
+  },
+  {
+    "Bilal2453/luvit-meta",
+    lazy = true,
   },
   {
     "folke/trouble.nvim",
@@ -406,12 +421,6 @@ return {
       },
     },
   },
-  {
-    "stevearc/oil.nvim",
-    opts = {},
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    cmd = "Oil",
-  },
 
   -- AI
   {
@@ -530,14 +539,6 @@ return {
   {
     "nvim-pack/nvim-spectre",
     cmd = "Spectre",
-  },
-  {
-    "Wansmer/treesj",
-    dependencies = { "nvim-treesitter/nvim-treesitter" },
-    keys = { "<leader>sj" },
-    config = function()
-      require("treesj").setup()
-    end,
   },
   {
     "kylechui/nvim-surround",

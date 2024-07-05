@@ -1,3 +1,5 @@
+local M = {}
+
 local function extend(opt, list)
   if opt._info.flaglist then
     local flaglist = {}
@@ -40,6 +42,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.scrolloff = 5
 vim.opt.showtabline = 1
+vim.opt.smoothscroll = true
 
 -- Theme
 vim.opt.termguicolors = true
@@ -69,16 +72,24 @@ vim.opt.tabstop = 4
 
 -- Spell
 vim.opt.spelllang = { "en_us", "pt_br" }
-vim.opt.dictionary = extend(vim.opt.dictionary, {
+for _, dic in ipairs({
   "/usr/share/dict/words",
   "/usr/share/dict/brazilian",
   "/usr/share/dict/american-english",
-})
+}) do
+  if vim.fn.filereadable(dic) == 1 then
+    extend(vim.opt.dictionary, { dic })
+  end
+end
 
 -- Search
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.wildmode = { "list:longest", "full" }
+
+-- Persistent undo
+vim.opt.undofile = true
+vim.opt.undolevels = 10000
 
 -- FT Configs
 local ft_configs = {
@@ -105,25 +116,24 @@ local ft_configs = {
   zsh = { indent = 2 },
 }
 
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "*",
-  callback = function()
-    local config = ft_configs[vim.bo.filetype]
-    if config == nil then
-      return
-    end
+M.setup_ft = function()
+  local config = ft_configs[vim.bo.filetype]
+  if config == nil then
+    return
+  end
 
-    if config.indent ~= nil then
-      vim.opt_local.shiftwidth = config.indent
-      vim.opt_local.softtabstop = config.indent
-    end
+  if config.indent ~= nil then
+    vim.opt_local.shiftwidth = config.indent
+    vim.opt_local.softtabstop = config.indent
+  end
 
-    if config.spell ~= nil then
-      if type(config.spell) == "string" then
-        vim.cmd("syn spell " .. config.spell)
-      else
-        vim.opt_local.spell = config.spell or false
-      end
+  if config.spell ~= nil then
+    if type(config.spell) == "string" then
+      vim.cmd("syn spell " .. config.spell)
+    else
+      vim.opt_local.spell = config.spell or false
     end
-  end,
-})
+  end
+end
+
+return M
