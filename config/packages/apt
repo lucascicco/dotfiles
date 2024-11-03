@@ -12,7 +12,7 @@ cpanminus
 curl
 dnsutils
 docker-compose
-exa
+eza
 flatpak
 fonts-open-sans
 fonts-powerline

@@ -46,6 +46,11 @@ export LANG="en_US.UTF-8"
 export MISE_USE_TOML=1
 export MISE_EXPERIMENTAL=1
 
+export PERL_LOCAL_LIB_ROOT="$HOME/.local/perl"
+export PIP_REQUIRE_VIRTUALENV=true
+export RIPGREP_CONFIG_PATH="$DOTFILES_DIR/config/rg/ripgreprc"
+export PYTHON_CFLAGS="-march=native -mtune=native"
+export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions"
 
 # Sources #
 

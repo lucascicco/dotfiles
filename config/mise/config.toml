@@ -1,16 +1,8 @@
 [settings]
 experimental = true
 
-[env]
-_.path = ["~/.local/bin", "~/bin"]
-EDITOR = 'nvim'
-GIT_SSH = 'ssh'
-PERL_LOCAL_LIB_ROOT = '{{env.HOME}}/.local/perl'
-PIP_REQUIRE_VIRTUALENV = 'true'
-RIPGREP_CONFIG_PATH = '{{env.HOME}}/dotfiles/config/rg/ripgreprc'
-# python build settings
-PYTHON_CFLAGS = '-march=native -mtune=native'
-PYTHON_CONFIGURE_OPTS = '--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions'
+[settings.pipx]
+uvx = true
 
 [tools]
 # tools
@@ -22,7 +14,6 @@ cmctl = 'latest'
 doctl = 'latest'
 duf = 'latest'
 fd = 'latest'
-fzf = 'latest'
 jq = 'latest'
 gcloud = 'latest'
 github-cli = 'latest'
@@ -53,6 +44,7 @@ ripgrep = 'latest'
 stern = 'latest'
 shellcheck = 'latest'
 shfmt = 'latest'
+uv = 'latest'
 stylua = 'latest'
 trivy = 'latest'
 opentofu = "1.7.1"
@@ -111,5 +103,5 @@ yq = 'latest'
 deno = 'latest'
 go = ["latest", "1.20", "1.19", "1.18"]
 node = ["latest", "20", "18", "16"]
-python = ['latest', 'sub-0.1:latest', 'sub-0.2:latest', 'sub-0.3:latest', 'sub-0.4:latest']
+python = ['3.12', '3.11', '3.10', '3.9']
 rust = 'latest'

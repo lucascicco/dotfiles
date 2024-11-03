@@ -20,6 +20,9 @@ local lsp_capabilities = function()
 end
 
 vim.diagnostic.config({
+  jump = {
+    float = true,
+  },
   signs = {
     text = {
       [vim.diagnostic.severity.ERROR] = "",
@@ -165,7 +168,7 @@ nvim_lsp.astro.setup({
 })
 
 -- https://github.com/theia-ide/typescript-language-server
-nvim_lsp.tsserver.setup({
+nvim_lsp.ts_ls.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
   on_attach = on_attach,

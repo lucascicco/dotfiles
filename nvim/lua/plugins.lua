@@ -70,6 +70,17 @@ return {
     lazy = true,
   },
   {
+    "rachartier/tiny-code-action.nvim",
+    dependencies = {
+      { "nvim-lua/plenary.nvim" },
+      { "nvim-telescope/telescope.nvim" },
+    },
+    event = "LspAttach",
+    config = function()
+      require("tiny-code-action").setup({})
+    end,
+  },
+  {
     "folke/trouble.nvim",
     branch = "dev",
     dependencies = {
@@ -105,7 +116,8 @@ return {
     },
   },
   {
-    "hrsh7th/nvim-cmp",
+    "iguanacucumber/magazine.nvim",
+    name = "nvim-cmp",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-buffer",
@@ -424,20 +436,28 @@ return {
 
   -- AI
   {
-    "jackMort/ChatGPT.nvim",
-    cmd = { "ChatGPT", "ChatGPTRun", "ChatGPTEditWithInstruction" },
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-telescope/telescope.nvim",
+      "stevearc/dressing.nvim",
+    },
     config = function()
-      local openai_key = vim.fs.joinpath(vim.fn.expand("$HOME"), ".openai_key")
-      require("chatgpt").setup({
-        api_key_cmd = "cat " .. openai_key,
+      require("codecompanion").setup({
+        strategies = {
+          chat = {
+            adapter = "copilot",
+          },
+          inline = {
+            adapter = "copilot",
+          },
+          agent = {
+            adapter = "copilot",
+          },
+        },
       })
     end,
-    dependencies = {
-      "MunifTanjim/nui.nvim",
-      "nvim-lua/plenary.nvim",
-      "folke/trouble.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
   },
 
   -- Language specific
@@ -450,6 +470,30 @@ return {
       vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
       vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
     end,
+  },
+
+  {
+    "alexpasmantier/pymple.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+      "stevearc/dressing.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    build = ":PympleBuild",
+    config = function()
+      ---@diagnostic disable-next-line: missing-parameter
+      require("pymple").setup()
+    end,
+  },
+
+  -- Utils
+  {
+    "almo7aya/openingh.nvim",
+    cmd = {
+      "OpenInGHFile",
+      "OpenInGHFileLines",
+    },
   },
 
   -- Text editing
@@ -544,7 +588,12 @@ return {
     "kylechui/nvim-surround",
     event = "VeryLazy",
     config = function()
-      require("nvim-surround").setup({})
+      require("nvim-surround").setup({
+        -- disable conflicting keymaps
+        normal_cur = false,
+        normal_line = false,
+        normal_cur_line = false,
+      })
     end,
   },
 
