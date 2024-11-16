@@ -59,10 +59,19 @@ GPG_TTY=$(tty)
 export GPG_TTY
 
 # fzf
-readonly MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf/latest/"
+readonly MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf"
 if [ -d "$MISE_FZF_BASE_DIR" ]; then
-  # If the fzf installed with mise exists, we use it.
-  export FZF_BASE="$MISE_FZF_BASE_DIR"
+  latest_fzf_dir="$MISE_FZF_BASE_DIR/latest/"
+  if [ ! -d "$latest_fzf_dir" ]; then
+    all_fzf_subdirs="$(find "$MISE_FZF_BASE_DIR" -mindepth 1 -maxdepth 1 -type d)"
+    sorted_fzf_subdirs="$(echo "$all_fzf_subdirs" | sort -V)"
+    if [ -n "$sorted_fzf_subdirs" ] && [ ${#sorted_fzf_subdirs[@]} -gt 0 ]; then
+      latest_fzf_dir="$(echo "$sorted_fzf_subdirs" | tail -n 1)"
+    fi
+  fi
+  if [ -d "$latest_fzf_dir" ]; then
+    export FZF_BASE="$latest_fzf_dir"
+  fi
 fi
 
 load_dynamic_paths "${BASE_PATHS[@]}"
