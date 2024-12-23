@@ -81,6 +81,8 @@ wk.add({
     desc = "Toggle neotest summary",
   },
   { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
+  { "<leader>y", '"+y', silent = true, mode = "v" },
+  { "<leader>p", '"+p', silent = true, mode = { "n", "v" } },
   {
     group = "toggle",
     { "<leader>td", utils.toggle_diagnostics, desc = "Toggle diagnostics" },

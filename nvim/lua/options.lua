@@ -95,6 +95,7 @@ vim.opt.undolevels = 10000
 local ft_configs = {
   bash = { indent = 2 },
   css = { indent = 2 },
+  go = { indent = 4 },
   gitcommit = { spell = true },
   graphql = { indent = 2 },
   help = { spell = false },
@@ -109,6 +110,7 @@ local ft_configs = {
   sh = { indent = 2 },
   tags = { spell = false },
   text = { spell = true },
+  terraform = { indent = 2 },
   typescript = { indent = 2 },
   typescriptreact = { indent = 2 },
   xml = { indent = 2, spell = "toplevel" },
