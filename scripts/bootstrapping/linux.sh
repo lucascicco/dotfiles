@@ -56,7 +56,6 @@ function _ {
   _mise "$@"
   _gh "$@"
   _zsh "$@"
-  _python_libs "$@"
   _mise_reshim "$@"
 }
 

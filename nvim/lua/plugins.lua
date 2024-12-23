@@ -42,7 +42,12 @@ return {
     "neovim/nvim-lspconfig",
     event = "BufReadPost",
     dependencies = {
-      "nvimtools/none-ls.nvim",
+      {
+        "nvimtools/none-ls.nvim",
+        dependencies = {
+          "nvimtools/none-ls-extras.nvim",
+        },
+      },
       "b0o/schemastore.nvim",
       "SmiteshP/nvim-navic",
     },
@@ -115,7 +120,7 @@ return {
     },
   },
   {
-    "iguanacucumber/magazine.nvim",
+    "hrsh7th/nvim-cmp",
     name = "nvim-cmp",
     dependencies = {
       "hrsh7th/cmp-nvim-lsp",
@@ -172,33 +177,6 @@ return {
 
   -- Testing
   {
-    "mfussenegger/nvim-dap",
-    lazy = true,
-    config = function()
-      require("config.dap")
-    end,
-    dependencies = {
-      { "ofirgall/goto-breakpoints.nvim" },
-      {
-        "theHamsta/nvim-dap-virtual-text",
-        opts = {
-          all_frames = true,
-        },
-      },
-      {
-        "mfussenegger/nvim-dap-python",
-        config = false,
-      },
-      {
-        "rcarriga/nvim-dap-ui",
-        dependencies = {
-          "nvim-neotest/nvim-nio",
-        },
-        config = true,
-      },
-    },
-  },
-  {
     "nvim-neotest/neotest",
     lazy = true,
     dependencies = {
@@ -221,11 +199,6 @@ return {
         progress = {
           enabled = false,
         },
-        override = {
-          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-          ["vim.lsp.util.stylize_markdown"] = true,
-          ["cmp.entry.get_documentation"] = true,
-        },
       },
       presets = {
         bottom_search = true,
@@ -233,6 +206,17 @@ return {
         long_message_to_split = true,
         inc_rename = false,
         lsp_doc_border = true,
+      },
+      routes = {
+        { filter = { event = "msg_show", find = "written" } },
+        { filter = { event = "msg_show", find = "yanked" } },
+        { filter = { event = "msg_show", find = "%d+L, %d+B" } },
+        { filter = { event = "msg_show", find = "; after #%d+" } },
+        { filter = { event = "msg_show", find = "; before #%d+" } },
+        { filter = { event = "msg_show", find = "%d fewer lines" } },
+        { filter = { event = "msg_show", find = "%d more lines" } },
+        { filter = { event = "msg_show", find = "<ed" } },
+        { filter = { event = "msg_show", find = ">ed" } },
       },
     },
     dependencies = {
@@ -322,6 +306,15 @@ return {
   {
     "sindrets/winshift.nvim",
     cmd = "WinShift",
+  },
+  {
+    "anuvyklack/windows.nvim",
+    dependencies = {
+      "anuvyklack/middleclass",
+    },
+    config = function()
+      require("windows").setup()
+    end,
   },
   {
     "mrjones2014/smart-splits.nvim",
@@ -468,21 +461,6 @@ return {
       require("peek").setup()
       vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
       vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
-    end,
-  },
-
-  {
-    "alexpasmantier/pymple.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "MunifTanjim/nui.nvim",
-      "stevearc/dressing.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    build = ":PympleBuild",
-    config = function()
-      ---@diagnostic disable-next-line: missing-parameter
-      require("pymple").setup()
     end,
   },
 

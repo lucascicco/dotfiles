@@ -1,4 +1,7 @@
-# Constants #
+# instant prompt
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export P10K_CACHE="${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
+[[ -r "${P10K_CACHE}" ]] && source "${P10K_CACHE}"
 
 export DOTFILES_DIR="$HOME/dotfiles"
 export ZSH_CONFIG_DIR="${DOTFILES_DIR}/config/zsh"
@@ -9,31 +12,17 @@ export ALIAS_ZSH="${ZSH_CONFIG_DIR}/alias.zsh"
 
 # p10k
 export P10K_CONFIG="${DOTFILES_DIR}/config/zsh/p10k.zsh"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export P10K_CACHE="${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
+[[ -s "${P10K_CONFIG}" ]] && source "${P10K_CONFIG}"
 
-# Sources #
-[[ -r "${P10K_CACHE}" ]] && source "${P10K_CACHE}"
-
+# Utils
 if [[ ! -s "${ZSHRC_CORE}" ]]; then
   echo "Cannot find ${ZSHRC_CORE}" >&2
   return 1
 fi
 source "${ZSHRC_CORE}"
-
-# Load bashrc and antigen safely
-ANTIGEN_PATH="$(find_antigen)"
-if [[ -z "${ANTIGEN_PATH}" ]]; then
-  echo "Cannot find antigen" >&2
-  return 1
-fi
-source "${ANTIGEN_PATH}"
-
 load_bashrc
-[[ -s ${P10K_CONFIG} ]] && source ${P10K_CONFIG}
 
 # oh-my-zsh config #
-
 ZSH_WAKATIME_PROJECT_DETECTION="true"
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
@@ -41,52 +30,37 @@ DISABLE_AUTO_UPDATE="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"
 DISABLE_VENV_CD=1
-
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=1000000000
 SAVEHIST=$HISTSIZE
 
-antigen use oh-my-zsh
-
-antigen bundle colored-man-pages
-antigen bundle colorize
-antigen bundle common-aliases
-antigen bundle docker
-antigen bundle encode64
-antigen bundle extract
-antigen bundle fzf
-antigen bundle gh
-antigen bundle git
-antigen bundle gitfast
-antigen bundle httpie
-antigen bundle iterm2
-antigen bundle kubectl
-antigen bundle kubectx
-antigen bundle mise
-antigen bundle npm
-antigen bundle pip
-antigen bundle poetry
-antigen bundle python
-antigen bundle redis-cli
-antigen bundle rust
-antigen bundle screen
-antigen bundle yarn
-antigen bundle systemd
-
-# github
-antigen bundle zdharma-continuum/fast-syntax-highlighting
-antigen bundle zsh-users/zsh-completions
-antigen bundle jocelynmallon/zshmarks
-antigen bundle wbingli/zsh-wakatime
-antigen bundle popstas/zsh-command-time
-
-# theme
-antigen theme romkatv/powerlevel10k
-antigen apply
+# Load bashrc and antidote #
+ANTIDOTE_PATH="$(find_antidote)"
+if [[ -z "${ANTIDOTE_PATH}" ]]; then
+  echo "Cannot find antidote" >&2
+  return 1
+fi
+source "${ANTIDOTE_PATH}"
+ANTIDOTE_DIR="$(dirname "${ANTIDOTE_PATH}")"
+if [[ -d "${ANTIDOTE_DIR}" ]]; then
+  LOCAL_ZSH_PLUGINS="${HOME}/.zsh_plugins"
+  LOCAL_ZSH_PLUGINS_TXT="${LOCAL_ZSH_PLUGINS}.txt"
+  if [[ ! -s "${LOCAL_ZSH_PLUGINS_TXT}" ]]; then
+    echo "Cannot find ${LOCAL_ZSH_PLUGINS_TXT}" >&2
+    return 1
+  fi
+  fpath=(${ANTIDOTE_DIR}/functions $fpath)
+  autoload -Uz antidote
+  LOCAL_ZSH_PLUGINS_ZSH="${LOCAL_ZSH_PLUGINS}.zsh"
+  if [[ ! ${LOCAL_ZSH_PLUGINS_ZSH} -nt ${LOCAL_ZSH_PLUGINS_TXT} ]]; then
+    antidote bundle <${LOCAL_ZSH_PLUGINS_TXT} >|${LOCAL_ZSH_PLUGINS_ZSH}
+  fi
+  source ${LOCAL_ZSH_PLUGINS_ZSH}
+fi
 
 # aliases
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
 alias k=${KUBE_CMD}
 [[ -s ${ALIAS_ZSH} ]] && source ${ALIAS_ZSH}
 
-autoload -U compinit && compinit
+autoload -Uz promptinit && promptinit && prompt powerlevel10k

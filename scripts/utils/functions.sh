@@ -131,7 +131,7 @@ function dynamic_batch_source {
 }
 
 function _generate_dynamic_path {
-  local -r paths=("$@")
+  local -ra paths=("$@")
   local new_path=""
   for p in "${paths[@]}"; do
     if [ ! -e "$p" ]; then

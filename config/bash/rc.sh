@@ -2,7 +2,7 @@
 
 # CONSTANTS #
 
-export DOTFILES_DIR="$HOME/dotfiles"
+export DOTFILES_DIR="${HOME}/dotfiles"
 export BOOTSTRAP_SCRIPTS_DIR="$DOTFILES_DIR/scripts/bootstrapping"
 readonly FUNCTIONS_SCRIPT="${DOTFILES_DIR}/scripts/utils/functions.sh"
 if [ -s "${FUNCTIONS_SCRIPT}" ]; then
@@ -14,17 +14,17 @@ else
 fi
 
 # scripts
-readonly SECRET_ENV_SCRIPT="$HOME/.secret_env.sh"
-readonly CORP_EXTRA_SCRIPTS_DIR="$HOME/.corp"
+readonly SECRET_ENV_SCRIPT="${HOME}/.secret_env.sh"
+readonly CORP_EXTRA_SCRIPTS_DIR="${HOME}/.corp"
 
 # paths
 readonly -a SOURCE_SCRIPT_PATHS=(
   "$SECRET_ENV_SCRIPT"
 )
 readonly -a BASE_PATHS=(
-  "$HOME/.local/bin"
-  "$HOME/bin"
-  "$HOME/.krew/bin"
+  "${HOME}/.local/bin"
+  "${HOME}/bin"
+  "${HOME}/.krew/bin"
 )
 
 # EXPORTS #
@@ -35,8 +35,8 @@ export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
 export GIT_CONFIG_FILE="$DOTFILES_DIR/config/git/gitconfig"
 
 # paths
-export PROJECT_HOME=$HOME/projects
-export GOBIN=$HOME/.local/bin
+export PROJECT_HOME=${HOME}/projects
+export GOBIN=${HOME}/.local/bin
 
 # os
 export EDITOR="nvim"
@@ -45,12 +45,13 @@ export LANG="en_US.UTF-8"
 # mise
 export MISE_USE_TOML=1
 export MISE_EXPERIMENTAL=1
+export MISE_PIPX_UVX=1
 
-export PERL_LOCAL_LIB_ROOT="$HOME/.local/perl"
+export PERL_LOCAL_LIB_ROOT="${HOME}/.local/perl"
 export PIP_REQUIRE_VIRTUALENV=true
 export RIPGREP_CONFIG_PATH="$DOTFILES_DIR/config/rg/ripgreprc"
 export PYTHON_CFLAGS="-march=native -mtune=native"
-export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-lto --enable-loadable-sqlite-extensions"
+export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-lto"
 
 # Sources #
 
@@ -59,8 +60,8 @@ GPG_TTY=$(tty)
 export GPG_TTY
 
 # fzf
-readonly MISE_FZF_BASE_DIR="$HOME/.local/share/mise/installs/fzf"
-if [ -d "$MISE_FZF_BASE_DIR" ]; then
+readonly MISE_FZF_BASE_DIR="${HOME}/.local/share/mise/installs/fzf"
+if [ -d "$MISE_FZF_BASE_DIR" ] && [ -z "$FZF_BASE" ]; then
   latest_fzf_dir="$MISE_FZF_BASE_DIR/latest/"
   if [ ! -d "$latest_fzf_dir" ]; then
     all_fzf_subdirs="$(find "$MISE_FZF_BASE_DIR" -mindepth 1 -maxdepth 1 -type d)"

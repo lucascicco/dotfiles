@@ -31,31 +31,32 @@ MISE_BINARY="$(get_mise_binary_path)"
 readonly MISE_BINARY
 
 # ZSH
-readonly ZSH_SITE_FUNCTIONS_DIR="${HOME}/.local/share/zsh/site-functions"
-readonly ANTIGEN_SCRIPT_PATH="${HOME}/antigen.zsh"
+readonly ANTIDOTE_SCRIPT_PATH="${HOME}/.antidote"
 
 # Fonts
 readonly NERD_FONTS_REPO="https://github.com/ryanoasis/nerd-fonts/blob/master"
 readonly NERD_FONTS_PATCHED_FONTS="${NERD_FONTS_REPO}/patched-fonts"
-readonly MICROSOFT_VSCODE_FONTS_REPO="https://github.com/microsoft/vscode-codicons/blob/main"
+readonly
 FONTS_DIR="$(get_fonts_directory)"
 readonly FONTS_DIR
 
 # Symlinks
 readonly -a SYMLINKS=(
-  "$DOTFILES_CONFIG_DIR/git/gitattributes $HOME/.gitattributes"
-  "$DOTFILES_CONFIG_DIR/git/gitconfig $HOME/.gitconfig"
-  "$DOTFILES_CONFIG_DIR/git/gitignore $HOME/.gitignore"
+  "$DOTFILES_CONFIG_DIR/git/gitattributes ${HOME}/.gitattributes"
+  "$DOTFILES_CONFIG_DIR/git/gitconfig ${HOME}/.gitconfig"
+  "$DOTFILES_CONFIG_DIR/git/gitignore ${HOME}/.gitignore"
 
-  "$DOTFILES_CONFIG_DIR/mise/config.toml $HOME/.config/mise/config.toml"
-  "$DOTFILES_CONFIG_DIR/mise/rust-packages $HOME/.default-cargo-crates"
+  "$DOTFILES_CONFIG_DIR/mise/config.toml ${HOME}/.config/mise/config.toml"
+  "$DOTFILES_CONFIG_DIR/mise/rust-packages ${HOME}/.default-cargo-crates"
   "$DOTFILES_CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
   "$DOTFILES_CONFIG_DIR/mise/golang-packages ${HOME}/.default-go-packages"
 
   "$NVIM_SOURCE_DIR ${HOME}/.config/nvim"
 
-  "$DOTFILES_CONFIG_DIR/zsh/zshrc $HOME/.zshrc"
-  "$DOTFILES_CONFIG_DIR/vim/vimrc $HOME/.vimrc"
+  "$DOTFILES_CONFIG_DIR/zsh/zshrc ${HOME}/.zshrc"
+  "$DOTFILES_CONFIG_DIR/zsh/zsh_plugins.txt ${HOME}/.zsh_plugins.txt"
+
+  "$DOTFILES_CONFIG_DIR/vim/vimrc ${HOME}/.vimrc"
 )
 
 readonly -a CORE_DIRS=(
@@ -115,12 +116,9 @@ function _mise {
   fi
 
   "$MISE_BINARY" plugins update -y || true
-  "$MISE_BINARY" install -y
-  "$MISE_BINARY" upgrade -y
+  "$MISE_BINARY" install -y || true
+  "$MISE_BINARY" upgrade -y || true
   "$MISE_BINARY" prune -y
-
-  mkdir -p "${HOME}/.local/share/zsh/site-functions"
-  "$MISE_BINARY" complete -s zsh >"${ZSH_SITE_FUNCTIONS_DIR}/_mise"
 }
 
 function _mise_reshim {
@@ -138,29 +136,13 @@ function _gh {
 
 function _zsh {
   task "Zsh" "Installing zsh"
-
-  if [[ ! -s "$ANTIGEN_SCRIPT_PATH" ]]; then
+  if [[ ! -s "$ANTIDOTE_SCRIPT_PATH" ]]; then
     (
-      curl -L git.io/antigen >"$ANTIGEN_SCRIPT_PATH" &&
-        chmod +x "$ANTIGEN_SCRIPT_PATH"
+      git clone --depth=1 https://github.com/mattmc3/antidote.git "${ZDOTDIR:-$HOME}/.antidote"
     )
     reload_zsh
   fi
-
-  zsh -i -c "antigen cleanup"
-  zsh -i -c "antigen update"
-  zsh -i -c "antigen cache-gen"
-}
-
-function _python_libs {
-  task "Python" "installing python libraries"
-
-  if [ ! -f "${HOME}/.debugpy/bin/python3" ]; then
-    python3 -m venv "${HOME}/.debugpy"
-  fi
-
-  "${HOME}/.debugpy/bin/pip" install -U pip
-  "${HOME}/.debugpy/bin/pip" install -U git+https://github.com/microsoft/debugpy.git@main
+  zsh -i -c "antidote update"
 }
 
 function _neovim_spell_check {
@@ -201,26 +183,24 @@ function _fonts {
 
   info "Fonts directory: ${FONTS_DIR}"
   info "Nerd fonts patched fonts: ${NERD_FONTS_PATCHED_FONTS}"
-  info "Microsoft vscode fonts repo: ${MICROSOFT_VSCODE_FONTS_REPO}"
-
-  download_file "${FONTS_DIR}/codicon.ttf" "${MICROSOFT_VSCODE_FONTS_REPO}/dist/codicon.ttf?raw=true"
 
   download_file \
     "${FONTS_DIR}/Hack Regular Nerd Font Complete.ttf" \
     "${NERD_FONTS_PATCHED_FONTS}/Hack/Regular/HackNerdFont-Regular.ttf?raw=true"
-
   download_file \
     "${FONTS_DIR}/Inconsolata Nerd Font Complete.otf" \
     "${NERD_FONTS_PATCHED_FONTS}/Inconsolata/InconsolataNerdFont-Regular.ttf?raw=true"
-
   download_file \
     "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
     "${NERD_FONTS_PATCHED_FONTS}/FiraCode/Regular/FiraCodeNerdFont-Regular.ttf?raw=true"
+  download_file \
+    "${FONTS_DIR}/JetBrains Mono Nerd Font Complete.ttf" \
+    "${NERD_FONTS_PATCHED_FONTS}/JetBrainsMono/NoLigatures/Regular/JetBrainsMonoNLNerdFont-Regular.ttf?raw=true"
 
   if [ "${MACHINE_OS}" == "Linux" ]; then
     fc-cache -f -v >/dev/null 2>&1
-    if [ "$(gsettings get org.gnome.desktop.interface monospace-font-name)" != "'Hack Nerd Font 11'" ]; then
-      gsettings set org.gnome.desktop.interface monospace-font-name 'Hack Nerd Font 11'
+    if [ "$(gsettings get org.gnome.desktop.interface monospace-font-name)" != "'JetBrainsMonoNL NerdFont 12'" ]; then
+      gsettings set org.gnome.desktop.interface monospace-font-name 'JetBrainsMonoNL NerdFont 12'
     fi
   fi
 }

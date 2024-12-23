@@ -14,6 +14,7 @@ cmctl = 'latest'
 doctl = 'latest'
 duf = 'latest'
 fd = 'latest'
+fzf = 'latest'
 jq = 'latest'
 gcloud = 'latest'
 github-cli = 'latest'
@@ -83,6 +84,7 @@ yq = 'latest'
 "npm:vscode-langservers-extracted" = "latest"
 "npm:yaml-language-server" = "latest"
 # pipx tools
+"pipx:autoflake" = "latest"
 "pipx:basedpyright" = "latest"
 "pipx:black" = "latest"
 "pipx:codespell" = "latest"

@@ -1,6 +1,7 @@
 .git
 .rtx.toml
 .mise.toml
+.mise.local.toml
 .tool-versions
 .venv
 pyrightconfig.json

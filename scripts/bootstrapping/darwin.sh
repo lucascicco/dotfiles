@@ -23,7 +23,7 @@ function _packages {
     reload_zsh
   fi
 
-  brew install ${BREW_PACKAGES}
+  brew install "${BREW_PACKAGES}"
   brew update
   brew upgrade
   brew autoremove
@@ -48,7 +48,6 @@ function _ {
   _mise "$@"
   _gh "$@"
   _zsh "$@"
-  _python_libs "$@"
   _mise_reshim "$@"
 }
 

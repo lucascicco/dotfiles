@@ -3,11 +3,10 @@
 export DOTFILES_DIR="$HOME/dotfiles"
 export RC_SCRIPTS_DIR="$DOTFILES_DIR/config/bash"
 
-readonly -a ANTIGEN_PATHS=(
-  "${HOME}/antigen.zsh"
-  "${HOME}/.antigen.zsh"
-  "/opt/homebrew/share/antigen/antigen.zsh"
-  "/usr/share/zsh-antigen/antigen.zsh"
+readonly -a ANTIDOTE_PATHS=(
+  "${HOME}/.antidote/antidote.zsh"
+  "/opt/homebrew//opt/antidote/share/antidote/antidote.zsh"
+  "/usr/share/zsh-antidote/antidote.zsh"
 )
 
 function load_bashrc() {
@@ -23,10 +22,10 @@ function load_bashrc() {
   source "$rc_file"
 }
 
-function find_antigen() {
-  for antigen_path in "${ANTIGEN_PATHS[@]}"; do
-    if [ -s "$antigen_path" ]; then
-      echo "$antigen_path"
+function find_antidote() {
+  for antidote_path in "${ANTIDOTE_PATHS[@]}"; do
+    if [ -s "$antidote_path" ]; then
+      echo "$antidote_path"
       return 0
     fi
   done
@@ -37,7 +36,7 @@ function kube-toggle() {
   if (( ${+POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND} )); then
     unset POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND
   else
-    export POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
+    export POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='k|kubectl|helm|kubens|kubectx|oc|istioctl|kogito|k9s|helmfile|flux|fluxctl|stern|kubeseal|skaffold'
   fi
   p10k reload
   if zle; then

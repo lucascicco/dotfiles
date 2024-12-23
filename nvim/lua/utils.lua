@@ -76,6 +76,7 @@ M.lsp_format = function(opts)
       filter = function(client)
         return not lsp_excluded[client.name]
       end,
+      bufnr = opts.bufnr or 0,
     })
   end
 end
@@ -117,10 +118,17 @@ M.find_python = function()
 
     local poetry_root = vim.fs.root(0, { "poetry.lock" })
     if poetry_root then
-      env_info = vim.fn.system({ "poetry", "env", "info", "--path", "-C", poetry_root })
+      local poetry_output = vim.fn.system({ "poetry", "env", "info", "--path", "-C", poetry_root })
+      for line in poetry_output:gmatch("[^\r\n]+") do
+        local stat = vim.loop.fs_stat(line)
+        if stat and stat.type == "directory" then
+          env_info = line
+          break
+        end
+      end
     end
 
-    if env_info ~= nil and string.find(env_info, "could not find") == nil then
+    if env_info ~= nil then
       p = vim.fs.joinpath(env_info:gsub("\n", ""), "bin", "python3")
     else
       local venv_dir = vim.fs.find(".venv", {
@@ -160,21 +168,12 @@ M.find_python_cmd = function(cmd)
   return cmd
 end
 
-local hast_last_run = false
-
 M.run_tests = function()
   local opts = {
-    "Test Last Run",
-    "Test Last Run (debug)",
     "Test Closest",
-    "Test Closest (debug)",
     "Test File",
     "Test Failed",
   }
-  if not hast_last_run then
-    table.remove(opts, 1)
-    table.remove(opts, 1)
-  end
   vim.ui.select(opts, {
     prompt = "What to run:",
   }, function(choice)
@@ -183,22 +182,10 @@ M.run_tests = function()
 
     if choice == "Test File" then
       require("neotest").run.run({ vim.fn.expand("%"), cwd = cwd, suite = false })
-      hast_last_run = true
     elseif choice == "Test Closest" then
       require("neotest").run.run({ cwd = cwd, suite = false })
-      hast_last_run = true
-    elseif choice == "Test Closest (debug)" then
-      require("neotest").run.run({ strategy = "dap", cwd = cwd, suite = false })
-      hast_last_run = true
-    elseif choice == "Test Last Run" then
-      require("neotest").run.run_last()
-      hast_last_run = true
-    elseif choice == "Test Last Run (debug)" then
-      require("neotest").run.run_last({ strategy = "dap", cwd = cwd, suite = false })
-      hast_last_run = true
     elseif choice == "Test Failed" then
       require("neotest").run.run({ status = "failed", cwd = cwd, suite = false })
-      hast_last_run = true
     end
   end)
 end
