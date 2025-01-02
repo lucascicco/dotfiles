@@ -39,13 +39,6 @@ wk.add({
     desc = "Find buffers",
   },
   { "<C-d>", utils.run_tests, desc = "Run tests" },
-  {
-    "<C-f>",
-    function()
-      require("telescope.builtin").live_grep()
-    end,
-    desc = "Live grep",
-  },
   { "<C-p>", utils.find_files, desc = "Find files" },
   {
     "<C-q>",
@@ -187,7 +180,24 @@ wk.add({
     { "<C-/>", "gc", desc = "Toggle comment", remap = true },
   },
   {
+    mode = { "i" },
+    {
+      "<C-f>",
+      function()
+        require("blink.cmp").show({ sources = { "ripgrep" } })
+      end,
+      desc = "Complete with ripgrep",
+    },
+  },
+  {
     mode = { "n" },
+    {
+      "<C-f>",
+      function()
+        require("telescope.builtin").live_grep()
+      end,
+      desc = "Live grep",
+    },
     { "<C-/>", "gcc", desc = "Toggle comment", remap = true },
   },
   {
@@ -215,7 +225,7 @@ M.setup_lsp = function(ev)
       {
         "<leader>ca",
         function()
-          require("tiny-code-action").code_action()
+          require("tiny-code-action").code_action({})
         end,
         buffer = ev.buf,
         desc = "LSP code action",
