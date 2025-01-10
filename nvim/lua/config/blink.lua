@@ -33,7 +33,6 @@ blink.setup({
   },
   signature = { enabled = true, window = { border = "single" } },
   completion = {
-    list = { selection = "manual" },
     ghost_text = { enabled = true },
     documentation = { auto_show = true },
     menu = { auto_show = false },
@@ -43,7 +42,7 @@ blink.setup({
 local augroup = vim.api.nvim_create_augroup("_blink_augroup_", { clear = true })
 
 vim.api.nvim_create_autocmd("User", {
-  pattern = "BlinkCmpCompletionMenuOpen",
+  pattern = "BlinkCmpMenuOpen",
   group = augroup,
   callback = function()
     require("copilot.suggestion").dismiss()
@@ -52,7 +51,7 @@ vim.api.nvim_create_autocmd("User", {
 })
 
 vim.api.nvim_create_autocmd("User", {
-  pattern = "BlinkCmpCompletionMenuClose",
+  pattern = "BlinkCmpMenuOpen",
   group = augroup,
   callback = function()
     vim.b.copilot_suggestion_hidden = false
