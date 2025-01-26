@@ -6,9 +6,14 @@ local lsp_excluded = {
   html = true,
   jsonls = true,
   pyright = true,
+  basedpyright = true,
   sumneko_lua = true,
-  lua_ls = true,
+  lua_ls = true, -- disable for .env files
   tsserver = true,
+}
+
+M.disabled_copilot_organizations = {
+  "LiferayCloud",
 }
 
 M.get_root_path = function()

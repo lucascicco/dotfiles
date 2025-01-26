@@ -1,8 +1,9 @@
 local nvim_lsp = require("lspconfig")
 local utils = require("utils")
 
-local augroup_formatting = vim.api.nvim_create_augroup("LspFormatting", {})
-local augroup_codelens = vim.api.nvim_create_augroup("LspCodelens", {})
+local augroup_lspattach = vim.api.nvim_create_augroup("_my_lsp_attach", { clear = true })
+local augroup_formatting = vim.api.nvim_create_augroup("my_lsp_formatting", {})
+local augroup_codelens = vim.api.nvim_create_augroup("_my_lsp_codelens", {})
 
 local excluded_paths = {
   "lib/python%d.%d+/site-packages/",
@@ -19,10 +20,17 @@ local lsp_capabilities = function()
 end
 
 vim.diagnostic.config({
+  virtual_text = false,
   jump = {
+    severity = {
+      min = vim.diagnostic.severity.WARN,
+    },
     float = true,
   },
   signs = {
+    severity = {
+      min = vim.diagnostic.severity.WARN,
+    },
     text = {
       [vim.diagnostic.severity.ERROR] = "",
       [vim.diagnostic.severity.WARN] = "",
@@ -30,35 +38,60 @@ vim.diagnostic.config({
       [vim.diagnostic.severity.HINT] = "",
     },
   },
+  underline = {
+    severity = {
+      min = vim.diagnostic.severity.WARN,
+    },
+  },
 })
 
-local on_attach = function(client, bufnr)
-  if client.server_capabilities.documentSymbolProvider then
-    require("nvim-navic").attach(client, bufnr)
-  end
+vim.api.nvim_create_autocmd("BufEnter", {
+  group = augroup_bufferenter,
+  pattern = "*",
+  callback = function(args) end,
+})
 
-  if client.server_capabilities.documentFormattingProvider then
-    vim.api.nvim_clear_autocmds({ group = augroup_formatting, buffer = bufnr })
-    vim.api.nvim_create_autocmd("BufWritePre", {
-      buffer = bufnr,
-      callback = function()
-        require("utils").lsp_format({ bufnr = bufnr })
-      end,
-      group = augroup_formatting,
-    })
-  end
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = augroup_lspattach,
+  pattern = "*",
+  callback = function(args)
+    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+    local bufnr = args.buf
 
-  if client.server_capabilities.codeLensProvider then
-    vim.api.nvim_clear_autocmds({ group = augroup_codelens, buffer = bufnr })
-    vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-      buffer = bufnr,
-      callback = function()
-        vim.lsp.codelens.refresh({ bufnr = bufnr })
-      end,
-      group = augroup_codelens,
-    })
-  end
-end
+    if client.name == "ruff" then
+      -- favor pyright over ruff
+      client.server_capabilities.hoverProvider = false
+    end
+
+    if client.server_capabilities.documentSymbolProvider then
+      require("nvim-navic").attach(client, bufnr)
+    end
+
+    if client.server_capabilities.documentFormattingProvider then
+      vim.api.nvim_clear_autocmds({ group = augroup_formatting, buffer = bufnr })
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        buffer = bufnr,
+        callback = function()
+          require("utils").lsp_format({ bufnr = bufnr })
+        end,
+        group = augroup_formatting,
+      })
+    end
+
+    if client.server_capabilities.codeLensProvider then
+      vim.api.nvim_clear_autocmds({ group = augroup_codelens, buffer = bufnr })
+      vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+        buffer = bufnr,
+        callback = function()
+          vim.lsp.codelens.refresh({ bufnr = bufnr })
+        end,
+        group = augroup_codelens,
+      })
+    end
+
+    require("mappings").setup_lsp(args)
+  end,
+})
 
 local _util_open_floating_preview = vim.lsp.util.open_floating_preview
 local function _my_open_floating_preview(contents, syntax, opts, ...)
@@ -69,26 +102,6 @@ end
 vim.lsp.util.open_floating_preview = _my_open_floating_preview
 
 local handlers = {
-  ["textDocument/publishDiagnostics"] = vim.lsp.with(function(_, result, ...)
-    for _, path in pairs(excluded_paths) do
-      if result.uri:match(path) ~= nil then
-        return
-      end
-    end
-
-    local min = vim.diagnostic.severity.INFO
-    result.diagnostics = vim.tbl_filter(function(t)
-      return t.severity <= min
-    end, result.diagnostics)
-    return vim.lsp.handlers["textDocument/publishDiagnostics"](_, result, ...)
-  end, {
-    virtual_text = false,
-    underline = {
-      severity = {
-        min = vim.diagnostic.severity.WARN,
-      },
-    },
-  }),
   ["textDocument/rename"] = function(_, result, ...)
     local title = nil
     local msg = {}
@@ -119,11 +132,11 @@ local handlers = {
 }
 
 -- https://github.com/microsoft/pyright
-nvim_lsp.pyright.setup({
+local python_lsp = os.getenv("PYTHON_LSP") or "pyright"
+nvim_lsp[python_lsp].setup({
   capabilities = lsp_capabilities(),
   autostart = os.getenv("DISABLE_PYRIGHT") ~= "1",
   handlers = handlers,
-  on_attach = on_attach,
   before_init = function(initialize_params, config)
     local python_path = utils.find_python()
     config.settings.python.pythonPath = python_path
@@ -148,10 +161,6 @@ nvim_lsp.ruff.setup({
   capabilities = lsp_capabilities(),
   autostart = os.getenv("DISABLE_RUFF") ~= "1",
   handlers = handlers,
-  on_attach = function(client, bufnr)
-    client.server_capabilities.hoverProvider = false
-    on_attach(client, bufnr)
-  end,
   settings = {
     prioritizeFileConfiguration = true,
     fixAll = true,
@@ -163,28 +172,24 @@ nvim_lsp.ruff.setup({
 nvim_lsp.astro.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-  on_attach = on_attach,
 })
 
 -- https://github.com/theia-ide/typescript-language-server
 nvim_lsp.ts_ls.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-  on_attach = on_attach,
 })
 
 -- https://github.com/biomejs/biome
 nvim_lsp.biome.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-  on_attach = on_attach,
 })
 
--- https://github.com/golang/tools/blob/master/gopls
+--- https://github.com/golang/tools/blob/master/gopls
 nvim_lsp.gopls.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-  on_attach = on_attach,
   cmd = { "gopls" },
   filetypes = { "go", "gomod", "gowork", "gotmpl" },
   root_dir = nvim_lsp.util.root_pattern("go.work", "go.mod"),
@@ -203,63 +208,54 @@ nvim_lsp.gopls.setup({
 nvim_lsp.graphql.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-  on_attach = on_attach,
 })
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
 nvim_lsp.eslint.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/iamcco/vim-language-server
 nvim_lsp.vimls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
 nvim_lsp.cssls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/hrsh7th/vscode-langservers-extracted
 nvim_lsp.html.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/bash-lsp/bash-language-server
 nvim_lsp.bashls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/rcjsuen/dockerfile-language-server-nodejs
 nvim_lsp.dockerls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/hashicorp/terraform-ls
 nvim_lsp.terraformls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/redhat-developer/yaml-language-server
 nvim_lsp.yamlls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
   settings = {
     yaml = {
       validate = true,
@@ -281,7 +277,6 @@ nvim_lsp.yamlls.setup({
 nvim_lsp.jsonls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
   init_options = {
     provideFormatter = true,
   },
@@ -297,13 +292,11 @@ nvim_lsp.jsonls.setup({
 nvim_lsp.taplo.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
 })
 
 -- https://github.com/LuaLS/lua-language-server
 nvim_lsp.lua_ls.setup({
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
   handlers = handlers,
   on_init = function(client)
     local path = client.workspace_folders[1].name
@@ -343,7 +336,6 @@ local code_actions = null_ls.builtins.code_actions
 null_ls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
-  on_attach = on_attach,
   should_attach = function(bufnr)
     return os.getenv("DISABLE_NULL_LS") ~= "1"
   end,
@@ -358,6 +350,22 @@ null_ls.setup({
       condition = function(utils)
         return not utils.root_has_file({ "biome.json", "biome.jsonc" })
           and os.getenv("DISABLE_PRETTIER") ~= "1"
+      end,
+    }),
+    -- golang
+    formatting.gofumpt.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
+      end,
+    }),
+    formatting.golines.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
+      end,
+    }),
+    formatting.goimports_reviser.with({
+      condition = function(utils)
+        return utils.root_has_file({ "go.work", "go.mod" })
       end,
     }),
     -- sh/bash
@@ -430,35 +438,7 @@ null_ls.setup({
         return utils.root_has_file({ "stylua.toml", ".stylua.toml" })
       end,
     }),
-    -- golang
-    formatting.gofumpt.with({
-      condition = function(utils)
-        return utils.root_has_file({ "go.work", "go.mod" })
-      end,
-    }),
-    formatting.golines.with({
-      condition = function(utils)
-        return utils.root_has_file({ "go.work", "go.mod" })
-      end,
-    }),
-    formatting.goimports_reviser.with({
-      condition = function(utils)
-        return utils.root_has_file({ "go.work", "go.mod" })
-      end,
-    }),
     -- yaml
-    diagnostics.yamllint.with({
-      diagnostics_format = diagnostics_format,
-      extra_args = function(params)
-        return {
-          "-d",
-          string.format(
-            "{extends: default, rules: {line-length: {max: %d}}}",
-            vim.opt_local.textwidth:get() + 1
-          ),
-        }
-      end,
-    }),
     formatting.yamlfix.with({
       env = function(params)
         return {

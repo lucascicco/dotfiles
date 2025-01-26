@@ -1,3 +1,5 @@
+local utils = require("utils")
+
 return {
   -- Theme
   {
@@ -125,6 +127,7 @@ return {
     dependencies = {
       "rafamadriz/friendly-snippets",
       "mikavilpas/blink-ripgrep.nvim",
+      "giuxtaposition/blink-cmp-copilot",
     },
     event = "InsertEnter",
     version = "*",
@@ -137,10 +140,26 @@ return {
     build = ":Copilot auth",
     event = "VeryLazy",
     opts = {
-      suggestion = { enabled = true, auto_trigger = true },
+      suggestion = { enabled = false },
       panel = { enabled = false },
       filetypes = {
-        ["*"] = true,
+        ["*"] = function()
+          if
+            os.getenv("SKIP_COPILOT_FILETYPE_VALIDATION") ~= "TRUE"
+            and vim.fn.executable("git") == 1
+          then
+            local bufname = vim.api.nvim_buf_get_name(0)
+            local git_dir = vim.fn.finddir(".git", vim.fn.expand("%:p:h") .. ";")
+            if git_dir ~= "" then
+              local remote = vim.fn.systemlist("git -C " .. git_dir .. " remote get-url origin")[1]
+              if remote ~= "" then
+                local org = remote:match("github.com[:/](%w+)/")
+                return not vim.tbl_contains(utils.disabled_copilot_organizations, org)
+              end
+            end
+          end
+          return true
+        end,
       },
     },
   },

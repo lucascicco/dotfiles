@@ -5,8 +5,8 @@ local wk = require("which-key")
 
 wk.add({
   { "<A-/>", desc = "Toggle comment" },
-  { "<A-Left>", "gT", desc = "Previous tab" },
   { "<A-Right>", "gt", desc = "Next tab" },
+  { "<A-Left>", "gT", desc = "Previous tab" },
   {
     "<A-Down>",
     function()
