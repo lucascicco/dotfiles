@@ -45,12 +45,6 @@ vim.diagnostic.config({
   },
 })
 
-vim.api.nvim_create_autocmd("BufEnter", {
-  group = augroup_bufferenter,
-  pattern = "*",
-  callback = function(args) end,
-})
-
 vim.api.nvim_create_autocmd("LspAttach", {
   group = augroup_lspattach,
   pattern = "*",
@@ -133,6 +127,8 @@ local handlers = {
 
 -- https://github.com/microsoft/pyright
 local python_lsp = os.getenv("PYTHON_LSP") or "pyright"
+local python_diagnostic_overrides =
+  vim.json.decode(os.getenv("PYRIGHT_DIAGNOSTIC_OVERRIDES") or "{}")
 nvim_lsp[python_lsp].setup({
   capabilities = lsp_capabilities(),
   autostart = os.getenv("DISABLE_PYRIGHT") ~= "1",
@@ -144,13 +140,14 @@ nvim_lsp[python_lsp].setup({
     initialize_params.initializationOptions.settings.python.pythonPath = python_path
   end,
   settings = {
-    python = {
+    [python_lsp == "basedpyright" and "basedpyright" or "python"] = {
       analysis = {
         autoSearchPaths = true,
         diagnosticMode = os.getenv("PYRIGHT_DIAGNOSTIC_MODE") or "workspace",
         typeCheckingMode = os.getenv("PYRIGHT_TYPE_CHECKING_MODE") or "standard",
         useLibraryCodeForTypes = true,
         disableOrganizeImports = true,
+        diagnosticSeverityOverrides = python_diagnostic_overrides,
       },
     },
   },
@@ -166,6 +163,18 @@ nvim_lsp.ruff.setup({
     fixAll = true,
     organizeImports = true,
   },
+})
+
+-- https://ast-grep.github.io/
+nvim_lsp.ast_grep.setup({
+  capabilities = lsp_capabilities(),
+  handlers = handlers,
+})
+
+-- https://github.com/Freed-Wu/autotools-language-server
+nvim_lsp.autotools_ls.setup({
+  capabilities = lsp_capabilities(),
+  handlers = handlers,
 })
 
 -- https://github.com/withastro/language-tools/tree/main/packages/language-server
@@ -184,24 +193,6 @@ nvim_lsp.ts_ls.setup({
 nvim_lsp.biome.setup({
   capabilities = lsp_capabilities(),
   handlers = handlers,
-})
-
---- https://github.com/golang/tools/blob/master/gopls
-nvim_lsp.gopls.setup({
-  capabilities = lsp_capabilities(),
-  handlers = handlers,
-  cmd = { "gopls" },
-  filetypes = { "go", "gomod", "gowork", "gotmpl" },
-  root_dir = nvim_lsp.util.root_pattern("go.work", "go.mod"),
-  settings = {
-    gopls = {
-      completeUnimported = true,
-      usePlaceholders = true,
-      analyses = {
-        unusedparams = true,
-      },
-    },
-  },
 })
 
 -- https://github.com/graphql/graphiql/tree/main/packages/graphql-language-service-cli
@@ -244,6 +235,24 @@ nvim_lsp.bashls.setup({
 nvim_lsp.dockerls.setup({
   handlers = handlers,
   capabilities = lsp_capabilities(),
+})
+
+--- https://github.com/golang/tools/blob/master/gopls
+nvim_lsp.gopls.setup({
+  capabilities = lsp_capabilities(),
+  handlers = handlers,
+  cmd = { "gopls" },
+  filetypes = { "go", "gomod", "gowork", "gotmpl" },
+  root_dir = nvim_lsp.util.root_pattern("go.work", "go.mod"),
+  settings = {
+    gopls = {
+      completeUnimported = true,
+      usePlaceholders = true,
+      analyses = {
+        unusedparams = true,
+      },
+    },
+  },
 })
 
 -- https://github.com/hashicorp/terraform-ls
@@ -342,7 +351,7 @@ null_ls.setup({
   sources = {
     -- gitrebase code_actions,
     code_actions.gitrebase,
-    -- github actions
+    -- github actioins
     diagnostics.actionlint,
     -- javascript/typescript
     formatting.prettier.with({

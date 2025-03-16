@@ -9,7 +9,7 @@ else
   exit 1
 fi
 
-readonly NVIM_APP_IMAGE_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim.appimage"
+readonly NVIM_APP_IMAGE_URL="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.appimage"
 readonly NVIM_BIN_PATH="${BIN_DIR}/nvim"
 
 APT_PACKAGES="$(get_packages "${PACKAGES_DIR}" apt)"

@@ -27,6 +27,13 @@ return {
       "NvChad/nvim-colorizer.lua",
     },
     build = ":TSUpdate",
+    init = function()
+      require("vim.treesitter.query").add_predicate("is-mise?", function(_, _, bufnr, _)
+        local filepath = vim.api.nvim_buf_get_name(tonumber(bufnr) or 0)
+        local filename = vim.fn.fnamemodify(filepath, ":t")
+        return string.match(filename, ".*mise.*%.toml$") ~= nil
+      end, { force = true, all = false })
+    end,
     config = function()
       require("config.treesitter")
     end,
@@ -67,6 +74,8 @@ return {
     opts = {
       library = {
         { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+        { path = "snacks.nvim", words = { "Snacks" } },
+        { path = "lazy.nvim", words = { "LazyVim" } },
       },
     },
     dependencies = {
@@ -78,14 +87,33 @@ return {
     lazy = true,
   },
   {
-    "rachartier/tiny-code-action.nvim",
-    dependencies = {
-      { "nvim-lua/plenary.nvim" },
-      { "nvim-telescope/telescope.nvim" },
-    },
-    event = "LspAttach",
-    config = function()
-      require("tiny-code-action").setup({})
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = function(_, opts)
+      return vim.tbl_deep_extend("force", opts or {}, {
+        bigfile = { enabled = true },
+        explorer = { enabled = true },
+        git = { enabled = true },
+        gitbrowse = { enabled = true },
+        image = { enabled = true },
+        input = { enabled = true },
+        notifier = { enabled = true },
+        picker = {
+          enabled = true,
+          actions = require("trouble.sources.snacks").actions,
+          win = {
+            input = {
+              keys = {
+                ["<c-q>"] = {
+                  "trouble_open",
+                  mode = { "n", "i" },
+                },
+              },
+            },
+          },
+        },
+      })
     end,
   },
   {
@@ -93,14 +121,17 @@ return {
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    cmd = { "Trouble" },
+    lazy = true,
     opts = {
       auto_preview = false,
       modes = {
         diagnostics = {
           sort = { "severity", "pos", "filename", "message" },
         },
-        telescope = {
+        snacks = {
+          sort = { "pos", "filename", "severity", "message" },
+        },
+        snacks_files = {
           sort = { "pos", "filename", "severity", "message" },
         },
         quickfix = {
@@ -111,6 +142,21 @@ return {
         },
       },
     },
+  },
+  {
+    "jmbuhr/otter.nvim",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      vim.api.nvim_create_autocmd({ "FileType" }, {
+        pattern = { "toml", "markdown" },
+        group = vim.api.nvim_create_augroup("EmbedTomlMd", {}),
+        callback = function()
+          require("otter").activate()
+        end,
+      })
+    end,
   },
 
   -- Completion
@@ -127,7 +173,6 @@ return {
     dependencies = {
       "rafamadriz/friendly-snippets",
       "mikavilpas/blink-ripgrep.nvim",
-      "giuxtaposition/blink-cmp-copilot",
     },
     event = "InsertEnter",
     version = "*",
@@ -140,7 +185,7 @@ return {
     build = ":Copilot auth",
     event = "VeryLazy",
     opts = {
-      suggestion = { enabled = false },
+      suggestion = { enabled = true, auto_trigger = true },
       panel = { enabled = false },
       filetypes = {
         ["*"] = function()
@@ -265,35 +310,9 @@ return {
             separator = true,
             padding = 1,
           },
-          {
-            filetype = "undotree",
-            text = "Undo Tree",
-            separator = true,
-            padding = 1,
-          },
         },
       },
     },
-  },
-  {
-    "stevearc/dressing.nvim",
-    opts = {
-      input = {
-        insert_only = true,
-      },
-    },
-  },
-  {
-    "rcarriga/nvim-notify",
-    config = function()
-      local notify = require("notify")
-      ---@diagnostic disable-next-line: missing-fields
-      notify.setup({
-        background_colour = "#000000",
-        timeout = 2000,
-      })
-      vim.notify = notify
-    end,
   },
   {
     "sindrets/winshift.nvim",
@@ -304,9 +323,7 @@ return {
     dependencies = {
       "anuvyklack/middleclass",
     },
-    config = function()
-      require("windows").setup()
-    end,
+    config = true,
   },
   {
     "mrjones2014/smart-splits.nvim",
@@ -334,68 +351,8 @@ return {
 
   -- File browsing
   {
-    "nvim-telescope/telescope.nvim",
-    lazy = true,
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
-      {
-        "nvim-telescope/telescope-fzf-native.nvim",
-        build = "gmake",
-        config = function()
-          require("telescope").load_extension("fzf")
-        end,
-      },
-    },
-    config = function()
-      local actions = require("telescope.actions")
-      local open_with_trouble = require("trouble.sources.telescope").open
-      local add_to_trouble = require("trouble.sources.telescope").add
-      require("telescope").setup({
-        defaults = {
-          layout_strategy = "horizontal",
-          layout_config = {
-            prompt_position = "top",
-          },
-          sorting_strategy = "ascending",
-          prompt_prefix = "🔍 ",
-          selection_caret = " ",
-          dynamic_preview_title = true,
-          mappings = {
-            i = {
-              ["<Esc>"] = actions.close,
-              ["<c-q>"] = open_with_trouble,
-              ["<c-s>"] = add_to_trouble,
-            },
-            n = {
-              ["<c-q>"] = open_with_trouble,
-              ["<c-s>"] = add_to_trouble,
-            },
-          },
-        },
-        pickers = {
-          buffers = {
-            mappings = {
-              i = {
-                ["<A-d>"] = actions.delete_buffer + actions.move_to_top,
-              },
-            },
-          },
-        },
-        extensions = {
-          fzf = {
-            fuzzy = true,
-            override_generic_sorter = true,
-            override_file_sorter = true,
-            case_mode = "smart_case",
-          },
-        },
-      })
-    end,
-  },
-  {
     "nvim-neo-tree/neo-tree.nvim",
+    version = "*",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
@@ -405,17 +362,24 @@ return {
     init = function()
       vim.g.neo_tree_remove_legacy_commands = 1
     end,
-    opts = {
-      close_if_last_window = true,
-      filesystem = {
-        filtered_items = {
-          visible = true,
-        },
+    opts = function(_, opts)
+      opts.close_if_last_window = true
+      opts.filesystem = {
         follow_current_file = {
           enabled = true,
         },
-      },
-    },
+      }
+
+      local function on_move(data)
+        Snacks.rename.on_rename_file(data.source, data.destination)
+      end
+      local events = require("neo-tree.events")
+      opts.event_handlers = opts.event_handlers or {}
+      vim.list_extend(opts.event_handlers, {
+        { event = events.FILE_MOVED, handler = on_move },
+        { event = events.FILE_RENAMED, handler = on_move },
+      })
+    end,
   },
 
   -- AI
@@ -424,27 +388,29 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "nvim-telescope/telescope.nvim",
       "stevearc/dressing.nvim",
     },
-    config = function()
-      require("codecompanion").setup({
-        strategies = {
-          chat = {
-            adapter = "copilot",
-          },
-          inline = {
-            adapter = "copilot",
-          },
-          agent = {
-            adapter = "copilot",
-          },
+    opts = {
+      strategies = {
+        chat = {
+          adapter = "copilot",
         },
-      })
-    end,
+        inline = {
+          adapter = "copilot",
+        },
+        agent = {
+          adapter = "copilot",
+        },
+      },
+    },
   },
 
   -- Language specific
+  {
+    "mrcjkb/rustaceanvim",
+    version = "*",
+    lazy = false,
+  },
   {
     "toppair/peek.nvim",
     build = "deno task --quiet build:fast",
@@ -454,15 +420,6 @@ return {
       vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
       vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
     end,
-  },
-
-  -- Utils
-  {
-    "almo7aya/openingh.nvim",
-    cmd = {
-      "OpenInGHFile",
-      "OpenInGHFileLines",
-    },
   },
 
   -- Text editing
@@ -501,13 +458,6 @@ return {
     },
   },
   {
-    "mbbill/undotree",
-    cmd = "UndotreeToggle",
-    init = function()
-      vim.g.undotree_CursorLine = 0
-    end,
-  },
-  {
     "wakatime/vim-wakatime",
     event = "VeryLazy",
   },
@@ -524,7 +474,7 @@ return {
   },
   {
     "mg979/vim-visual-multi",
-    config = function()
+    init = function()
       vim.g.VM_silent_exit = 1
       vim.g.VM_quit_after_leaving_insert_mode = 1
       vim.g.VM_show_warnings = 0
@@ -541,7 +491,6 @@ return {
         "gitrebase",
         "neo-tree",
         "neotest-summary",
-        "undotree",
       },
     },
   },
@@ -550,38 +499,20 @@ return {
     event = "BufReadPost",
   },
   {
-    "nvim-pack/nvim-spectre",
-    cmd = "Spectre",
+    "MagicDuck/grug-far.nvim",
+    keys = { "<leader>rr" },
+    config = true,
   },
   {
     "kylechui/nvim-surround",
-    event = "VeryLazy",
-    config = function()
-      require("nvim-surround").setup({
+    event = "BufReadPost",
+    opts = {
+      keymaps = {
         -- disable conflicting keymaps
         normal_cur = false,
         normal_line = false,
         normal_cur_line = false,
-      })
-    end,
-  },
-
-  -- Git
-
-  {
-    "kdheepak/lazygit.nvim",
-    cmd = {
-      "LazyGit",
-      "LazyGitConfig",
-      "LazyGitCurrentFile",
-      "LazyGitFilter",
-      "LazyGitFilterCurrentFile",
-    },
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-    },
-    keys = {
-      { "<C-g>", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+      },
     },
   },
 }

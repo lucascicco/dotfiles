@@ -5,8 +5,8 @@ local wk = require("which-key")
 
 wk.add({
   { "<A-/>", desc = "Toggle comment" },
-  { "<A-Right>", "gt", desc = "Next tab" },
   { "<A-Left>", "gT", desc = "Previous tab" },
+  { "<A-Right>", "gt", desc = "Next tab" },
   {
     "<A-Down>",
     function()
@@ -34,7 +34,7 @@ wk.add({
   {
     "<C-b>",
     function()
-      require("telescope.builtin").buffers()
+      Snacks.picker.buffers()
     end,
     desc = "Find buffers",
   },
@@ -43,9 +43,9 @@ wk.add({
   {
     "<C-q>",
     function()
-      require("trouble").toggle({ mode = "diagnostics", focus = false })
+      Snacks.picker.resume()
     end,
-    desc = "Toggle trouble",
+    desc = "Toggle snacks",
   },
   { "<C-w>m", "<cmd>WinShift<cr>", desc = "WinShift mode" },
   {
@@ -57,7 +57,13 @@ wk.add({
   },
   { "<C-w>t", "<cmd>tab split<cr>", desc = "Duplicate tab" },
   { "<C-w>x", "<cmd>WinShift swap<cr><C-w><C-w>", desc = "Swap splits" },
-  { "<F2>", "<cmd>UndotreeToggle<cr>", desc = "Toggle Undotree" },
+  {
+    "<F2>",
+    function()
+      Snacks.picker.undo()
+    end,
+    desc = "Toggle Undotree",
+  },
   { "<F4>", "<cmd>Neotree reveal toggle<cr>", desc = "Toggle Neotree" },
   {
     "<F10>",
@@ -73,22 +79,31 @@ wk.add({
     end,
     desc = "Toggle neotest summary",
   },
-  { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
   { "<leader>y", '"+y', silent = true, mode = "v" },
   { "<leader>p", '"+p', silent = true, mode = { "n", "v" } },
+  { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
   {
     group = "toggle",
     { "<leader>td", utils.toggle_diagnostics, desc = "Toggle diagnostics" },
     { "<leader>tf", utils.toggle_format, desc = "Toggle format" },
+    { "<leader>ti", utils.toggle_inlay_hints, desc = "Toggle inlay hints" },
     { "<leader>tl", "<cmd>set list!<cr>:set list?<CR>", desc = "Toggle list" },
     { "<leader>tn", "<cmd>set number!<cr>:set number?<CR>", desc = "Toggle number" },
     { "<leader>tp", "<cmd>set paste!<cr>:set paste?<CR>", desc = "Toggle paste" },
     { "<leader>ts", "<cmd>set spell!<cr>:set spell?<CR>", desc = "Toggle spell" },
+    { "<leader>tw", "<cmd>set wrap!<cr>:set wrap?<CR>", desc = "Toggle wrap" },
+  },
+  {
+    "<C-g>",
+    function()
+      Snacks.lazygit()
+    end,
+    desc = "Lazygit",
   },
   {
     "<leader>vb",
     function()
-      require("gitsigns").blame_line({ full = true })
+      Snacks.git.blame_line()
     end,
     desc = "Blame current line",
   },
@@ -141,18 +156,38 @@ wk.add({
   {
     "ge",
     function()
-      require("trouble").toggle({ mode = "diagnostics", focus = false, filter = { buf = 0 } })
+      ---@diagnostic disable-next-line: missing-fields, missing-fields, missing-fields
+      require("trouble").toggle({
+        mode = "diagnostics",
+        focus = false,
+        filter = {
+          ["not"] = { severity = vim.diagnostic.severity.HINT },
+        },
+      })
     end,
     desc = "Document diagnostics",
   },
   {
     "gE",
     function()
-      require("trouble").toggle({ mode = "diagnostics", focus = false })
+      ---@diagnostic disable-next-line: missing-fields
+      require("trouble").toggle({
+        mode = "diagnostics",
+        focus = false,
+        filter = {
+          ["not"] = { severity = vim.diagnostic.severity.HINT },
+        },
+      })
     end,
     desc = "Workspace diagnostics",
   },
-  { "z=", utils.spell_suggest, desc = "Spell suggest" },
+  {
+    "z=",
+    function()
+      Snacks.picker.spelling()
+    end,
+    desc = "Spell suggest",
+  },
   {
     mode = { "n", "o", "x" },
     { "#", "*", desc = "Search highlighted word forward" },
@@ -180,6 +215,19 @@ wk.add({
     { "<C-/>", "gc", desc = "Toggle comment", remap = true },
   },
   {
+    mode = { "n", "v" },
+    { "<C-a>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
+    { "<F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
+    { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
+    {
+      "<leader>rr",
+      function()
+        require("grug-far").open({ prefills = { search = vim.fn.expand("<cword>") } })
+      end,
+      desc = "Find & Replace",
+    },
+  },
+  {
     mode = { "i" },
     {
       "<C-f>",
@@ -191,14 +239,24 @@ wk.add({
   },
   {
     mode = { "n" },
+    { "<C-/>", "gcc", desc = "Toggle comment", remap = true },
     {
       "<C-f>",
       function()
-        require("telescope.builtin").live_grep()
+        Snacks.picker.grep()
       end,
       desc = "Live grep",
     },
-    { "<C-/>", "gcc", desc = "Toggle comment", remap = true },
+  },
+  {
+    mode = { "v", "x" },
+    {
+      "<C-f>",
+      function()
+        Snacks.picker.grep_word()
+      end,
+      desc = "Grep word",
+    },
   },
   {
     mode = { "i", "n" },
@@ -224,9 +282,7 @@ M.setup_lsp = function(ev)
       mode = { "n", "v" },
       {
         "<leader>ca",
-        function()
-          require("tiny-code-action").code_action({})
-        end,
+        vim.lsp.buf.code_action,
         buffer = ev.buf,
         desc = "LSP code action",
         group = "LSP Actions",
@@ -276,30 +332,11 @@ M.setup_lsp = function(ev)
     },
     { "K", vim.lsp.buf.hover, buffer = ev.buf, desc = "LSP hover", group = "LSP Actions" },
     {
-      group = "callhierarchy",
-      {
-        "gic",
-        function()
-          require("telescope.builtin").lsp_incoming_calls()
-        end,
-        buffer = ev.buf,
-        desc = "LSP incoming calls",
-      },
-      {
-        "goc",
-        function()
-          require("telescope.builtin").lsp_outgoing_calls()
-        end,
-        buffer = ev.buf,
-        desc = "LSP outgoing calls",
-      },
-    },
-    {
       group = "LSP Navigation",
       {
         "<C-LeftMouse>",
         function()
-          require("telescope.builtin").lsp_definitions()
+          Snacks.picker.lsp_definitions({ auto_confirm = true })
         end,
         buffer = ev.buf,
         desc = "LSP hover",
@@ -307,16 +344,23 @@ M.setup_lsp = function(ev)
       {
         "gd",
         function()
-          require("telescope.builtin").lsp_definitions()
+          Snacks.picker.lsp_definitions({ auto_confirm = true })
         end,
         buffer = ev.buf,
         desc = "LSP go to definition",
       },
-      { "gD", vim.lsp.buf.declaration, buffer = ev.buf, desc = "LSP go to declaration" },
+      {
+        "gD",
+        function()
+          Snacks.picker.lsp_declarations({ auto_confirm = true })
+        end,
+        buffer = ev.buf,
+        desc = "LSP go to declarations",
+      },
       {
         "grr",
         function()
-          require("telescope.builtin").lsp_references({ jump_type = "never" })
+          Snacks.picker.lsp_references({ auto_confirm = false })
         end,
         buffer = ev.buf,
         desc = "LSP references",
@@ -324,7 +368,7 @@ M.setup_lsp = function(ev)
       {
         "<leader>D",
         function()
-          require("telescope.builtin").lsp_type_definitions()
+          Snacks.picker.lsp_type_definitions({ auto_confirm = true })
         end,
         buffer = ev.buf,
         desc = "LSP type definition",
@@ -332,7 +376,7 @@ M.setup_lsp = function(ev)
       {
         "gs",
         function()
-          require("telescope.builtin").lsp_document_symbols()
+          Snacks.picker.lsp_symbols({ auto_confirm = false })
         end,
         buffer = ev.buf,
         desc = "LSP document symbols",
@@ -340,7 +384,7 @@ M.setup_lsp = function(ev)
       {
         "gI",
         function()
-          require("telescope.builtin").lsp_implementations()
+          Snacks.picker.lsp_implementations({ auto_confirm = false })
         end,
         buffer = ev.buf,
         desc = "LSP go to implementation",
@@ -348,7 +392,7 @@ M.setup_lsp = function(ev)
       {
         "gS",
         function()
-          require("telescope.builtin").lsp_workspace_symbols()
+          Snacks.picker.lsp_workspace_symbols({ auto_confirm = false })
         end,
         buffer = ev.buf,
         desc = "LSP workspace symbols",

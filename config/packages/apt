@@ -58,6 +58,7 @@ python3-pip
 python3-pynvim
 rsync
 sd
+shellcheck
 sed
 software-properties-common
 sox

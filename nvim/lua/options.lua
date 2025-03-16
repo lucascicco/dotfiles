@@ -13,6 +13,7 @@ end
 
 -- Set leader to ,
 vim.g.mapleader = ","
+vim.g.maplocalleader = ","
 
 -- Use lua parser and highlight
 vim.g.ts_highlight_lua = true
@@ -43,6 +44,8 @@ vim.opt.splitbelow = true
 vim.opt.scrolloff = 5
 vim.opt.showtabline = 1
 vim.opt.smoothscroll = true
+vim.opt.title = true
+vim.opt.smoothscroll = true
 
 -- Theme
 vim.opt.termguicolors = true
@@ -57,6 +60,14 @@ vim.opt.formatoptions = extend(vim.opt.formatoptions, { "1", "o" })
 vim.opt.whichwrap = extend(vim.opt.whichwrap, { "<", ">", "[", "]", "~" })
 vim.opt.shortmess = extend(vim.opt.shortmess, { "a" })
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
+vim.opt.fillchars = {
+  foldopen = "",
+  foldclose = "",
+  fold = " ",
+  foldsep = " ",
+  diff = "╱",
+  eob = " ",
+}
 
 -- Folding
 vim.opt.foldmethod = "expr"
@@ -69,7 +80,6 @@ vim.opt.smarttab = true
 vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.tabstop = 4
-vim.opt.title = true
 
 -- Spell
 vim.opt.spelllang = { "en_us", "pt_br" }
@@ -92,12 +102,24 @@ vim.opt.wildmode = { "list:longest", "full" }
 vim.opt.undofile = true
 vim.opt.undolevels = 10000
 
+-- Filetypes
+vim.filetype.add({
+  extension = {
+    gotmpl = "gotmpl",
+  },
+  pattern = {
+    [".*/templates/.*%.tpl"] = "helm",
+    [".*/templates/.*%.ya?ml"] = "helm",
+    ["helmfile.*%.ya?ml"] = "helm",
+  },
+})
+
 -- FT Configs
 local ft_configs = {
   bash = { indent = 2 },
   css = { indent = 2 },
-  go = { indent = 4 },
   gitcommit = { spell = true },
+  go = { indent = 2 },
   graphql = { indent = 2 },
   help = { spell = false },
   html = { indent = 2, spell = "toplevel" },
