@@ -4,6 +4,8 @@ local utils = require("utils")
 local wk = require("which-key")
 
 wk.add({
+  { "<leader>y", '"+y', silent = true, mode = "v" },
+  { "<leader>p", '"+p', silent = true, mode = { "n", "v" } },
   { "<A-/>", desc = "Toggle comment" },
   { "<A-Left>", "gT", desc = "Previous tab" },
   { "<A-Right>", "gt", desc = "Next tab" },
@@ -79,8 +81,6 @@ wk.add({
     end,
     desc = "Toggle neotest summary",
   },
-  { "<leader>y", '"+y', silent = true, mode = "v" },
-  { "<leader>p", '"+p', silent = true, mode = { "n", "v" } },
   { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
   {
     group = "toggle",
@@ -98,7 +98,7 @@ wk.add({
     function()
       Snacks.lazygit()
     end,
-    desc = "Lazygit",
+    desc = "Toggle lazygit",
   },
   {
     "<leader>vb",
@@ -106,6 +106,22 @@ wk.add({
       Snacks.git.blame_line()
     end,
     desc = "Blame current line",
+  },
+  {
+    "<leader>pf",
+    function()
+      vim.fn.setreg("+", vim.fn.expand("%:t"))
+      vim.notify("File name copied to clipboard", "info")
+    end,
+    desc = "Copy file name to system clipboard",
+  },
+  {
+    "<leader>pp",
+    function()
+      vim.fn.setreg("+", vim.fn.expand("%:p"))
+      vim.notify("File path copied to clipboard", "info")
+    end,
+    desc = "Copy file path to system clipboard",
   },
   {
     "[Q",
@@ -216,8 +232,8 @@ wk.add({
   },
   {
     mode = { "n", "v" },
-    { "<C-a>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
-    { "<F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
+    { "<F9>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
+    { "<C-F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
     { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
     {
       "<leader>rr",
@@ -243,7 +259,7 @@ wk.add({
     {
       "<C-f>",
       function()
-        Snacks.picker.grep()
+        Snacks.picker.grep({ hidden = true, follow = true })
       end,
       desc = "Live grep",
     },
@@ -275,6 +291,8 @@ M.setup_lsp = function(ev)
   if client.server_capabilities.definitionProvider then
     vim.bo[ev.buf].tagfunc = "v:lua.vim.lsp.tagfunc"
   end
+
+  local jump = { tagstack = true, reuse_win = false }
 
   -- lsp mappings
   wk.add({
@@ -336,7 +354,7 @@ M.setup_lsp = function(ev)
       {
         "<C-LeftMouse>",
         function()
-          Snacks.picker.lsp_definitions({ auto_confirm = true })
+          Snacks.picker.lsp_definitions({ auto_confirm = true, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP hover",
@@ -344,7 +362,7 @@ M.setup_lsp = function(ev)
       {
         "gd",
         function()
-          Snacks.picker.lsp_definitions({ auto_confirm = true })
+          Snacks.picker.lsp_definitions({ auto_confirm = true, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP go to definition",
@@ -352,7 +370,7 @@ M.setup_lsp = function(ev)
       {
         "gD",
         function()
-          Snacks.picker.lsp_declarations({ auto_confirm = true })
+          Snacks.picker.lsp_declarations({ auto_confirm = true, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP go to declarations",
@@ -360,7 +378,7 @@ M.setup_lsp = function(ev)
       {
         "grr",
         function()
-          Snacks.picker.lsp_references({ auto_confirm = false })
+          Snacks.picker.lsp_references({ auto_confirm = false, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP references",
@@ -368,7 +386,7 @@ M.setup_lsp = function(ev)
       {
         "<leader>D",
         function()
-          Snacks.picker.lsp_type_definitions({ auto_confirm = true })
+          Snacks.picker.lsp_type_definitions({ auto_confirm = true, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP type definition",
@@ -376,7 +394,7 @@ M.setup_lsp = function(ev)
       {
         "gs",
         function()
-          Snacks.picker.lsp_symbols({ auto_confirm = false })
+          Snacks.picker.lsp_symbols({ auto_confirm = false, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP document symbols",
@@ -384,7 +402,7 @@ M.setup_lsp = function(ev)
       {
         "gI",
         function()
-          Snacks.picker.lsp_implementations({ auto_confirm = false })
+          Snacks.picker.lsp_implementations({ auto_confirm = false, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP go to implementation",
@@ -392,7 +410,7 @@ M.setup_lsp = function(ev)
       {
         "gS",
         function()
-          Snacks.picker.lsp_workspace_symbols({ auto_confirm = false })
+          Snacks.picker.lsp_workspace_symbols({ auto_confirm = false, jump = jump })
         end,
         buffer = ev.buf,
         desc = "LSP workspace symbols",

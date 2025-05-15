@@ -52,12 +52,6 @@ return {
     event = "BufReadPost",
     dependencies = {
       "saghen/blink.cmp",
-      {
-        "nvimtools/none-ls.nvim",
-        dependencies = {
-          "nvimtools/none-ls-extras.nvim",
-        },
-      },
       "b0o/schemastore.nvim",
       "SmiteshP/nvim-navic",
     },
@@ -110,6 +104,11 @@ return {
                   mode = { "n", "i" },
                 },
               },
+            },
+          },
+          formatters = {
+            file = {
+              truncate = 100,
             },
           },
         },
@@ -205,6 +204,16 @@ return {
           end
           return true
         end,
+      },
+      copilot_model = "gpt-4o-copilot",
+      logger = {
+        log_to_file = true,
+        file = vim.fn.stdpath("log") .. "/copilot-lua.log",
+        file_log_level = vim.log.levels.WARN,
+        print_log = false,
+        print_log_level = vim.log.levels.WARN,
+        trace_lsp = "off", -- "off" | "messages" | "verbose"
+        trace_lsp_progress = false,
       },
     },
   },
@@ -388,7 +397,6 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      "stevearc/dressing.nvim",
     },
     opts = {
       strategies = {
