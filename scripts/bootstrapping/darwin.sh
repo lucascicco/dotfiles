@@ -33,8 +33,14 @@ function _packages {
 function _neovim {
   task "Neovim" "installing neovim"
 
-  brew install --HEAD neovim
-  brew upgrade neovim --fetch-HEAD
+  local file=${LOCAL_BUILD_DIR}/nvim.tar.gz
+  local url=https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz
+
+  if [ "$(download_file ${file} ${url})" == "1" ]; then
+    rm -rf ${LOCAL_BUILD_DIR}/nvim-macos-arm64
+    tar xzf ${file} -C ${LOCAL_BUILD_DIR}
+    ln -sf ${LOCAL_BUILD_DIR}/nvim-macos-arm64/bin/nvim ${BIN_DIR}/nvim
+  fi
 }
 
 function _ {

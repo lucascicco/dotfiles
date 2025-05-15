@@ -5,7 +5,7 @@ export RC_SCRIPTS_DIR="$DOTFILES_DIR/config/bash"
 
 readonly -a ANTIDOTE_PATHS=(
   "${HOME}/.antidote/antidote.zsh"
-  "/opt/homebrew//opt/antidote/share/antidote/antidote.zsh"
+  "/opt/homebrew/opt/antidote/share/antidote/antidote.zsh"
   "/usr/share/zsh-antidote/antidote.zsh"
 )
 
