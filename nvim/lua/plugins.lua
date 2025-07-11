@@ -205,7 +205,7 @@ return {
           return true
         end,
       },
-      copilot_model = "gpt-4o-copilot",
+      copilot_model = "claude-3-7-sonnet",
       logger = {
         log_to_file = true,
         file = vim.fn.stdpath("log") .. "/copilot-lua.log",
@@ -281,14 +281,11 @@ return {
     end,
   },
   {
-    "utilyre/barbecue.nvim",
-    event = "VeryLazy",
-    dependencies = {
-      "SmiteshP/nvim-navic",
-      "nvim-tree/nvim-web-devicons",
-    },
+    "Bekaboo/dropbar.nvim",
     opts = {
-      attach_navic = false,
+      menu = {
+        preview = false,
+      },
     },
   },
   {
@@ -402,12 +399,19 @@ return {
       strategies = {
         chat = {
           adapter = "copilot",
+          model = "claude-3-7-sonnet",
         },
         inline = {
           adapter = "copilot",
+          model = "claude-3-7-sonnet",
         },
         agent = {
           adapter = "copilot",
+          model = "claude-3-7-sonnet",
+        },
+        cmd = {
+          adapter = "copilot",
+          model = "claude-3-7-sonnet",
         },
       },
     },

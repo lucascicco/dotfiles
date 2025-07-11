@@ -40,6 +40,13 @@ wk.add({
     end,
     desc = "Find buffers",
   },
+  {
+    "<C-s>",
+    function()
+      require("dropbar.api").pick()
+    end,
+    desc = "Dropbar pick",
+  },
   { "<C-d>", utils.run_tests, desc = "Run tests" },
   { "<C-p>", utils.find_files, desc = "Find files" },
   {
@@ -232,6 +239,7 @@ wk.add({
   },
   {
     mode = { "n", "v" },
+    { "<C-.>", "<cmd>CodeCompanion<cr>", desc = "Code companion prompt" },
     { "<F9>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
     { "<C-F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
     { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
