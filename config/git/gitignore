@@ -1,7 +1,9 @@
 .git
-.rtx.toml
 .mise.toml
 .mise.local.toml
+.ropeproject
+.rtx.toml
 .tool-versions
 .venv
 pyrightconfig.json
+ty.toml

@@ -104,3 +104,17 @@ bootstrap() {
 switch_git_config() {
   switch_git_user "$GIT_USERS_DIR" "$GIT_CONFIG_FILE"
 }
+
+vi() {
+  if [ -n "${VIRTUAL_ENV}" ] && [ -d "${VIRTUAL_ENV}" ] && [ -f "${VIRTUAL_ENV}/bin/activate" ]; then
+    source "${VIRTUAL_ENV}/bin/activate"
+  fi
+  if command -v poetry &>/dev/null; then
+    local poetry_venv
+    poetry_venv=$(poetry env info --path -C "$(pwd)" 2>/dev/null)
+    if [ -n "${poetry_venv}" ]; then
+      source "${poetry_venv}/bin/activate"
+    fi
+  fi
+  nvim "${@}"
+}

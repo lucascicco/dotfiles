@@ -23,7 +23,6 @@ vim.opt.mouse = "nv"
 vim.opt.linebreak = true
 vim.opt.swapfile = false
 vim.opt.updatetime = 500
-
 -- Ui
 vim.opt.number = true
 vim.opt.cursorline = false
@@ -43,7 +42,6 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 vim.opt.scrolloff = 5
 vim.opt.showtabline = 1
-vim.opt.smoothscroll = true
 vim.opt.title = true
 vim.opt.smoothscroll = true
 
@@ -70,8 +68,6 @@ vim.opt.fillchars = {
 }
 
 -- Folding
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
 vim.opt.foldenable = false
 
 -- Tabs
@@ -139,9 +135,14 @@ local ft_configs = {
   xml = { indent = 2, spell = "toplevel" },
   yaml = { indent = 2 },
   zsh = { indent = 2 },
+  sql = { indent = 2 },
 }
 
 M.setup_ft = function()
+  if pcall(vim.treesitter.start) then
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+  end
+
   local config = ft_configs[vim.bo.filetype]
   if config == nil then
     return

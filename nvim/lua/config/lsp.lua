@@ -8,6 +8,16 @@ local augroup_codelens = vim.api.nvim_create_augroup("_my_lsp_codelens", {})
 local excluded_paths = {
   "lib/python%d.%d+/site-packages/",
 }
+local lsp_disable_format = {
+  html = true,
+  jsonls = true,
+  pyright = true,
+  basedpyright = true,
+  sumneko_lua = true,
+  lua_ls = true,
+  tsserver = true,
+  taplo = os.getenv("DISABLE_TAPLO_FMT") == "1",
+}
 
 vim.diagnostic.config({
   virtual_text = false,
@@ -45,6 +55,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     if client.name == "ruff" then
       -- favor pyright over ruff
       client.server_capabilities.hoverProvider = false
+    end
+
+    if lsp_disable_format[client.name] then
+      client.server_capabilities.documentFormattingProvider = false
+      client.server_capabilities.documentRangeFormattingProvider = false
     end
 
     if client.server_capabilities.documentSymbolProvider then
@@ -85,36 +100,6 @@ local function _my_open_floating_preview(contents, syntax, opts, ...)
 end
 vim.lsp.util.open_floating_preview = _my_open_floating_preview
 
-local handlers = {
-  ["textDocument/rename"] = function(_, result, ...)
-    local title = nil
-    local msg = {}
-
-    if result and result.documentChanges then
-      local fname
-      local old = vim.fn.expand("<cword>")
-      local new = "<unknown>"
-      local root = vim.uv.cwd()
-      for _, c in pairs(result.documentChanges) do
-        new = c.edits[1].newText
-        fname = "." .. c.textDocument.uri:gsub("file://" .. root, "")
-        table.insert(msg, ("%d changes -> %s"):format(#c.edits, fname))
-      end
-      title = ("Rename: %s -> %s"):format(old, new)
-    end
-
-    local ret = vim.lsp.handlers["textDocument/rename"](_, result, ...)
-
-    if not vim.tbl_isempty(msg) then
-      vim.notify(table.concat(msg, "\n"), vim.log.levels.INFO, { title = title })
-      -- Save the modified files after the rename
-      vim.cmd("wall")
-    end
-
-    return ret
-  end,
-}
-
 local lsp_capabilities = function()
   return require("blink.cmp").get_lsp_capabilities({}, true)
 end
@@ -125,7 +110,6 @@ local function enable(name, config)
     vim.tbl_deep_extend("force", {
       capabilities = lsp_capabilities(),
       autostart = os.getenv("DISABLE_" .. name:upper()) ~= "1",
-      handlers = handlers,
     }, config or {})
   )
   vim.lsp.enable(name)
@@ -159,6 +143,8 @@ local plugins = {
   "terraformls",
   -- https://github.com/lttb/gh-actions-language-server
   "gh_actions_ls",
+  -- https://github.com/golang/tools/tree/master/gopls
+  "gopls",
   -- https://taplo.tamasfe.dev/cli/usage/language-server.html
   "taplo",
   -- https://github.com/antonk52/lua-3p-language-servers
@@ -170,35 +156,105 @@ for _, plugin in ipairs(plugins) do
   enable(plugin)
 end
 
--- https://github.com/microsoft/pyright
+-- https://github.com/tilt-dev/tilt
+enable("tilt_ls", {
+  filetypes = { "tiltfile", "starlark" },
+})
+
 local python_lsp = os.getenv("PYTHON_LSP") or "pyright"
-local python_config_key = python_lsp == "basedpyright" and "basedpyright" or "python"
-enable(python_lsp, {
-  before_init = function(initialize_params, config)
-    local python_path = utils.find_python()
-    config.settings.python.pythonPath = python_path
-    utils.ensure_tables(initialize_params, "initializationOptions", "settings", python_config_key)
-    initialize_params.initializationOptions.settings.python.pythonPath = python_path
-  end,
-  settings = {
-    [python_config_key] = {
-      analysis = {
-        autoSearchPaths = true,
-        diagnosticMode = os.getenv("PYRIGHT_DIAGNOSTIC_MODE") or "workspace",
-        typeCheckingMode = os.getenv("PYRIGHT_TYPE_CHECKING_MODE") or "standard",
-        useLibraryCodeForTypes = true,
-        disableOrganizeImports = true,
-        diagnosticSeverityOverrides = vim.json.decode(
-          os.getenv("PYRIGHT_DIAGNOSTIC_OVERRIDES") or "{}"
-        ),
+if python_lsp == "ty" then
+  -- https://github.com/astral-sh/ty
+  enable("ty", {
+    settings = {
+      ty = {
+        importStrategy = "fromEnvironment",
+        diagnosticMode = "workspace",
       },
     },
-  },
-})
+  })
+elseif python_lsp == "pylsp" then
+  enable("pylsp", {
+    settings = {
+      pylsp = {
+        plugins = {
+          autopep8 = { enabled = false },
+          black = { enabled = false },
+          flake8 = { enabled = false },
+          isort = { enabled = false },
+          mccabe = { enabled = false },
+          pycodestyle = { enabled = false },
+          pydocstyle = { enabled = false },
+          pyflakes = { enabled = false },
+          pylint = { enabled = false },
+          yapf = { enabled = false },
+          signature = {
+            formatter = "ruff",
+          },
+        },
+      },
+    },
+  })
+else
+  -- https://github.com/microsoft/pyright
+  -- https://github.com/DetachHead/basedpyright
+  local python_config_key = python_lsp == "basedpyright" and "basedpyright" or "python"
+  enable(python_lsp, {
+    before_init = function(initialize_params, config)
+      local python_path = utils.find_python()
+      config.settings.python.pythonPath = python_path
+      utils.ensure_tables(initialize_params, "initializationOptions", "settings", python_config_key)
+      initialize_params.initializationOptions.settings.python.pythonPath = python_path
+    end,
+    settings = {
+      [python_config_key] = {
+        analysis = {
+          autoSearchPaths = true,
+          diagnosticMode = os.getenv("PYRIGHT_DIAGNOSTIC_MODE") or "workspace",
+          typeCheckingMode = os.getenv("PYRIGHT_TYPE_CHECKING_MODE") or "standard",
+          useLibraryCodeForTypes = true,
+          disableOrganizeImports = true,
+          diagnosticSeverityOverrides = vim.json.decode(
+            os.getenv("PYRIGHT_DIAGNOSTIC_OVERRIDES") or "{}"
+          ),
+        },
+      },
+    },
+    handlers = {
+      -- Override the default rename handler to remove the `annotationId` from edits.
+      --
+      -- Pyright is being non-compliant here by returning `annotationId` in the edits, but not
+      -- populating the `changeAnnotations` field in the `WorkspaceEdit`. This causes Neovim to
+      -- throw an error when applying the workspace edit.
+      --
+      -- See:
+      -- - https://github.com/neovim/neovim/issues/34731
+      -- - https://github.com/microsoft/pyright/issues/10671
+      [vim.lsp.protocol.Methods.textDocument_rename] = function(err, result, ctx)
+        if err then
+          vim.notify("Pyright rename failed: " .. err.message, vim.log.levels.ERROR)
+          return
+        end
+
+        ---@cast result lsp.WorkspaceEdit
+        for _, change in ipairs(result.documentChanges or {}) do
+          for _, edit in ipairs(change.edits or {}) do
+            if edit.annotationId then
+              edit.annotationId = nil
+            end
+          end
+        end
+
+        local client = assert(vim.lsp.get_client_by_id(ctx.client_id))
+        vim.lsp.util.apply_workspace_edit(result, client.offset_encoding)
+      end,
+    },
+  })
+end
 
 -- https://github.com/astral-sh/ruff
 enable("ruff", {
   settings = {
+    configurationPreference = "filesystemFirst",
     prioritizeFileConfiguration = true,
     fixAll = true,
     organizeImports = true,
@@ -264,22 +320,6 @@ enable("lua_ls", {
     Lua = {
       completion = {
         callSnippet = "Replace",
-      },
-    },
-  },
-})
-
--- https://github.com/golang/tools/blob/master/gopls
-enable("gopls", {
-  cmd = { "gopls" },
-  filetypes = { "go", "gomod", "gowork", "gotmpl" },
-  root_dir = nvim_lsp.util.root_pattern("go.work", "go.mod"),
-  settings = {
-    gopls = {
-      completeUnimported = true,
-      usePlaceholders = true,
-      analyses = {
-        unusedparams = true,
       },
     },
   },

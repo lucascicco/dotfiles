@@ -15,7 +15,7 @@ M.setup = function()
   vim.opt.runtimepath:prepend(lazypath)
 
   require("lazy").setup("plugins", {
-    install = { colorscheme = { "rose-pine", "default" } },
+    install = { colorscheme = { "kanagawa", "default" } },
     checker = { enabled = true },
     dev = {
       path = os.getenv("HOME") .. "/dev",

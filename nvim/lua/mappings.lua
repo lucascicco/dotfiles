@@ -57,13 +57,6 @@ wk.add({
     desc = "Toggle snacks",
   },
   { "<C-w>m", "<cmd>WinShift<cr>", desc = "WinShift mode" },
-  {
-    "<C-w>r",
-    function()
-      require("smart-splits").start_resize_mode()
-    end,
-    desc = "Smart resize",
-  },
   { "<C-w>t", "<cmd>tab split<cr>", desc = "Duplicate tab" },
   { "<C-w>x", "<cmd>WinShift swap<cr><C-w><C-w>", desc = "Swap splits" },
   {
@@ -242,7 +235,6 @@ wk.add({
     { "<C-.>", "<cmd>CodeCompanion<cr>", desc = "Code companion prompt" },
     { "<F9>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
     { "<C-F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
-    { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
     {
       "<leader>rr",
       function()
@@ -250,6 +242,10 @@ wk.add({
       end,
       desc = "Find & Replace",
     },
+  },
+  {
+    mode = { "v" },
+    { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
   },
   {
     mode = { "i" },
@@ -328,7 +324,10 @@ M.setup_lsp = function(ev)
     },
     {
       "<leader>rn",
-      vim.lsp.buf.rename,
+      function()
+        vim.lsp.buf.rename()
+        vim.cmd("silent! wa")
+      end,
       buffer = ev.buf,
       desc = "LSP rename",
       group = "LSP Actions",

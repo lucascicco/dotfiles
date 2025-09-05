@@ -1,21 +1,11 @@
 local M = {}
 
-local format_enabled = true
-local inside_git_dir = {}
-local lsp_excluded = {
-  html = true,
-  jsonls = true,
-  pyright = true,
-  basedpyright = true,
-  sumneko_lua = true,
-  lua_ls = true,
-  tsserver = true,
-  taplo = os.getenv("DISABLE_TAPLO_FMT") == "1",
-}
-
 M.disabled_copilot_organizations = {
   "LiferayCloud",
 }
+
+local format_enabled = true
+local inside_git_dir = {}
 
 M.get_root_path = function()
   local info = debug.getinfo(1, "S")
@@ -75,9 +65,6 @@ M.lsp_format = function(opts)
   opts = opts or {}
   if format_enabled or opts.force then
     vim.lsp.buf.format({
-      filter = function(client)
-        return not lsp_excluded[client.name]
-      end,
       bufnr = opts.bufnr or 0,
     })
   end

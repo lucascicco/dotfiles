@@ -1,6 +1,6 @@
 require("lualine").setup({
   options = {
-    theme = "rose-pine",
+    theme = "kanagawa",
     globalstatus = true,
     component_separators = { left = "｜", right = "｜" },
   },

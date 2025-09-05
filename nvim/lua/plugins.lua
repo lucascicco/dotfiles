@@ -1,32 +1,40 @@
-local utils = require("utils")
-
 return {
   -- Theme
   {
-    "rose-pine/neovim",
-    name = "rose-pine",
+    "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 1000,
     config = function()
-      require("rose-pine").setup({
-        styles = {
-          bold = false,
-          italic = false,
-          transparency = false,
+      ---@diagnostic disable-next-line: missing-fields
+      require("kanagawa").setup({
+        transparent = true,
+        globalStatus = true,
+        colors = {
+          theme = {
+            all = {
+              ui = {
+                bg_gutter = "none",
+              },
+            },
+          },
         },
       })
-      vim.cmd("colorscheme rose-pine")
+      vim.cmd("colorscheme kanagawa")
     end,
   },
 
   -- Treesitter
   {
     "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter-textobjects",
-      "NvChad/nvim-colorizer.lua",
-    },
+    lazy = false,
+    branch = "main",
     build = ":TSUpdate",
+    dependencies = {
+      {
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        branch = "main",
+      },
+    },
     init = function()
       require("vim.treesitter.query").add_predicate("is-mise?", function(_, _, bufnr, _)
         local filepath = vim.api.nvim_buf_get_name(tonumber(bufnr) or 0)
@@ -37,13 +45,6 @@ return {
     config = function()
       require("config.treesitter")
     end,
-  },
-  {
-    "nvim-treesitter/playground",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-    },
-    cmd = { "TSPlaygroundToggle", "TSHighlightCapturesUnderCursor" },
   },
 
   -- LSP
@@ -87,12 +88,12 @@ return {
     opts = function(_, opts)
       return vim.tbl_deep_extend("force", opts or {}, {
         bigfile = { enabled = true },
-        explorer = { enabled = true },
         git = { enabled = true },
         gitbrowse = { enabled = true },
         image = { enabled = true },
         input = { enabled = true },
         notifier = { enabled = true },
+        rename = { enabled = true },
         picker = {
           enabled = true,
           actions = require("trouble.sources.snacks").actions,
@@ -187,25 +188,9 @@ return {
       suggestion = { enabled = true, auto_trigger = true },
       panel = { enabled = false },
       filetypes = {
-        ["*"] = function()
-          if
-            os.getenv("SKIP_COPILOT_FILETYPE_VALIDATION") ~= "TRUE"
-            and vim.fn.executable("git") == 1
-          then
-            local bufname = vim.api.nvim_buf_get_name(0)
-            local git_dir = vim.fn.finddir(".git", vim.fn.expand("%:p:h") .. ";")
-            if git_dir ~= "" then
-              local remote = vim.fn.systemlist("git -C " .. git_dir .. " remote get-url origin")[1]
-              if remote ~= "" then
-                local org = remote:match("github.com[:/](%w+)/")
-                return not vim.tbl_contains(utils.disabled_copilot_organizations, org)
-              end
-            end
-          end
-          return true
-        end,
+        ["*"] = true,
       },
-      copilot_model = "claude-3-7-sonnet",
+      copilot_model = "claude-4-sonnet",
       logger = {
         log_to_file = true,
         file = vim.fn.stdpath("log") .. "/copilot-lua.log",
@@ -215,6 +200,33 @@ return {
         trace_lsp = "off", -- "off" | "messages" | "verbose"
         trace_lsp_progress = false,
       },
+      should_attach = function(_, bufname)
+        local val = os.getenv("SKIP_COPILOT_SHOULD_ATTACH_VALIDATION")
+        if val and (val:lower() == "true" or val == "1") then
+          return true
+        end
+        if vim.fn.executable("git") ~= 1 then
+          return true
+        end
+        local git_dir = vim.fn.finddir(".git", vim.fn.fnamemodify(bufname, ":p:h") .. ";")
+        if git_dir == "" then
+          return true
+        end
+        if type(git_dir) == "table" then
+          git_dir = git_dir[1]
+        end
+        local git_root = vim.fn.fnamemodify(git_dir, ":h")
+        local remote = vim.fn.systemlist("git -C " .. git_root .. " remote get-url origin")[1] or ""
+        if remote == "" then
+          return true
+        end
+        local org = remote:match("github.com[:/]([^/]+)/")
+        if not org then
+          return true
+        end
+        local disabled = require("utils").disabled_copilot_organizations
+        return not vim.tbl_contains(disabled, org)
+      end,
     },
   },
 
@@ -311,6 +323,12 @@ return {
             padding = 1,
           },
           {
+            filetype = "codecompanion",
+            text = "Code Companion",
+            separator = true,
+            padding = 1,
+          },
+          {
             filetype = "neotest-summary",
             text = "Tests",
             separator = true,
@@ -330,16 +348,6 @@ return {
       "anuvyklack/middleclass",
     },
     config = true,
-  },
-  {
-    "mrjones2014/smart-splits.nvim",
-    lazy = true,
-    opts = {
-      resize_mode = {
-        quit_key = "<ESC>",
-        resize_keys = { "<Left>", "<Down>", "<Up>", "<Right>" },
-      },
-    },
   },
   {
     "SmiteshP/nvim-navic",
@@ -394,6 +402,18 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
+      {
+        "ravitemer/mcphub.nvim",
+        dependencies = {
+          "nvim-lua/plenary.nvim",
+        },
+        build = "bundled_build.lua",
+        config = function()
+          require("mcphub").setup({
+            use_bundled_binary = true,
+          })
+        end,
+      },
     },
     opts = {
       strategies = {
@@ -414,6 +434,20 @@ return {
           model = "claude-3-7-sonnet",
         },
       },
+      extensions = {
+        mcphub = {
+          callback = "mcphub.extensions.codecompanion",
+          opts = {
+            make_tools = true,
+            show_server_tools_in_chat = true,
+            add_mcp_prefix_to_tool_names = false,
+            show_result_in_chat = true,
+            format_tool = nil,
+            make_vars = true,
+            make_slash_commands = true,
+          },
+        },
+      },
     },
   },
 
@@ -432,6 +466,10 @@ return {
       vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
       vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
     end,
+  },
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown", "codecompanion" },
   },
 
   -- Text editing
@@ -490,6 +528,16 @@ return {
       vim.g.VM_silent_exit = 1
       vim.g.VM_quit_after_leaving_insert_mode = 1
       vim.g.VM_show_warnings = 0
+      vim.g.VM_maps = {
+        ["I BS"] = "",
+        ["Goto Next"] = "]v",
+        ["Goto Prev"] = "[v",
+        ["I CtrlB"] = "<M-b>",
+        ["I CtrlF"] = "<M-f>",
+        ["I Return"] = "<S-CR>",
+        ["I Down Arrow"] = "",
+        ["I Up Arrow"] = "",
+      }
     end,
     branch = "master",
     keys = { "<C-n>" },
@@ -503,12 +551,17 @@ return {
         "gitrebase",
         "neo-tree",
         "neotest-summary",
+        "codecompanion",
       },
     },
   },
   {
     "andymass/vim-matchup",
-    event = "BufReadPost",
+    opts = {
+      treesitter = {
+        stopline = 500,
+      },
+    },
   },
   {
     "MagicDuck/grug-far.nvim",

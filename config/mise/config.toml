@@ -94,23 +94,20 @@ yq = 'latest'
 "npm:vscode-langservers-extracted" = "latest"
 "npm:yaml-language-server" = "latest"
 # pipx tools
-"pipx:autoflake" = "latest"
 "pipx:autotools-language-server" = "latest"
 "pipx:basedpyright" = "latest"
-"pipx:black" = "latest"
 "pipx:copier" = "latest"
 "pipx:codespell" = "latest"
 "pipx:djlint" = "latest"
-"pipx:flake8" = "latest"
 "pipx:ipython" = "latest"
 "pipx:isort" = "latest"
 "pipx:mypy" = "latest"
 "pipx:pdm" = "latest"
 "pipx:pipx" = "latest"
 "pipx:pytest" = "latest"
+"pipx:python-lsp-server" = { version = "latest", extras = "all" }
 "pipx:ruff" = "latest"
 "pipx:tox" = "latest"
-"pipx:yamlfix" = "latest"
 "pipx:yamllint" = "latest"
 
 # langs
