@@ -5,5 +5,7 @@
 .rtx.toml
 .tool-versions
 .venv
+.serena
 pyrightconfig.json
+pyrefly.toml
 ty.toml

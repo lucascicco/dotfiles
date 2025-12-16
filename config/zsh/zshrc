@@ -23,7 +23,6 @@ source "${ZSHRC_CORE}"
 load_bashrc
 
 # oh-my-zsh config #
-ZSH_WAKATIME_PROJECT_DETECTION="true"
 CASE_SENSITIVE="true"
 COMPLETION_WAITING_DOTS="true"
 DISABLE_AUTO_UPDATE="true"
@@ -31,8 +30,19 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"
 DISABLE_VENV_CD=1
 HISTFILE=$HOME/.zsh_history
-HISTSIZE=1000000000
-SAVEHIST=$HISTSIZE
+HISTSIZE=100000
+SAVEHIST=100000
+
+# Completion optimization
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache"
+
+# History improvements
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+setopt INC_APPEND_HISTORY
 
 # Load bashrc and antidote #
 ANTIDOTE_PATH="$(find_antidote)"
@@ -51,6 +61,7 @@ if [[ -d "${ANTIDOTE_DIR}" ]]; then
   fi
   fpath=(${ANTIDOTE_DIR}/functions $fpath)
   autoload -Uz antidote
+  zstyle ':antidote:bundle' use-friendly-names on
   LOCAL_ZSH_PLUGINS_ZSH="${LOCAL_ZSH_PLUGINS}.zsh"
   if [[ ! ${LOCAL_ZSH_PLUGINS_ZSH} -nt ${LOCAL_ZSH_PLUGINS_TXT} ]]; then
     antidote bundle <${LOCAL_ZSH_PLUGINS_TXT} >|${LOCAL_ZSH_PLUGINS_ZSH}

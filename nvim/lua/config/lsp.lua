@@ -1,4 +1,5 @@
 local nvim_lsp = require("lspconfig")
+local configs = require("lspconfig.configs")
 local utils = require("utils")
 
 local augroup_lspattach = vim.api.nvim_create_augroup("_my_lsp_attach", { clear = true })
@@ -62,10 +63,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       client.server_capabilities.documentRangeFormattingProvider = false
     end
 
-    if client.server_capabilities.documentSymbolProvider then
-      require("nvim-navic").attach(client, bufnr)
-    end
-
     if client.server_capabilities.documentFormattingProvider then
       vim.api.nvim_clear_autocmds({ group = augroup_formatting, buffer = bufnr })
       vim.api.nvim_create_autocmd("BufWritePre", {
@@ -121,6 +118,8 @@ local plugins = {
   "autotools_ls",
   -- https://github.com/withastro/language-tools/tree/main/packages/language-server
   "astro",
+  -- https://github.com/joshuadavidthomas/django-language-server
+  "djls",
   -- https://github.com/theia-ide/typescript-language-server
   "ts_ls",
   -- https://github.com/biomejs/biome
@@ -151,6 +150,8 @@ local plugins = {
   "stylua3p_ls",
   -- https://github.com/artempyanykh/marksman
   "marksman",
+  -- https://github.com/bellini666/pytest-language-server
+  "pytest",
 }
 for _, plugin in ipairs(plugins) do
   enable(plugin)
@@ -161,15 +162,59 @@ enable("tilt_ls", {
   filetypes = { "tiltfile", "starlark" },
 })
 
-local python_lsp = os.getenv("PYTHON_LSP") or "pyright"
+local python_lsp = os.getenv("PYTHON_LSP") or "pyrefly"
 if python_lsp == "ty" then
   -- https://github.com/astral-sh/ty
   enable("ty", {
+    before_init = function(initialize_params, config)
+      local python_path = utils.find_python()
+      utils.ensure_tables(config, "settings", "ty")
+      config.settings.ty.interpreter = python_path
+      utils.ensure_tables(initialize_params, "initializationOptions", "settings", "ty")
+      initialize_params.initializationOptions.settings.ty.interpreter = python_path
+    end,
     settings = {
       ty = {
         importStrategy = "fromEnvironment",
         diagnosticMode = "workspace",
+        experimental = {
+          rename = true,
+          autoImport = true,
+        },
       },
+    },
+  })
+elseif python_lsp == "pyrefly" then
+  enable("pyrefly", {
+    before_init = function(initialize_params, config)
+      local python_path = utils.find_python()
+      utils.ensure_tables(config, "settings", "python", "pyrefly")
+      config.settings.python.pyrefly = python_path
+      utils.ensure_tables(
+        initialize_params,
+        "initializationOptions",
+        "settings",
+        "python",
+        "pyrefly"
+      )
+      initialize_params.initializationOptions.settings.python.pyrefly = python_path
+    end,
+    handlers = {
+      ["workspace/configuration"] = function(_, result, _)
+        local response = {}
+        for _, item in ipairs(result.items) do
+          if item.section == "python" then
+            table.insert(response, {
+              analysis = {
+                showHoverGoToLinks = false,
+              },
+            })
+          else
+            table.insert(response, vim.NIL)
+          end
+        end
+        return response
+      end,
     },
   })
 elseif python_lsp == "pylsp" then

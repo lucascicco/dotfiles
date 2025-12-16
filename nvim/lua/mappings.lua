@@ -10,36 +10,14 @@ wk.add({
   { "<A-Left>", "gT", desc = "Previous tab" },
   { "<A-Right>", "gt", desc = "Next tab" },
   {
-    "<A-Down>",
-    function()
-      if vim.api.nvim_get_mode().mode:lower() == "v" then
-        require("moveline").block_down()
-      else
-        require("moveline").down()
-      end
-    end,
-    desc = "Move line down",
-    mode = { "i", "n", "v" },
-  },
-  {
-    "<A-Up>",
-    function()
-      if vim.api.nvim_get_mode().mode:lower() == "v" then
-        require("moveline").block_up()
-      else
-        require("moveline").up()
-      end
-    end,
-    desc = "Move line up",
-    mode = { "i", "n", "v" },
-  },
-  {
     "<C-b>",
     function()
       Snacks.picker.buffers()
     end,
     desc = "Find buffers",
   },
+  { "<C-d>", utils.run_tests, desc = "Run tests" },
+  { "<C-p>", utils.find_files, desc = "Find files" },
   {
     "<C-s>",
     function()
@@ -47,8 +25,6 @@ wk.add({
     end,
     desc = "Dropbar pick",
   },
-  { "<C-d>", utils.run_tests, desc = "Run tests" },
-  { "<C-p>", utils.find_files, desc = "Find files" },
   {
     "<C-q>",
     function()
@@ -124,6 +100,14 @@ wk.add({
     desc = "Copy file path to system clipboard",
   },
   {
+    "<leader>pr",
+    function()
+      vim.fn.setreg("+", vim.fn.expand("%:~:."))
+      vim.notify("Relative file path copied to clipboard", "info")
+    end,
+    desc = "Copy relative file path to system clipboard",
+  },
+  {
     "[Q",
     function()
       ---@diagnostic disable-next-line: missing-parameter, missing-fields
@@ -131,13 +115,7 @@ wk.add({
     end,
     desc = "First trouble result",
   },
-  {
-    "[b",
-    function()
-      require("goto-breakpoints").next()
-    end,
-    desc = "Go to previous breakpoint",
-  },
+
   {
     "[q",
     function()
@@ -154,13 +132,7 @@ wk.add({
     end,
     desc = "Last trouble result",
   },
-  {
-    "]b",
-    function()
-      require("goto-breakpoints").next()
-    end,
-    desc = "Go to next breakpoint",
-  },
+
   {
     "]q",
     function()

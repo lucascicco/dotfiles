@@ -54,7 +54,6 @@ return {
     dependencies = {
       "saghen/blink.cmp",
       "b0o/schemastore.nvim",
-      "SmiteshP/nvim-navic",
     },
     config = function()
       require("config.lsp")
@@ -77,10 +76,7 @@ return {
       "neovim/nvim-lspconfig",
     },
   },
-  {
-    "Bilal2453/luvit-meta",
-    lazy = true,
-  },
+
   {
     "folke/snacks.nvim",
     priority = 1000,
@@ -91,7 +87,7 @@ return {
         git = { enabled = true },
         gitbrowse = { enabled = true },
         image = { enabled = true },
-        input = { enabled = true },
+        -- input = { enabled = true },
         notifier = { enabled = true },
         rename = { enabled = true },
         picker = {
@@ -153,7 +149,9 @@ return {
         pattern = { "toml", "markdown" },
         group = vim.api.nvim_create_augroup("EmbedTomlMd", {}),
         callback = function()
-          require("otter").activate()
+          if vim.api.nvim_get_option_value("buftype", { buf = 0 }) ~= "nofile" then
+            require("otter").activate()
+          end
         end,
       })
     end,
@@ -190,7 +188,7 @@ return {
       filetypes = {
         ["*"] = true,
       },
-      copilot_model = "claude-4-sonnet",
+      copilot_model = "claude-4.5-sonnet",
       logger = {
         log_to_file = true,
         file = vim.fn.stdpath("log") .. "/copilot-lua.log",
@@ -257,6 +255,9 @@ return {
         signature = {
           enabled = false,
         },
+        hover = {
+          enabled = false,
+        },
       },
       presets = {
         bottom_search = true,
@@ -285,8 +286,7 @@ return {
     "nvim-lualine/lualine.nvim",
     dependencies = {
       "nvim-tree/nvim-web-devicons",
-      "arkav/lualine-lsp-progress",
-      "SmiteshP/nvim-navic",
+      "neovim/nvim-lspconfig",
     },
     config = function()
       require("config.statusline")
@@ -349,19 +349,6 @@ return {
     },
     config = true,
   },
-  {
-    "SmiteshP/nvim-navic",
-    lazy = true,
-    dependencies = {
-      "neovim/nvim-lspconfig",
-    },
-    init = function()
-      vim.g.navic_silence = 1
-    end,
-    opts = {
-      separator = " ⇒ ",
-    },
-  },
 
   -- File browsing
   {
@@ -402,50 +389,21 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      {
-        "ravitemer/mcphub.nvim",
-        dependencies = {
-          "nvim-lua/plenary.nvim",
-        },
-        build = "bundled_build.lua",
-        config = function()
-          require("mcphub").setup({
-            use_bundled_binary = true,
-          })
-        end,
-      },
     },
     opts = {
+      ignore_warnings = true,
       strategies = {
         chat = {
-          adapter = "copilot",
-          model = "claude-3-7-sonnet",
+          adapter = "opencode",
         },
         inline = {
-          adapter = "copilot",
-          model = "claude-3-7-sonnet",
+          adapter = "opencode",
         },
         agent = {
-          adapter = "copilot",
-          model = "claude-3-7-sonnet",
+          adapter = "opencode",
         },
         cmd = {
-          adapter = "copilot",
-          model = "claude-3-7-sonnet",
-        },
-      },
-      extensions = {
-        mcphub = {
-          callback = "mcphub.extensions.codecompanion",
-          opts = {
-            make_tools = true,
-            show_server_tools_in_chat = true,
-            add_mcp_prefix_to_tool_names = false,
-            show_result_in_chat = true,
-            format_tool = nil,
-            make_vars = true,
-            make_slash_commands = true,
-          },
+          adapter = "opencode",
         },
       },
     },
@@ -487,10 +445,6 @@ return {
         },
       },
     },
-  },
-  {
-    "willothy/moveline.nvim",
-    build = "make",
   },
   {
     "tpope/vim-repeat",
@@ -555,14 +509,7 @@ return {
       },
     },
   },
-  {
-    "andymass/vim-matchup",
-    opts = {
-      treesitter = {
-        stopline = 500,
-      },
-    },
-  },
+
   {
     "MagicDuck/grug-far.nvim",
     keys = { "<leader>rr" },

@@ -1,9 +1,22 @@
 [settings]
 experimental = true
-idiomatic_version_file_enable_tools = ["python"]
+idiomatic_version_file_enable_tools = [
+    "python",
+    "node",
+    "go",
+    "terraform",
+    "terragrunt",
+    "opentofu",
+]
 
 [settings.pipx]
 uvx = true
+
+[settings.python]
+uv_venv_auto = true
+
+[settings.npm]
+bun = true
 
 [tools]
 # tools
@@ -67,6 +80,7 @@ yq = 'latest'
 
 # npm tools
 "npm:@astrojs/language-server" = "latest"
+"npm:@github/copilot" = "latest"
 "npm:@github/copilot-language-server" = "latest"
 "npm:@mermaid-js/mermaid-cli" = "latest"
 "npm:bash-language-server" = "latest"
@@ -81,6 +95,7 @@ yq = 'latest'
 "npm:graphql-language-service-cli" = "latest"
 "npm:lua-3p-language-servers" = "latest"
 "npm:markdownlint-cli" = "latest"
+"npm:opencode-ai" = "latest"
 "npm:opencollective" = "latest"
 "npm:patch-package" = "latest"
 "npm:pnpm" = "latest"
@@ -98,19 +113,23 @@ yq = 'latest'
 "pipx:basedpyright" = "latest"
 "pipx:copier" = "latest"
 "pipx:codespell" = "latest"
+"pipx:django-language-server" = "latest"
 "pipx:djlint" = "latest"
 "pipx:ipython" = "latest"
 "pipx:isort" = "latest"
 "pipx:mypy" = "latest"
 "pipx:pdm" = "latest"
 "pipx:pipx" = "latest"
+"pipx:pyrefly" = "latest"
 "pipx:pytest" = "latest"
+"pipx:pytest-language-server" = "latest"
 "pipx:python-lsp-server" = { version = "latest", extras = "all" }
 "pipx:ruff" = "latest"
 "pipx:tox" = "latest"
 "pipx:yamllint" = "latest"
 
 # langs
+bun = 'latest'
 deno = 'latest'
 go = ["latest", "1.20", "1.19", "1.18"]
 node = ["latest", "20", "18", "16"]
