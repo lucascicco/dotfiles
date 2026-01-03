@@ -1,5 +1,6 @@
 [settings]
 experimental = true
+cache_prune_age = "7d"
 idiomatic_version_file_enable_tools = [
     "python",
     "node",
@@ -18,6 +19,10 @@ uv_venv_auto = true
 [settings.npm]
 bun = true
 
+[env]
+OPENCODE_EXPERIMENTAL_ICON_DISCOVERY = "true"
+OPENCODE_EXPERIMENTAL_FILEWATCHER = "true"
+
 [tools]
 # tools
 actionlint = 'latest'
@@ -25,13 +30,17 @@ argocd = 'latest'
 ast-grep = 'latest'
 awscli = 'latest'
 biome = 'latest'
+bottom = 'latest'
+cheat = 'latest'
 cloud-sql-proxy = 'latest'
 cmctl = 'latest'
+delta = 'latest'
 doctl = 'latest'
 duf = 'latest'
 fd = 'latest'
 fzf = 'latest'
 jq = 'latest'
+glab = 'latest'
 gcloud = 'latest'
 github-cli = 'latest'
 gomplate = 'latest'
@@ -50,21 +59,23 @@ kubeseal = 'latest'
 kustomize = 'latest'
 k9s = 'latest'
 k3d = '4.4.8'
+kind = "latest"
 velero = 'latest'
 
 lazygit = 'latest'
 lua-language-server = 'latest'
 marksman = 'latest'
-kind = "latest"
-poetry = "latest"
+opencode = 'latest'
 pdm = 'latest'
+pnpm = 'latest'
+poetry = "latest"
 pre-commit = 'latest'
 ripgrep = 'latest'
 ruff = 'latest'
 rust-analyzer = 'latest'
+starship = 'latest'
 stern = 'latest'
 shfmt = 'latest'
-uv = 'latest'
 stylua = 'latest'
 trivy = 'latest'
 opentofu = "1.9.0"
@@ -74,6 +85,7 @@ terraform-ls = 'latest'
 terraformer = "latest"
 terragrunt = "0.75.2"
 teleport-community = "15.1.4"
+yazi = 'latest'
 yamlfmt = 'latest'
 yamllint = 'latest'
 yq = 'latest'
@@ -95,19 +107,16 @@ yq = 'latest'
 "npm:graphql-language-service-cli" = "latest"
 "npm:lua-3p-language-servers" = "latest"
 "npm:markdownlint-cli" = "latest"
-"npm:opencode-ai" = "latest"
 "npm:opencollective" = "latest"
-"npm:patch-package" = "latest"
-"npm:pnpm" = "latest"
 "npm:prettier" = "latest"
 "npm:pyright" = "latest"
 "npm:stylelint" = "latest"
-"npm:tree-sitter-cli" = "latest"
 "npm:ts-server" = "latest"
 "npm:typescript" = "latest"
 "npm:typescript-language-server" = "latest"
 "npm:vscode-langservers-extracted" = "latest"
 "npm:yaml-language-server" = "latest"
+
 # pipx tools
 "pipx:autotools-language-server" = "latest"
 "pipx:basedpyright" = "latest"
@@ -116,7 +125,6 @@ yq = 'latest'
 "pipx:django-language-server" = "latest"
 "pipx:djlint" = "latest"
 "pipx:ipython" = "latest"
-"pipx:isort" = "latest"
 "pipx:mypy" = "latest"
 "pipx:pdm" = "latest"
 "pipx:pipx" = "latest"
@@ -127,6 +135,20 @@ yq = 'latest'
 "pipx:ruff" = "latest"
 "pipx:tox" = "latest"
 "pipx:yamllint" = "latest"
+
+# cargo tools
+"cargo:cargo-update" = "latest"
+"cargo:eza" = "latest"
+"cargo:gctx" = "latest"
+"cargo:grip-grab" = "latest"
+"cargo:taplo-cli" = "latest"
+"cargo:tree-sitter-cli" = "latest"
+
+# go tools
+"go:github.com/incu6us/goimports-reviser/v3" = "latest"
+"go:github.com/segmentio/golines" = "latest"
+"go:golang.org/x/tools/gopls" = "latest"
+"go:mvdan.cc/gofumpt" = "latest"
 
 # langs
 bun = 'latest'

@@ -1,4 +1,0 @@
-cargo-update
-taplo-cli --features lsp --locked
-gctx
-grip-grab

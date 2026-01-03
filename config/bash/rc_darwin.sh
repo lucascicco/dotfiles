@@ -13,6 +13,10 @@ readonly BREW_PREFIX="/opt/homebrew"
 readonly BREW_BIN="$BREW_PREFIX/bin"
 readonly BREW_SBIN="$BREW_PREFIX/sbin"
 
+if [ -x "${BREW_BIN}/brew" ]; then
+  eval "$("${BREW_BIN}/brew" shellenv)"
+fi
+
 readonly -a DYNAMIC_PATHS=(
   "$BREW_BIN"
   "$BREW_SBIN"

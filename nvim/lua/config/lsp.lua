@@ -162,7 +162,7 @@ enable("tilt_ls", {
   filetypes = { "tiltfile", "starlark" },
 })
 
-local python_lsp = os.getenv("PYTHON_LSP") or "pyrefly"
+local python_lsp = os.getenv("PYTHON_LSP") or "pyright"
 if python_lsp == "ty" then
   -- https://github.com/astral-sh/ty
   enable("ty", {

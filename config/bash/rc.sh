@@ -44,8 +44,12 @@ export LANG="en_US.UTF-8"
 
 # mise
 export MISE_USE_TOML=1
-export MISE_EXPERIMENTAL=1
-export MISE_PIPX_UVX=1
+
+# xdg
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
 
 export PERL_LOCAL_LIB_ROOT="${HOME}/.local/perl"
 export PIP_REQUIRE_VIRTUALENV=true
@@ -156,5 +160,5 @@ vi() {
 }
 
 opencode() {
-  XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}${XDG_DATA_EXTRA:-}" npx opencode-ai@latest "${@}"
+  XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}${XDG_DATA_EXTRA:-}" mise exec opencode@latest -- opencode "${@}"
 }

@@ -1,6 +1,13 @@
 # zsh aliases
-
 alias c="clear"
+
+function kube-toggle() {
+  if [[ -n "$STARSHIP_K8S" ]]; then
+    unset STARSHIP_K8S
+  else
+    export STARSHIP_K8S=1
+  fi
+}
 
 # terraform
 alias tf="tofu "
@@ -12,10 +19,8 @@ alias lf="jump lf"
 
 # git
 alias lg="lazygit"
-alias "?"="gh copilot suggest -t shell"
 
 # kubernetes (kubectl)
-alias k='${KUBE_CMD}'
 alias kctx='kubectx'
 alias kns='kubens'
 alias kgctx='${KUBE_CMD} config get-contexts -o name'

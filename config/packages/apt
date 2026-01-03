@@ -4,7 +4,6 @@ automake
 bat
 binutils
 bison
-broot
 btop
 build-essential
 ca-certificates
@@ -12,7 +11,6 @@ cpanminus
 curl
 dnsutils
 docker-compose
-eza
 flatpak
 fonts-open-sans
 fonts-powerline
@@ -48,7 +46,6 @@ meld
 mercurial
 ncdu
 neovim
-netcat
 net-tools
 ninja-build
 pgcli
@@ -74,4 +71,3 @@ xclip
 xz-utils
 zlib1g-dev
 zsh
-zsh-antidote

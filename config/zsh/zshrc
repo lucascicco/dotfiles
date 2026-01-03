@@ -1,18 +1,10 @@
 # instant prompt
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
-export P10K_CACHE="${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
-[[ -r "${P10K_CACHE}" ]] && source "${P10K_CACHE}"
-
 export DOTFILES_DIR="$HOME/dotfiles"
 export ZSH_CONFIG_DIR="${DOTFILES_DIR}/config/zsh"
 
 # zsh
 export ZSHRC_CORE="${DOTFILES_DIR}/config/zsh/.zshrc_core.sh"
 export ALIAS_ZSH="${ZSH_CONFIG_DIR}/alias.zsh"
-
-# p10k
-export P10K_CONFIG="${DOTFILES_DIR}/config/zsh/p10k.zsh"
-[[ -s "${P10K_CONFIG}" ]] && source "${P10K_CONFIG}"
 
 # Utils
 if [[ ! -s "${ZSHRC_CORE}" ]]; then
@@ -22,27 +14,19 @@ fi
 source "${ZSHRC_CORE}"
 load_bashrc
 
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
+fi
+
 # oh-my-zsh config #
-CASE_SENSITIVE="true"
-COMPLETION_WAITING_DOTS="true"
-DISABLE_AUTO_UPDATE="true"
-DISABLE_UNTRACKED_FILES_DIRTY="true"
 HIST_STAMPS="yyyy-mm-dd"
-DISABLE_VENV_CD=1
-HISTFILE=$HOME/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
+SAVEHIST=50000
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
 
 # Completion optimization
 zstyle ':completion:*' use-cache on
 zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompcache"
-
-# History improvements
-setopt HIST_IGNORE_ALL_DUPS
-setopt HIST_FIND_NO_DUPS
-setopt HIST_SAVE_NO_DUPS
-setopt SHARE_HISTORY
-setopt INC_APPEND_HISTORY
 
 # Load bashrc and antidote #
 ANTIDOTE_PATH="$(find_antidote)"
@@ -51,6 +35,7 @@ if [[ -z "${ANTIDOTE_PATH}" ]]; then
   return 1
 fi
 source "${ANTIDOTE_PATH}"
+
 ANTIDOTE_DIR="$(dirname "${ANTIDOTE_PATH}")"
 if [[ -d "${ANTIDOTE_DIR}" ]]; then
   LOCAL_ZSH_PLUGINS="${HOME}/.zsh_plugins"
@@ -69,9 +54,16 @@ if [[ -d "${ANTIDOTE_DIR}" ]]; then
   source ${LOCAL_ZSH_PLUGINS_ZSH}
 fi
 
+
 # aliases
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
 alias k=${KUBE_CMD}
 [[ -s ${ALIAS_ZSH} ]] && source ${ALIAS_ZSH}
 
-autoload -Uz promptinit && promptinit && prompt powerlevel10k
+if command -v fzf &>/dev/null; then
+  source <(fzf --zsh)
+fi
+
+if command -v starship &>/dev/null; then
+  eval "$(starship init zsh)"
+fi

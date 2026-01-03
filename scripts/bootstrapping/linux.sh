@@ -54,7 +54,6 @@ function _ {
   _symlinks "$@"
   _fonts "$@"
   _mise "$@"
-  _gh "$@"
   _zsh "$@"
   _mise_reshim "$@"
 }

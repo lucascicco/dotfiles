@@ -55,6 +55,9 @@ readonly -a SYMLINKS=(
 
   "$DOTFILES_CONFIG_DIR/zsh/zshrc ${HOME}/.zshrc"
   "$DOTFILES_CONFIG_DIR/zsh/zsh_plugins.txt ${HOME}/.zsh_plugins.txt"
+  "$DOTFILES_CONFIG_DIR/starship/starship.toml ${HOME}/.config/starship.toml"
+
+  "$DOTFILES_CONFIG_DIR/ghostty ${HOME}/.config/ghostty"
 
   "$DOTFILES_CONFIG_DIR/vim/vimrc ${HOME}/.vimrc"
 )
@@ -133,13 +136,6 @@ function _mise_reshim {
   "$MISE_BINARY" reshim
 }
 
-function _gh {
-  task "Git Hub" "installing gh extensions"
-
-  gh extension install github/gh-copilot
-  gh extension upgrade --all
-}
-
 function _zsh {
   task "Zsh" "Installing zsh"
   if [[ ! -s "$ANTIDOTE_SCRIPT_PATH" ]]; then
@@ -148,7 +144,7 @@ function _zsh {
     )
     reload_zsh
   fi
-  zsh -i -c "antidote update"
+  zsh -i -c "antidote update -b"
 }
 
 function _neovim_spell_check {
@@ -194,7 +190,7 @@ function _fonts {
     "${FONTS_DIR}/Hack Regular Nerd Font Complete.ttf" \
     "${NERD_FONTS_PATCHED_FONTS}/Hack/Regular/HackNerdFont-Regular.ttf?raw=true"
   download_file \
-    "${FONTS_DIR}/Inconsolata Nerd Font Complete.otf" \
+    "${FONTS_DIR}/Inconsolata Nerd Font Complete.tff" \
     "${NERD_FONTS_PATCHED_FONTS}/Inconsolata/InconsolataNerdFont-Regular.ttf?raw=true"
   download_file \
     "${FONTS_DIR}/Fira Code Regular Nerd Font Complete.ttf" \
