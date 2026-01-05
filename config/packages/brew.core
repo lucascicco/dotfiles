@@ -1,6 +1,5 @@
 # Shell essentials
 antidote
-ghostty
 zsh
 zoxide
 
@@ -49,9 +48,6 @@ sqlite
 # Security/Crypto
 gnupg
 
-# Fonts
-font-symbols-only-nerd-font
-
 # Libraries (often dependencies)
 libffi
 openssl
@@ -61,3 +57,7 @@ zlib
 
 # Media/Image processing
 imagemagick
+
+# Casks (GUI apps and fonts)
+cask:ghostty
+cask:font-symbols-only-nerd-font

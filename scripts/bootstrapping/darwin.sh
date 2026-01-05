@@ -14,6 +14,7 @@ readonly BREW_INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/Homebrew/ins
 # Load brew packages based on profile
 # Priority: 1. DOTFILES_PROFILE env var  2. ~/.config/dotfiles/ai.toml [dotfiles] profile
 # Options: "" (full), "core" (minimal), "corporate" (corporate-safe)
+# Supports cask: prefix for GUI apps/fonts (e.g., cask:ghostty)
 _get_dotfiles_profile() {
   # 1. Check environment variable
   [[ -n "${DOTFILES_PROFILE:-}" ]] && echo "$DOTFILES_PROFILE" && return
@@ -41,15 +42,43 @@ _get_dotfiles_profile() {
   done <"$config_file"
 }
 
+_parse_brew_packages() {
+  local package_file="$1"
+  local formulas="" casks=""
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${line// /}" ]] && continue
+
+    if [[ "$line" == cask:* ]]; then
+      casks="${casks} ${line#cask:}"
+    else
+      formulas="${formulas} ${line}"
+    fi
+  done <"$package_file"
+
+  echo "FORMULAS=${formulas}"
+  echo "CASKS=${casks}"
+}
+
 DOTFILES_PROFILE="$(_get_dotfiles_profile)"
 if [[ -n "$DOTFILES_PROFILE" && -f "${PACKAGES_DIR}/brew.${DOTFILES_PROFILE}" ]]; then
-  BREW_PACKAGES="$(grep -v '^#' "${PACKAGES_DIR}/brew.${DOTFILES_PROFILE}" | grep -v '^$' | tr '\n' ' ')"
+  eval "$(_parse_brew_packages "${PACKAGES_DIR}/brew.${DOTFILES_PROFILE}")"
+  # shellcheck disable=SC2153
+  BREW_PACKAGES="$FORMULAS"
+  # shellcheck disable=SC2153
+  BREW_CASKS="$CASKS"
   info "Using brew profile: ${DOTFILES_PROFILE}"
 else
-  BREW_PACKAGES="$(tr '\n' ' ' <"${PACKAGES_DIR}/brew")"
+  eval "$(_parse_brew_packages "${PACKAGES_DIR}/brew")"
+  # shellcheck disable=SC2153
+  BREW_PACKAGES="$FORMULAS"
+  # shellcheck disable=SC2153
+  BREW_CASKS="$CASKS"
   info "Using brew profile: full (default)"
 fi
 readonly BREW_PACKAGES
+readonly BREW_CASKS
 
 # Libs
 function _packages {
@@ -61,8 +90,18 @@ function _packages {
     reload_zsh
   fi
 
-  # shellcheck disable=2086
-  brew install ${BREW_PACKAGES}
+  # Install formulas
+  if [[ -n "${BREW_PACKAGES// /}" ]]; then
+    # shellcheck disable=2086
+    brew install ${BREW_PACKAGES}
+  fi
+
+  # Install casks (GUI apps, fonts)
+  if [[ -n "${BREW_CASKS// /}" ]]; then
+    # shellcheck disable=2086
+    brew install --cask ${BREW_CASKS}
+  fi
+
   brew update
   brew upgrade
   brew autoremove
