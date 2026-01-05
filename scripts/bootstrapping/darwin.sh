@@ -11,8 +11,44 @@ fi
 
 readonly BREW_INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
 
-# Load base brew packages
-BREW_PACKAGES="$(tr '\n' ' ' <"${PACKAGES_DIR}/brew")"
+# Load brew packages based on profile
+# Priority: 1. DOTFILES_PROFILE env var  2. ~/.config/dotfiles/ai.toml [dotfiles] profile
+# Options: "" (full), "core" (minimal), "corporate" (corporate-safe)
+_get_dotfiles_profile() {
+  # 1. Check environment variable
+  [[ -n "${DOTFILES_PROFILE:-}" ]] && echo "$DOTFILES_PROFILE" && return
+
+  # 2. Check local config file
+  local config_file="${HOME}/.config/dotfiles/ai.toml"
+  [[ ! -f "$config_file" ]] && return
+
+  local in_dotfiles=false line key value
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${line// /}" ]] && continue
+
+    if [[ "$line" == "["*"]" ]]; then
+      [[ "$line" == "[dotfiles]" ]] && in_dotfiles=true || in_dotfiles=false
+      continue
+    fi
+
+    if [[ "$in_dotfiles" == true ]] && [[ "$line" == *"="* ]]; then
+      key="${line%%=*}" && key="${key// /}"
+      value="${line#*=}" && value="${value## }" && value="${value%% }"
+      value="${value//\"/}" # Remove quotes
+      [[ "$key" == "profile" && -n "$value" ]] && echo "$value" && return
+    fi
+  done <"$config_file"
+}
+
+DOTFILES_PROFILE="$(_get_dotfiles_profile)"
+if [[ -n "$DOTFILES_PROFILE" && -f "${PACKAGES_DIR}/brew.${DOTFILES_PROFILE}" ]]; then
+  BREW_PACKAGES="$(grep -v '^#' "${PACKAGES_DIR}/brew.${DOTFILES_PROFILE}" | grep -v '^$' | tr '\n' ' ')"
+  info "Using brew profile: ${DOTFILES_PROFILE}"
+else
+  BREW_PACKAGES="$(tr '\n' ' ' <"${PACKAGES_DIR}/brew")"
+  info "Using brew profile: full (default)"
+fi
 readonly BREW_PACKAGES
 
 # Libs

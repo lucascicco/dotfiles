@@ -17,6 +17,10 @@
 #   export DOTFILES_AI_COPILOT=1
 #   export DOTFILES_AI_OPENCODE=true
 
+[dotfiles]
+# Example: profile = "core" uses config/packages/brew.core
+profile = ""
+
 [tools]
 # GitHub Copilot - AI pair programmer
 # Packages: npm:@github/copilot, npm:@github/copilot-language-server

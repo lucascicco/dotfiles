@@ -1,0 +1,63 @@
+# Shell essentials
+antidote
+ghostty
+zsh
+zoxide
+
+# Core utilities
+bat
+broot
+btop
+curl
+git
+gnu-sed
+htop
+make
+md5sha1sum
+sd
+unar
+wget
+
+# Development essentials
+cmake
+libtool
+luarocks
+mise
+ninja
+pipx
+shellcheck
+taplo
+universal-ctags
+uv
+
+# Docker
+docker
+docker-buildx
+docker-compose
+docker-credential-helper
+docker-credential-helper-ecr
+
+# AWS
+aws-sso-cli
+
+# Databases
+mysql-client
+pgcli
+redis
+sqlite
+
+# Security/Crypto
+gnupg
+
+# Fonts
+font-symbols-only-nerd-font
+
+# Libraries (often dependencies)
+libffi
+openssl
+readline
+xz
+zlib
+
+# Media/Image processing
+imagemagick
