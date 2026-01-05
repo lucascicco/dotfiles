@@ -15,10 +15,12 @@ docker-credential-helper-ecr
 ffmpegthumbnailer
 font-symbols-only-nerd-font
 gdal
+ghostty
 gimp
 git
 gnu-sed
 go-task
+gpg
 graphicsmagick
 gs
 haproxy
@@ -26,7 +28,6 @@ hiddenbar
 htop
 imagemagick
 karabiner-elements
-kitty
 libffi
 libtool
 luarocks

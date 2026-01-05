@@ -1,0 +1,7 @@
+repos:
+  aws-infra:
+    path: ~/projects/personal/aws-infra
+    branches:
+      - main
+
+simple_aliases: {}
