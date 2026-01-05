@@ -21,7 +21,7 @@
 # GitHub Copilot - AI pair programmer
 # Packages: npm:@github/copilot, npm:@github/copilot-language-server
 # Neovim: copilot.lua plugin
-copilot = true
+copilot = false
 
 # OpenCode - AI coding assistant CLI
 # Packages: opencode (mise)
@@ -30,11 +30,10 @@ opencode = false
 # CodeCompanion - Neovim AI plugin
 # Packages: none (Neovim plugin only)
 # Neovim: codecompanion.nvim plugin
-codecompanion = true
+codecompanion = false
 
 # WakaTime - Coding activity tracker
 # Packages: none (plugins only)
 # Neovim: vim-wakatime plugin
 # Zsh: zsh-wakatime plugin
-# NOTE: Sends file/project names to WakaTime servers
-wakatime = true
+wakatime = false
