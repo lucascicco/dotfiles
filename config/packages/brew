@@ -19,8 +19,8 @@ ghostty
 gimp
 git
 gnu-sed
+gnupg
 go-task
-gpg
 graphicsmagick
 gs
 haproxy
@@ -38,6 +38,7 @@ mise
 ninja
 openssl
 pgcli
+pinentry-mac
 pipx
 poppler
 readline
