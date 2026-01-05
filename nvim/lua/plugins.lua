@@ -1,4 +1,6 @@
-return {
+local ai = require("ai")
+
+local plugins = {
   -- Theme
   {
     "rebelot/kanagawa.nvim",
@@ -178,55 +180,6 @@ return {
       require("config.blink")
     end,
   },
-  {
-    "zbirenbaum/copilot.lua",
-    build = ":Copilot auth",
-    event = "VeryLazy",
-    opts = {
-      suggestion = { enabled = true, auto_trigger = true },
-      panel = { enabled = false },
-      filetypes = {
-        ["*"] = true,
-      },
-      copilot_model = "claude-4.5-sonnet",
-      logger = {
-        log_to_file = true,
-        file = vim.fn.stdpath("log") .. "/copilot-lua.log",
-        file_log_level = vim.log.levels.WARN,
-        print_log = false,
-        print_log_level = vim.log.levels.WARN,
-        trace_lsp = "off", -- "off" | "messages" | "verbose"
-        trace_lsp_progress = false,
-      },
-      should_attach = function(_, bufname)
-        local val = os.getenv("SKIP_COPILOT_SHOULD_ATTACH_VALIDATION")
-        if val and (val:lower() == "true" or val == "1") then
-          return true
-        end
-        if vim.fn.executable("git") ~= 1 then
-          return true
-        end
-        local git_dir = vim.fn.finddir(".git", vim.fn.fnamemodify(bufname, ":p:h") .. ";")
-        if git_dir == "" then
-          return true
-        end
-        if type(git_dir) == "table" then
-          git_dir = git_dir[1]
-        end
-        local git_root = vim.fn.fnamemodify(git_dir, ":h")
-        local remote = vim.fn.systemlist("git -C " .. git_root .. " remote get-url origin")[1] or ""
-        if remote == "" then
-          return true
-        end
-        local org = remote:match("github.com[:/]([^/]+)/")
-        if not org then
-          return true
-        end
-        local disabled = require("utils").disabled_copilot_organizations
-        return not vim.tbl_contains(disabled, org)
-      end,
-    },
-  },
 
   -- Testing
   {
@@ -308,35 +261,43 @@ return {
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    opts = {
-      options = {
-        mode = "tabs",
-        diagnostics = "nvim_lsp",
-        color_icons = true,
-        show_close_icon = false,
-        always_show_bufferline = false,
-        offsets = {
-          {
-            filetype = "neo-tree",
-            text = "File Explorer",
-            separator = true,
-            padding = 1,
-          },
-          {
-            filetype = "codecompanion",
-            text = "Code Companion",
-            separator = true,
-            padding = 1,
-          },
-          {
-            filetype = "neotest-summary",
-            text = "Tests",
-            separator = true,
-            padding = 1,
-          },
+    opts = function()
+      local offsets = {
+        {
+          filetype = "neo-tree",
+          text = "File Explorer",
+          separator = true,
+          padding = 1,
         },
-      },
-    },
+        {
+          filetype = "neotest-summary",
+          text = "Tests",
+          separator = true,
+          padding = 1,
+        },
+      }
+
+      -- Only add codecompanion offset if enabled
+      if ai.is_enabled("codecompanion") then
+        table.insert(offsets, 2, {
+          filetype = "codecompanion",
+          text = "Code Companion",
+          separator = true,
+          padding = 1,
+        })
+      end
+
+      return {
+        options = {
+          mode = "tabs",
+          diagnostics = "nvim_lsp",
+          color_icons = true,
+          show_close_icon = false,
+          always_show_bufferline = false,
+          offsets = offsets,
+        },
+      }
+    end,
   },
   {
     "sindrets/winshift.nvim",
@@ -383,32 +344,6 @@ return {
     end,
   },
 
-  -- AI
-  {
-    "olimorris/codecompanion.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      ignore_warnings = true,
-      strategies = {
-        chat = {
-          adapter = "opencode",
-        },
-        inline = {
-          adapter = "opencode",
-        },
-        agent = {
-          adapter = "opencode",
-        },
-        cmd = {
-          adapter = "opencode",
-        },
-      },
-    },
-  },
-
   -- Language specific
   {
     "mrcjkb/rustaceanvim",
@@ -427,7 +362,7 @@ return {
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
-    ft = { "markdown", "codecompanion" },
+    ft = ai.is_enabled("codecompanion") and { "markdown", "codecompanion" } or { "markdown" },
   },
 
   -- Text editing
@@ -462,10 +397,6 @@ return {
     },
   },
   {
-    "wakatime/vim-wakatime",
-    event = "VeryLazy",
-  },
-  {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {
@@ -498,16 +429,22 @@ return {
   },
   {
     "ethanholz/nvim-lastplace",
-    opts = {
-      lastplace_ignore_buftype = { "quickfix", "nofile", "help", "Trouble" },
-      lastplace_ignore_filetype = {
+    opts = function()
+      local ignore_ft = {
         "gitcommit",
         "gitrebase",
         "neo-tree",
         "neotest-summary",
-        "codecompanion",
-      },
-    },
+      }
+      -- Only ignore codecompanion if enabled
+      if ai.is_enabled("codecompanion") then
+        table.insert(ignore_ft, "codecompanion")
+      end
+      return {
+        lastplace_ignore_buftype = { "quickfix", "nofile", "help", "Trouble" },
+        lastplace_ignore_filetype = ignore_ft,
+      }
+    end,
   },
 
   {
@@ -528,3 +465,92 @@ return {
     },
   },
 }
+
+-- AI plugins (conditionally added)
+if ai.is_enabled("copilot") then
+  table.insert(plugins, {
+    "zbirenbaum/copilot.lua",
+    build = ":Copilot auth",
+    event = "VeryLazy",
+    opts = {
+      suggestion = { enabled = true, auto_trigger = true },
+      panel = { enabled = false },
+      filetypes = {
+        ["*"] = true,
+      },
+      copilot_model = "claude-4.5-sonnet",
+      logger = {
+        log_to_file = true,
+        file = vim.fn.stdpath("log") .. "/copilot-lua.log",
+        file_log_level = vim.log.levels.WARN,
+        print_log = false,
+        print_log_level = vim.log.levels.WARN,
+        trace_lsp = "off", -- "off" | "messages" | "verbose"
+        trace_lsp_progress = false,
+      },
+      should_attach = function(_, bufname)
+        local val = os.getenv("SKIP_COPILOT_SHOULD_ATTACH_VALIDATION")
+        if val and (val:lower() == "true" or val == "1") then
+          return true
+        end
+        if vim.fn.executable("git") ~= 1 then
+          return true
+        end
+        local git_dir = vim.fn.finddir(".git", vim.fn.fnamemodify(bufname, ":p:h") .. ";")
+        if git_dir == "" then
+          return true
+        end
+        if type(git_dir) == "table" then
+          git_dir = git_dir[1]
+        end
+        local git_root = vim.fn.fnamemodify(git_dir, ":h")
+        local remote = vim.fn.systemlist("git -C " .. git_root .. " remote get-url origin")[1] or ""
+        if remote == "" then
+          return true
+        end
+        local org = remote:match("github.com[:/]([^/]+)/")
+        if not org then
+          return true
+        end
+        local disabled = require("utils").disabled_copilot_organizations
+        return not vim.tbl_contains(disabled, org)
+      end,
+    },
+  })
+end
+
+if ai.is_enabled("codecompanion") then
+  table.insert(plugins, {
+    "olimorris/codecompanion.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    opts = {
+      ignore_warnings = true,
+      strategies = {
+        chat = {
+          adapter = "opencode",
+        },
+        inline = {
+          adapter = "opencode",
+        },
+        agent = {
+          adapter = "opencode",
+        },
+        cmd = {
+          adapter = "opencode",
+        },
+      },
+    },
+  })
+end
+
+if ai.is_enabled("wakatime") then
+  table.insert(plugins, {
+    "wakatime/vim-wakatime",
+    event = "VeryLazy",
+  })
+end
+
+return plugins

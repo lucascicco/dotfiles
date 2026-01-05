@@ -13,6 +13,21 @@ else
   exit 1
 fi
 
+readonly AI_SCRIPTS="${DOTFILES_DIR}/scripts/utils/ai.sh"
+if [ -s "${AI_SCRIPTS}" ]; then
+  # shellcheck source=scripts/utils/ai.sh
+  source "${AI_SCRIPTS}"
+else
+  echo "Error: ${AI_SCRIPTS} not found" >&2
+  exit 1
+fi
+
+# Print AI tools status at bootstrap start
+print_ai_status
+
+# Export AI config as environment variables for child processes
+export_ai_config
+
 # Binaries directories
 readonly BIN_DIR="${HOME}/bin"
 readonly LOCAL_DIR="${HOME}/.local"
@@ -25,8 +40,13 @@ readonly NVIM_SPELL_URL="ftp://ftp.vim.org/pub/vim/runtime/spell"
 readonly NVIM_SPELL_DIR="${NVIM_SOURCE_DIR}/spell"
 readonly DOWNLOADED_SPELL_FILE="${NVIM_SPELL_DIR}/.downloaded"
 
+# Zsh plugins
+readonly ZSH_PLUGINS_BASE="${DOTFILES_CONFIG_DIR}/zsh/zsh_plugins.base.txt"
+readonly ZSH_PLUGINS_TARGET="${HOME}/.zsh_plugins.txt"
+
 # Mise
 readonly MISE_CONFIG_DIR="${HOME}/.config/mise"
+readonly MISE_AI_CONFIG="${MISE_CONFIG_DIR}/config.local.toml"
 MISE_BINARY="$(get_mise_binary_path)"
 readonly MISE_BINARY
 
@@ -36,25 +56,25 @@ readonly ANTIDOTE_SCRIPT_PATH="${HOME}/.antidote"
 # Fonts
 readonly NERD_FONTS_REPO="https://github.com/ryanoasis/nerd-fonts/blob/master"
 readonly NERD_FONTS_PATCHED_FONTS="${NERD_FONTS_REPO}/patched-fonts"
-readonly
-FONTS_DIR="$(get_fonts_directory)"
+readonly FONTS_DIR="$(get_fonts_directory)"
 readonly FONTS_DIR
 
-# Symlinks
-readonly -a SYMLINKS=(
+# Symlinks - base symlinks (AI tools handled separately)
+readonly -a BASE_SYMLINKS=(
   "$DOTFILES_CONFIG_DIR/git/gitattributes ${HOME}/.gitattributes"
   "$DOTFILES_CONFIG_DIR/git/gitconfig ${HOME}/.gitconfig"
   "$DOTFILES_CONFIG_DIR/git/gitignore ${HOME}/.gitignore"
 
-  "$DOTFILES_CONFIG_DIR/mise/config.toml ${HOME}/.config/mise/config.toml"
   "$DOTFILES_CONFIG_DIR/mise/rust-packages ${HOME}/.default-cargo-crates"
   "$DOTFILES_CONFIG_DIR/mise/gcloud-components ${HOME}/.default-cloud-sdk-components"
   "$DOTFILES_CONFIG_DIR/mise/golang-packages ${HOME}/.default-go-packages"
 
+  # Base mise config (AI tools added via config.local.toml)
+  "$DOTFILES_CONFIG_DIR/mise/config.toml ${HOME}/.config/mise/config.toml"
+
   "$NVIM_SOURCE_DIR ${HOME}/.config/nvim"
 
   "$DOTFILES_CONFIG_DIR/zsh/zshrc ${HOME}/.zshrc"
-  "$DOTFILES_CONFIG_DIR/zsh/zsh_plugins.txt ${HOME}/.zsh_plugins.txt"
   "$DOTFILES_CONFIG_DIR/starship/starship.toml ${HOME}/.config/starship.toml"
 
   "$DOTFILES_CONFIG_DIR/ghostty ${HOME}/.config/ghostty"
@@ -70,6 +90,7 @@ readonly -a CORE_DIRS=(
   "${MISE_CONFIG_DIR}"
   "${ZSH_SITE_FUNCTIONS_DIR}"
   "${FONTS_DIR}"
+  "${HOME}/.config/dotfiles"
 )
 
 MACHINE_OS="$(uname -s)"
@@ -89,14 +110,36 @@ function _create_core_dirs {
 function _symlinks {
   task "Symlinks" "creating symlinks"
 
-  for sfile in "${SYMLINKS[@]}"; do
+  # Create base symlinks
+  for sfile in "${BASE_SYMLINKS[@]}"; do
     # shellcheck disable=2086
     create_symlink ${sfile}
   done
 }
 
+# Manage AI tools mise config based on ai.toml configuration
+# Generates config.local.toml with only enabled tools
+# Removes config.local.toml when all AI tools disabled
+function _manage_mise_ai_config {
+  task "Mise AI Config" "managing AI tools configuration"
+
+  if any_ai_enabled; then
+    info "AI tools enabled - generating config"
+    write_mise_ai_config "$MISE_AI_CONFIG"
+  else
+    info "No AI tools enabled - removing config if exists"
+    if [[ -f "$MISE_AI_CONFIG" ]]; then
+      rm -f "$MISE_AI_CONFIG"
+      info "Removed: $MISE_AI_CONFIG"
+    fi
+  fi
+}
+
 function _mise {
   task "Mise" "installing mise"
+
+  # Manage AI tools config (generates config.local.toml)
+  _manage_mise_ai_config
 
   if [ "${MACHINE_OS}" = "Linux" ]; then
     if [ ! -f "${MISE_BINARY}" ]; then
@@ -108,7 +151,7 @@ function _mise {
 
   local -r today=$(date +%Y-%m-%d)
   local -r marker_file="${HOME}/.cache/mise-last-cache-clear"
-  local -r last_run_date=$(cat "$marker_file")
+  local -r last_run_date=$(cat "$marker_file" 2>/dev/null)
   if [ ! -e "$marker_file" ] || [ "$last_run_date" != "$today" ]; then
     "${MISE_BINARY}" cache clear
     echo "$today" >"$marker_file"
@@ -136,8 +179,20 @@ function _mise_reshim {
   "$MISE_BINARY" reshim
 }
 
+# Manage zsh plugins based on ai.toml configuration
+# Generates zsh_plugins.txt with base plugins + enabled AI tool plugins
+function _manage_zsh_plugins {
+  task "Zsh Plugins" "generating zsh plugins config"
+
+  write_zsh_plugins "$ZSH_PLUGINS_BASE" "$ZSH_PLUGINS_TARGET"
+}
+
 function _zsh {
   task "Zsh" "Installing zsh"
+
+  # Generate zsh_plugins.txt with AI tools
+  _manage_zsh_plugins
+
   if [[ ! -s "$ANTIDOTE_SCRIPT_PATH" ]]; then
     (
       git clone --depth=1 https://github.com/mattmc3/antidote.git "${ZDOTDIR:-$HOME}/.antidote"

@@ -1,8 +1,6 @@
 local M = {}
 
-M.disabled_copilot_organizations = {
-  "LiferayCloud",
-}
+M.disabled_copilot_organizations = {}
 
 local format_enabled = true
 local inside_git_dir = {}

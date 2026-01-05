@@ -29,6 +29,13 @@ readonly -a BASE_PATHS=(
 
 # EXPORTS #
 
+# Telemetry/Analytics opt-out
+export HOMEBREW_NO_ANALYTICS=1
+export SAM_CLI_TELEMETRY=0
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+export AZURE_CORE_COLLECT_TELEMETRY=0
+export DO_NOT_TRACK=1 # Generic opt-out (respects by some tools)
+
 # git
 export GIT_SSH=ssh
 export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
@@ -161,4 +168,50 @@ vi() {
 
 opencode() {
   XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}${XDG_DATA_EXTRA:-}" mise exec opencode@latest -- opencode "${@}"
+}
+
+# Reload AI tools configuration
+# Regenerates mise config and zsh plugins based on ai.toml
+ai-reload() {
+  local ai_script="${DOTFILES_DIR}/scripts/utils/ai.sh"
+  if [[ ! -s "$ai_script" ]]; then
+    echo "Error: ai.sh not found" >&2
+    return 1
+  fi
+
+  source "$ai_script"
+
+  echo "Reloading AI tools configuration..."
+  print_ai_status
+
+  # Regenerate mise config
+  local mise_config="${HOME}/.config/mise/config.local.toml"
+  write_mise_ai_config "$mise_config"
+
+  # Regenerate zsh plugins
+  local zsh_base="${DOTFILES_DIR}/config/zsh/zsh_plugins.base.txt"
+  local zsh_target="${HOME}/.zsh_plugins.txt"
+  if [[ -s "$zsh_base" ]]; then
+    write_zsh_plugins "$zsh_base" "$zsh_target"
+    # Clear antidote cache so changes take effect
+    rm -f "${HOME}/.zsh_plugins.zsh"
+  fi
+
+  # Install mise tools if any AI tools enabled
+  if any_ai_enabled; then
+    echo "Installing mise tools..."
+    mise install -y
+  fi
+
+  # Uninstall disabled AI tools from mise
+  uninstall_disabled_ai_tools
+
+  # Clean unused Neovim plugins (Lazy removes plugins not in spec)
+  if command -v nvim &>/dev/null; then
+    echo "Cleaning unused Neovim plugins..."
+    nvim --headless "+Lazy! clean" +qa 2>/dev/null || true
+  fi
+
+  echo ""
+  echo "Done! Restart your shell (exec zsh) for zsh plugin changes."
 }

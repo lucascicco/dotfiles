@@ -11,7 +11,8 @@ fi
 
 readonly BREW_INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh"
 
-BREW_PACKAGES="$(get_packages "${PACKAGES_DIR}" brew)"
+# Load base brew packages
+BREW_PACKAGES="$(tr '\n' ' ' <"${PACKAGES_DIR}/brew")"
 readonly BREW_PACKAGES
 
 # Libs

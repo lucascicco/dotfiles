@@ -40,6 +40,19 @@ ANTIDOTE_DIR="$(dirname "${ANTIDOTE_PATH}")"
 if [[ -d "${ANTIDOTE_DIR}" ]]; then
   LOCAL_ZSH_PLUGINS="${HOME}/.zsh_plugins"
   LOCAL_ZSH_PLUGINS_TXT="${LOCAL_ZSH_PLUGINS}.txt"
+  ZSH_PLUGINS_BASE="${ZSH_CONFIG_DIR}/zsh_plugins.base.txt"
+
+  # Generate plugins file on-the-fly from base + AI tools
+  if [[ -s "${ZSH_PLUGINS_BASE}" ]]; then
+    AI_SCRIPTS="${DOTFILES_DIR}/scripts/utils/ai.sh"
+    if [[ -s "${AI_SCRIPTS}" ]]; then
+      source "${AI_SCRIPTS}"
+      generate_zsh_plugins "${ZSH_PLUGINS_BASE}" > "${LOCAL_ZSH_PLUGINS_TXT}"
+    else
+      cp "${ZSH_PLUGINS_BASE}" "${LOCAL_ZSH_PLUGINS_TXT}"
+    fi
+  fi
+
   if [[ ! -s "${LOCAL_ZSH_PLUGINS_TXT}" ]]; then
     echo "Cannot find ${LOCAL_ZSH_PLUGINS_TXT}" >&2
     return 1
@@ -53,7 +66,6 @@ if [[ -d "${ANTIDOTE_DIR}" ]]; then
   fi
   source ${LOCAL_ZSH_PLUGINS_ZSH}
 fi
-
 
 # aliases
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
