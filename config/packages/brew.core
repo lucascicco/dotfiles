@@ -8,6 +8,7 @@ bat
 broot
 btop
 curl
+flock
 git
 gnu-sed
 htop
@@ -38,9 +39,11 @@ docker-credential-helper-ecr
 
 # AWS
 aws-sso-cli
+aws-vault
 
 # Databases
 mysql-client
+pinentry-mac
 pgcli
 redis
 sqlite
@@ -61,3 +64,8 @@ imagemagick
 # Casks (GUI apps and fonts)
 cask:ghostty
 cask:font-symbols-only-nerd-font
+cask:visual-studio-code
+cask:slack
+cask:freelens
+
+ingress2gateway

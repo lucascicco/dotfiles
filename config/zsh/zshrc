@@ -67,6 +67,11 @@ if [[ -d "${ANTIDOTE_DIR}" ]]; then
   source ${LOCAL_ZSH_PLUGINS_ZSH}
 fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  bindkey '\e[1;3D' backward-word
+  bindkey '\e[1;3C' forward-word
+fi
+
 # aliases
 KUBE_CMD=$(mise which kubecolor >/dev/null 2>&1 && echo "kubecolor" || echo "kubectl")
 alias k=${KUBE_CMD}
@@ -79,3 +84,6 @@ fi
 if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 fi
+
+# Generated for envman. Do not edit.
+[ -s "$HOME/.config/envman/load.sh" ] && source "$HOME/.config/envman/load.sh"

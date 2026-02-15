@@ -1,0 +1,10 @@
+[tools]
+cloud-sql-proxy = 'latest'
+doctl = 'latest'
+glab = 'latest'
+gcloud = 'latest'
+
+# npm tools
+"npm:graphql" = "latest"
+"npm:graphql-language-service-cli" = "latest"
+"npm:opencollective" = "latest"

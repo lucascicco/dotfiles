@@ -13,14 +13,14 @@ _git_sync_check_deps() {
 	return 0
 }
 
-# Check internet connectivity
 _git_sync_check_internet() {
-	local host="${1:-github.com}"
-	if ping -c 1 -W 1 "$host" >/dev/null 2>&1; then
-		return 0
-	else
-		return 1
-	fi
+    local host="${1:-github.com}"
+    # Try to list refs from a public repository (no auth required)
+    if git ls-remote "https://$host/git/git.git" HEAD >/dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
 }
 
 # Auto-sync function: _git_sync_auto_sync <host> <branch1> <branch2> ...
@@ -43,6 +43,7 @@ _git_sync_auto_sync() {
 		git fetch --all --jobs=3 --progress 2>&1
 	else
 		echo "No internet connection to $host. Skipping fetch."
+        return 1
 	fi
 
 	# Check for uncommitted changes
@@ -192,3 +193,45 @@ for _config in "$GIT_SYNC_CONFIG_BASE" "$GIT_SYNC_CONFIG_LOCAL"; do
 	[[ -f "$_config" ]] && _git_sync_create_aliases "$_config"
 done
 unset _config
+
+# --- Main function ---
+pick_and_git_sync() {
+    local projects_dir="$HOME/projects"
+    local selected_rel="$1"
+
+    # If no argument, show fzf picker
+    if [[ -z "$selected_rel" ]]; then
+        selected_rel=$(find "$projects_dir" -mindepth 2 -maxdepth 2 -type d | awk -F/ '{print $(NF-1) "/" $NF}' | fzf --prompt="Select project dir: ")
+        if [[ -z "$selected_rel" ]]; then
+            echo "No directory selected."
+            return 1
+        fi
+    fi
+
+    local full_path="$projects_dir/$selected_rel"
+
+    if [[ ! -d "$full_path" ]]; then
+        echo "Selected path does not exist: $full_path"
+        return 1
+    fi
+
+    echo "Selected: $selected_rel"
+    cd "$full_path" || return 1
+
+    # Infer all local branches
+    if [ ! -d .git ]; then
+        echo "Not a git repository: $full_path"
+        return 1
+    fi
+
+    all_branches=("${(@f)$(git branch --format='%(refname:short)')}")
+
+    if [[ ${#all_branches[@]} -eq 0 ]]; then
+        echo "No branches found in this repository."
+        return 1
+    fi
+
+    local host="github.com"
+
+    _git_sync_auto_sync "$host" "${all_branches[@]}"
+}

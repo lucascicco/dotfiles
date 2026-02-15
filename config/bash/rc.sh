@@ -215,3 +215,60 @@ ai-reload() {
   echo ""
   echo "Done! Restart your shell (exec zsh) for zsh plugin changes."
 }
+
+aws_eks_kubeconfig_profiles_parallel() {
+  local AWS_CONFIG_FILE="${AWS_CONFIG_FILE:-$HOME/.aws/config}"
+  local KUBECONFIG_FILE="${KUBECONFIG:-$HOME/.kube/config}"
+  local LOCKFILE="/tmp/.kubeconfig.lock"
+  local profiles regions clusters profile region cluster
+
+  # Get all profiles using AWS CLI
+  mapfile -t profiles < <(aws configure list-profiles)
+  if [ ${#profiles[@]} -eq 0 ]; then
+    echo "No profiles found."
+    return 1
+  fi
+
+  # Backup and remove kubeconfig
+  if [ -f "$KUBECONFIG_FILE" ]; then
+    cp "$KUBECONFIG_FILE" "${KUBECONFIG_FILE}.bak.$(date +%Y%m%d%H%M%S)"
+    rm "$KUBECONFIG_FILE"
+    echo "Backed up and removed $KUBECONFIG_FILE"
+  fi
+
+  # Function to process a single profile
+  process_profile() {
+    local profile="$1"
+    local regions clusters region cluster
+    echo "Processing profile: $profile"
+
+    mapfile -t regions < <(aws ec2 describe-regions --profile "$profile" --query 'Regions[].RegionName' --output text 2>/dev/null)
+    if [ ${#regions[@]} -eq 0 ]; then
+      echo "No regions found for profile $profile, skipping..."
+      return
+    fi
+
+    for region in "${regions[@]}"; do
+      mapfile -t clusters < <(aws eks list-clusters --profile "$profile" --region "$region" --query 'clusters[]' --output text 2>/dev/null)
+      for cluster in "${clusters[@]}"; do
+        echo "Updating kubeconfig for cluster $cluster in region $region (profile $profile)"
+        # Use flock to prevent concurrent writes
+        flock "$LOCKFILE" aws eks update-kubeconfig \
+          --profile "$profile" \
+          --region "$region" \
+          --name "$cluster" \
+          --alias "${profile}-${cluster}-${region}"
+      done
+    done
+  }
+
+  export -f process_profile
+
+  # Parallelize processing using background jobs
+  for profile in "${profiles[@]}"; do
+    process_profile "$profile" &
+  done
+
+  wait
+  echo "All profiles processed in parallel."
+}

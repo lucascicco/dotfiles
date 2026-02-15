@@ -57,7 +57,8 @@ _get_toml_value() {
 
 is_ai_enabled() {
   local tool="$1"
-  local env_var="DOTFILES_AI_$(_to_upper "$tool")"
+  local env_var
+  env_var="DOTFILES_AI_$(_to_upper "$tool")"
   env_var="${env_var//-/_}"
 
   local env_value
@@ -195,8 +196,8 @@ print_ai_status() {
   echo ""
 
   for tool in "${AI_TOOLS[@]}"; do
-    local tool_status="DISABLED" config_source="default"
-    local env_var="DOTFILES_AI_$(_to_upper "$tool")"
+    local tool_status="DISABLED" config_source="default" env_var
+    env_var="DOTFILES_AI_$(_to_upper "$tool")"
     env_var="${env_var//-/_}"
 
     if [[ -n "$(_get_env_value "$env_var")" ]]; then
@@ -215,7 +216,8 @@ print_ai_status() {
 
 export_ai_config() {
   for tool in "${AI_TOOLS[@]}"; do
-    local env_var="DOTFILES_AI_$(_to_upper "$tool")"
+    local env_var
+    env_var="DOTFILES_AI_$(_to_upper "$tool")"
     env_var="${env_var//-/_}"
     is_ai_enabled "$tool" && export "${env_var}=1" || export "${env_var}=0"
   done

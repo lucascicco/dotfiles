@@ -56,7 +56,7 @@ readonly ANTIDOTE_SCRIPT_PATH="${HOME}/.antidote"
 # Fonts
 readonly NERD_FONTS_REPO="https://github.com/ryanoasis/nerd-fonts/blob/master"
 readonly NERD_FONTS_PATCHED_FONTS="${NERD_FONTS_REPO}/patched-fonts"
-readonly FONTS_DIR="$(get_fonts_directory)"
+FONTS_DIR="$(get_fonts_directory)"
 readonly FONTS_DIR
 
 # Symlinks - base symlinks (AI tools handled separately)

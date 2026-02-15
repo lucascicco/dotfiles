@@ -122,7 +122,6 @@ function dynamic_batch_source {
   local -ra scripts=("$@")
   for s in "${scripts[@]}"; do
     if [ ! -s "$s" ]; then
-      debug "Skipping $s. It does not exist."
       continue
     fi
     # shellcheck disable=1090

@@ -23,7 +23,7 @@ alias lg="lazygit"
 # kubernetes/openshift
 # context & namespace
 alias kctx='kubectx'
-alias kns='kubens'
+alias kn='kubens'
 alias kgctx='${KUBE_CMD} config get-contexts -o name'
 alias kcuc='${KUBE_CMD} config use-context'
 alias kcns='${KUBE_CMD} config set-context --current --namespace'
@@ -36,6 +36,7 @@ export know='--force --grace-period 0'
 alias kg='${KUBE_CMD} get'
 alias kga='${KUBE_CMD} get all'
 alias kgaa='${KUBE_CMD} get all -A'
+alias kpo='${KUBE_CMD} get pods'
 alias kgp='${KUBE_CMD} get pods'
 alias kgpa='${KUBE_CMD} get pods -A'
 alias kgpw='${KUBE_CMD} get pods -w'
