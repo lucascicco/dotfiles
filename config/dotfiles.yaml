@@ -1,0 +1,50 @@
+# Dotfiles Configuration
+# ======================
+# Configure mise environments and AI tool plugins.
+#
+# IMPORTANT: This is the REPO DEFAULT config.
+# To customize, copy to ~/.config/dotfiles/dotfiles.yaml and edit there.
+# Local config takes priority over this file.
+#
+# Priority (highest to lowest):
+# 1. Environment variables: DOTFILES_PROFILE, DOTFILES_AI_<TOOL>=1
+# 2. Local config: ~/.config/dotfiles/dotfiles.yaml
+# 3. This file (repo default)
+
+dotfiles:
+  # Profile determines which mise environments to load (sets MISE_ENV)
+  #
+  # Available environments (in config/mise/):
+  #   - config.toml          : Core tools (always loaded)
+  #   - config.personal.toml : Personal tools (gcloud, doctl, etc.)
+  #   - config.ai.toml       : AI tools (opencode, copilot, etc.)
+  #
+  # Examples:
+  #   profile: ai              # Core + AI tools
+  #   profile: personal        # Core + personal tools
+  #   profile: personal,ai     # Core + personal + AI tools
+  #
+  # Or set via environment: export DOTFILES_PROFILE=ai
+  profile: ""
+
+tools:
+  # Individual tool flags for Neovim/Zsh plugins (not mise packages)
+  # Mise packages are controlled via profile/MISE_ENV above
+  #
+  # Values: true/false
+
+  # GitHub Copilot - Neovim plugin (copilot.lua)
+  # Mise packages in config.ai.toml
+  copilot: false
+
+  # OpenCode - AI coding assistant CLI
+  # Mise packages in config.ai.toml
+  opencode: false
+
+  # CodeCompanion - Neovim AI plugin (codecompanion.nvim)
+  # No mise packages, Neovim plugin only
+  codecompanion: false
+
+  # WakaTime - Coding activity tracker
+  # Neovim: vim-wakatime, Zsh: zsh-wakatime
+  wakatime: false

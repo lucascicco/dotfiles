@@ -52,6 +52,12 @@ export LANG="en_US.UTF-8"
 # mise
 export MISE_USE_TOML=1
 
+# dotfiles config (functions only; export_dotfiles_config called later from zshrc)
+DOTFILES_CONFIG_SCRIPT="${DOTFILES_DIR}/scripts/utils/dotfiles.sh"
+if [[ -s "$DOTFILES_CONFIG_SCRIPT" ]]; then
+  source "$DOTFILES_CONFIG_SCRIPT"
+fi
+
 # xdg
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
 export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
@@ -170,25 +176,25 @@ opencode() {
   XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}${XDG_DATA_EXTRA:-}" mise exec opencode@latest -- opencode "${@}"
 }
 
-# Reload AI tools configuration
-# Regenerates mise config and zsh plugins based on ai.toml
-ai-reload() {
-  local ai_script="${DOTFILES_DIR}/scripts/utils/ai.sh"
-  if [[ ! -s "$ai_script" ]]; then
-    echo "Error: ai.sh not found" >&2
+# Reload dotfiles configuration
+# Regenerates zsh plugins based on dotfiles.yaml and updates mise
+dotfiles-config-reload() {
+  local dotfiles_script="${DOTFILES_DIR}/scripts/utils/dotfiles.sh"
+  if [[ ! -s "$dotfiles_script" ]]; then
+    echo "Error: dotfiles.sh not found" >&2
     return 1
   fi
 
-  source "$ai_script"
+  source "$dotfiles_script"
 
-  echo "Reloading AI tools configuration..."
-  print_ai_status
+  echo "Reloading dotfiles configuration..."
+  print_dotfiles_status
 
-  # Regenerate mise config
-  local mise_config="${HOME}/.config/mise/config.local.toml"
-  write_mise_ai_config "$mise_config"
+  # Export MISE_ENV based on profile
+  export_dotfiles_config
+  echo "MISE_ENV=${MISE_ENV:-<not set>}"
 
-  # Regenerate zsh plugins
+  # Regenerate zsh plugins (for wakatime, etc.)
   local zsh_base="${DOTFILES_DIR}/config/zsh/zsh_plugins.base.txt"
   local zsh_target="${HOME}/.zsh_plugins.txt"
   if [[ -s "$zsh_base" ]]; then
@@ -197,14 +203,9 @@ ai-reload() {
     rm -f "${HOME}/.zsh_plugins.zsh"
   fi
 
-  # Install mise tools if any AI tools enabled
-  if any_ai_enabled; then
-    echo "Installing mise tools..."
-    mise install -y
-  fi
-
-  # Uninstall disabled AI tools from mise
-  uninstall_disabled_ai_tools
+  # Install mise tools based on MISE_ENV
+  echo "Installing mise tools..."
+  mise install -y
 
   # Clean unused Neovim plugins (Lazy removes plugins not in spec)
   if command -v nvim &>/dev/null; then
@@ -213,7 +214,7 @@ ai-reload() {
   fi
 
   echo ""
-  echo "Done! Restart your shell (exec zsh) for zsh plugin changes."
+  echo "Done! Restart your shell (exec zsh) for changes to take effect."
 }
 
 aws_eks_kubeconfig_profiles_parallel() {

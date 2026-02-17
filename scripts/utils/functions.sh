@@ -111,6 +111,12 @@ function create_symlink {
   fi
 
   if [ "$dest_symlink_path" != "$source_file" ]; then
+    # If dest is a real directory (not a symlink), back it up and remove
+    if [ -d "$dest_file" ] && [ ! -L "$dest_file" ]; then
+      local backup_dir="${dest_file}.bak.$(date +%Y%m%d%H%M%S)"
+      warning "Backing up existing directory: ${dest_file} -> ${backup_dir}"
+      mv "$dest_file" "$backup_dir"
+    fi
     debug "updating symlink ${dest_file} -> ${source_file}"
     ln -f -s "$source_file" "$dest_file"
   fi

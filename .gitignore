@@ -2,3 +2,6 @@ nvim/lazy-lock.json
 nvim/spell/*
 !nvim/spell/.downloaded
 config/git/gitconfig
+
+# mise local overrides (not committed)
+config/mise/*.local.toml

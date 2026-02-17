@@ -1,0 +1,9 @@
+[env]
+OPENCODE_EXPERIMENTAL_ICON_DISCOVERY = "true"
+OPENCODE_EXPERIMENTAL_FILEWATCHER = "true"
+
+[tools]
+opencode = "latest"
+
+"npm:@github/copilot" = "latest"
+"npm:@github/copilot-language-server" = "latest"

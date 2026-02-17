@@ -14,6 +14,9 @@ fi
 source "${ZSHRC_CORE}"
 load_bashrc
 
+# Export MISE_ENV and AI tool flags (must run after load_bashrc sets up PATH)
+export_dotfiles_config
+
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh)"
 fi
