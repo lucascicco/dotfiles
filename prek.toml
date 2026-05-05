@@ -52,9 +52,9 @@ hooks = [
   {
     id = "stylua",
     name = "StyLua",
-    language = "rust",
+    language = "system",
     types = ["lua"],
-    entry = "stylua -s -"
+    entry = "stylua"
   }
 ]
 
