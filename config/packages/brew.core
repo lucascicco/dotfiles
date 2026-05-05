@@ -3,6 +3,9 @@ antidote
 zsh
 zoxide
 
+# Version control / Forge CLIs
+glab
+
 # Core utilities
 bat
 broot
