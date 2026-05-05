@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export DOTFILES_DIR="$HOME/dotfiles"
+export DOTFILES_DIR="$HOME/.dotfiles"
 export RC_SCRIPTS_DIR="$DOTFILES_DIR/config/bash"
 
 readonly -a ANTIDOTE_PATHS=(

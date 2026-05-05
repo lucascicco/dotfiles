@@ -50,3 +50,6 @@ keybind = ctrl+shift+k=goto_split:up
 keybind = ctrl+shift+j=goto_split:down
 
 shell-integration-features = ssh-terminfo,ssh-env,cursor,sudo,title
+
+auto-update = check
+auto-update-channel = tip

@@ -15,8 +15,13 @@ function task {
   echo -e "[TASK] ${task_name} - ${task_description}"
 }
 
-function warning {
+function warn {
   echo -e "[WARN] ${1}"
+}
+
+# Back-compat alias
+function warning {
+  warn "${1}"
 }
 
 function fatal {
@@ -42,50 +47,67 @@ function git_clone_or_pull {
 
 function download_file {
   set +x
-  local -r dest=${1}
-  local -r url=${2}
+  DEST=${1}
+  URL=${2}
   set -x
 
-  local -r tmp=$(mktemp)
-  curl -4 -sSL -o "${tmp}" "${url}"
+  TMP=$(mktemp)
+  curl -4 -sSLf -o "${TMP}" "${URL}"
 
-  if [ -f "${dest}" ]; then
-    local -r old_md5=$(md5sum "${dest}" | cut -d ' ' -f 1)
-    local -r new_md5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
-    if [ "${old_md5}" != "${new_md5}" ]; then
-      local -r tmp2=$(mktemp)
-      mv "${dest}" "${tmp2}"
+  if [ -f "${DEST}" ]; then
+    OLD_MD5=$(md5sum "${DEST}" | cut -d ' ' -f 1)
+    NEW_MD5=$(md5sum "${TMP}" | cut -d ' ' -f 1)
+
+    if [ "${OLD_MD5}" == "${NEW_MD5}" ]; then
+      echo 0
+      return
     fi
+
+    TMP2=$(mktemp)
+    mv "${DEST}" "${TMP2}"
   fi
 
-  mv "${tmp}" "${dest}"
+  mv "${TMP}" "${DEST}"
+  echo 1
 }
 
-function download_executable {
+# download_file_verified <dest> <url> <expected-sha256>
+# Downloads <url> to a temp file, verifies its SHA-256 against <expected-sha256>,
+# and only installs it to <dest> if the hash matches. Hard-fails on mismatch.
+function download_file_verified {
   set +x
-  local -r dest=${1}
-  local -r url=${2}
+  local dest="${1}"
+  local url="${2}"
+  local expected_sha256="${3}"
   set -x
 
-  if [ -z "${dest}" ] || [ -z "${url}" ]; then
-    fatal "dest and url must be provided"
+  local tmp
+  tmp=$(mktemp)
+  curl -4 -sSLf -o "${tmp}" "${url}"
+
+  local actual_sha256
+  actual_sha256=$(shasum -a 256 "${tmp}" | cut -d ' ' -f 1)
+
+  if [[ "${actual_sha256}" != "${expected_sha256}" ]]; then
+    rm -f "${tmp}"
+    echo "[FATAL] SHA-256 mismatch for ${url}" >&2
+    echo "[FATAL]   expected: ${expected_sha256}" >&2
+    echo "[FATAL]   got:      ${actual_sha256}" >&2
     return 1
   fi
 
-  local -r tmp=$(mktemp)
-  curl -sSL -o "${tmp}" "${url}"
-  chmod +x "${tmp}"
-
-  if [ -f "${dest}" ]; then
-    local -r old_md5=$(md5sum "${dest}" | cut -d ' ' -f 1)
-    local -r new_md5=$(md5sum "${tmp}" | cut -d ' ' -f 1)
-    if [ "${old_md5}" != "${new_md5}" ]; then
-      local -r tmp2=$(mktemp)
-      mv "${dest}" "${tmp2}"
+  if [[ -f "${dest}" ]]; then
+    local dest_sha256
+    dest_sha256=$(shasum -a 256 "${dest}" | cut -d ' ' -f 1)
+    if [[ "${dest_sha256}" == "${actual_sha256}" ]]; then
+      rm -f "${tmp}"
+      echo 0
+      return 0
     fi
   fi
 
   mv "${tmp}" "${dest}"
+  echo 1
 }
 
 function create_symlink {

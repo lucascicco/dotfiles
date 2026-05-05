@@ -1,0 +1,7 @@
+# GUI apps and fonts — personal profile only
+# These are not installed on the restricted profile.
+cask:ghostty
+cask:font-symbols-only-nerd-font
+cask:visual-studio-code
+cask:slack
+cask:freelens

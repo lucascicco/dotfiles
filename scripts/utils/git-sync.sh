@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-GIT_SYNC_CONFIG_BASE="${DOTFILES_DIR:-$HOME/dotfiles}/config/git-sync/repos.yaml"
+GIT_SYNC_CONFIG_BASE="${DOTFILES_DIR:-$HOME/.dotfiles}/config/git-sync/repos.yaml"
 GIT_SYNC_CONFIG_LOCAL="${XDG_CONFIG_HOME:-$HOME/.config}/git-sync/repos.yaml"
 
 # Check if yq is available (required for YAML parsing)

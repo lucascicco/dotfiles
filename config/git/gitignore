@@ -1,11 +1,12 @@
+.claude/settings.local.json
+.claude/worktrees
 .git
-.mise.toml
+.jj
 .mise.local.toml
+.opencode
 .ropeproject
-.rtx.toml
-.tool-versions
 .venv
-.serena
-pyrightconfig.json
+CLAUDE.local.md
 pyrefly.toml
+pyrightconfig.json
 ty.toml

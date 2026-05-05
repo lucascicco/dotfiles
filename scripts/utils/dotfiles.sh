@@ -1,20 +1,22 @@
 #!/bin/bash
 
 # Dotfiles Configuration System
-# Controls mise environments and AI tool plugins.
 #
-# Mise tools are controlled via MISE_ENV (set profile in dotfiles.yaml)
-# Zsh/Neovim plugins are controlled via individual tool flags
+# Profiles:
+#   - personal: enables opencode + wakatime and sets MISE_ENV=ai,personal
+#   - restricted: disables opencode + wakatime and unsets MISE_ENV
 #
 # Priority (highest to lowest):
 #   1. Environment variables: DOTFILES_PROFILE, DOTFILES_AI_<TOOL>=1|0
 #   2. Local config: ~/.config/dotfiles/dotfiles.yaml
 #   3. Repo config: $DOTFILES_DIR/config/dotfiles.yaml
-#   4. Default: all disabled
+#   4. Profile defaults
 
 DOTFILES_CONFIG_LOCAL="${HOME}/.config/dotfiles/dotfiles.yaml"
-DOTFILES_CONFIG_REPO="${DOTFILES_DIR:-${HOME}/dotfiles}/config/dotfiles.yaml"
-AI_TOOLS=(copilot opencode codecompanion wakatime)
+DOTFILES_CONFIG_REPO="${DOTFILES_DIR:-${HOME}/.dotfiles}/config/dotfiles.yaml"
+readonly DEFAULT_PROFILE="restricted"
+AI_TOOLS=(opencode)
+TELEMETRY_TOOLS=(wakatime)
 
 # Resolve yq binary for YAML config parsing; without it, only env vars are used
 # Resolved lazily since yq/mise may not be on PATH when this file is sourced
@@ -81,14 +83,48 @@ is_ai_enabled() {
   local repo_value
   repo_value=$(_get_yaml_value "$DOTFILES_CONFIG_REPO" "$tool") && { _parse_bool "$repo_value" && return 0 || return 1; }
 
-  return 1
+  local profile
+  profile=$(get_dotfiles_profile)
+  case "$tool" in
+  opencode)
+    [[ "$profile" == "personal" ]] && return 0 || return 1
+    ;;
+  *)
+    return 1
+    ;;
+  esac
+}
+
+is_telemetry_enabled() {
+  local tool="$1"
+  local env_var
+  env_var="DOTFILES_AI_$(_to_upper "$tool")"
+  env_var="${env_var//-/_}"
+
+  local env_value
+  env_value=$(_get_env_value "$env_var")
+  [[ -n "$env_value" ]] && { _parse_bool "$env_value" && return 0 || return 1; }
+
+  local local_value
+  local_value=$(_get_yaml_value "$DOTFILES_CONFIG_LOCAL" "$tool") && { _parse_bool "$local_value" && return 0 || return 1; }
+
+  local repo_value
+  repo_value=$(_get_yaml_value "$DOTFILES_CONFIG_REPO" "$tool") && { _parse_bool "$repo_value" && return 0 || return 1; }
+
+  local profile
+  profile=$(get_dotfiles_profile)
+  case "$tool" in
+  wakatime)
+    [[ "$profile" == "personal" ]] && return 0 || return 1
+    ;;
+  *)
+    return 1
+    ;;
+  esac
 }
 
 any_ai_enabled() {
-  for tool in "${AI_TOOLS[@]}"; do
-    is_ai_enabled "$tool" && return 0
-  done
-  return 1
+  is_ai_enabled "opencode"
 }
 
 _get_ai_tool_zsh_plugins() {
@@ -102,14 +138,14 @@ generate_zsh_plugins() {
   [[ ! -f "$base_file" ]] && echo "Error: $base_file not found" >&2 && return 1
 
   cat "$base_file"
-  local ai_plugins="" p
-  for tool in "${AI_TOOLS[@]}"; do
-    if is_ai_enabled "$tool"; then
+  local generated_plugins="" p
+  for tool in "${TELEMETRY_TOOLS[@]}"; do
+    if is_telemetry_enabled "$tool"; then
       p=$(_get_ai_tool_zsh_plugins "$tool")
-      [[ -n "$p" ]] && ai_plugins="${ai_plugins}${p}"$'\n'
+      [[ -n "$p" ]] && generated_plugins="${generated_plugins}${p}"$'\n'
     fi
   done
-  [[ -n "$ai_plugins" ]] && echo -e "\n# AI tools (auto-generated)\n${ai_plugins}"
+  [[ -n "$generated_plugins" ]] && echo -e "\n# Telemetry tools (auto-generated)\n${generated_plugins}"
 }
 
 write_zsh_plugins() {
@@ -127,15 +163,11 @@ print_dotfiles_status() {
 
   local profile
   profile=$(get_dotfiles_profile)
-  if [[ -n "$profile" ]]; then
-    echo "  Profile: ${profile} (MISE_ENV)"
-  else
-    echo "  Profile: (none)"
-  fi
+  echo "  Profile: ${profile}"
   echo ""
-
+  echo "  AI"
   for tool in "${AI_TOOLS[@]}"; do
-    local tool_status="DISABLED" config_source="default" env_var
+    local tool_status="DISABLED" config_source="profile" env_var
     env_var="DOTFILES_AI_$(_to_upper "$tool")"
     env_var="${env_var//-/_}"
 
@@ -150,6 +182,25 @@ print_dotfiles_status() {
     is_ai_enabled "$tool" && tool_status="ENABLED"
     printf "  %-15s %s (%s)\n" "$tool:" "$tool_status" "$config_source"
   done
+
+  echo ""
+  echo "  Telemetry"
+  for tool in "${TELEMETRY_TOOLS[@]}"; do
+    local tool_status="DISABLED" config_source="profile" env_var
+    env_var="DOTFILES_AI_$(_to_upper "$tool")"
+    env_var="${env_var//-/_}"
+
+    if [[ -n "$(_get_env_value "$env_var")" ]]; then
+      config_source="env"
+    elif _get_yaml_value "$DOTFILES_CONFIG_LOCAL" "$tool" &>/dev/null; then
+      config_source="local"
+    elif _get_yaml_value "$DOTFILES_CONFIG_REPO" "$tool" &>/dev/null; then
+      config_source="repo"
+    fi
+
+    is_telemetry_enabled "$tool" && tool_status="ENABLED"
+    printf "  %-15s %s (%s)\n" "$tool:" "$tool_status" "$config_source"
+  done
   echo "============================================"
 }
 
@@ -161,11 +212,19 @@ export_dotfiles_config() {
     is_ai_enabled "$tool" && export "${env_var}=1" || export "${env_var}=0"
   done
 
+  for tool in "${TELEMETRY_TOOLS[@]}"; do
+    env_var="DOTFILES_AI_$(_to_upper "$tool")"
+    env_var="${env_var//-/_}"
+    is_telemetry_enabled "$tool" && export "${env_var}=1" || export "${env_var}=0"
+  done
+
   # Export MISE_ENV based on profile setting
   local profile
   profile=$(get_dotfiles_profile)
-  if [[ -n "$profile" ]]; then
-    export MISE_ENV="$profile"
+  if [[ "$profile" == "personal" ]]; then
+    export MISE_ENV="ai,personal"
+  else
+    unset MISE_ENV
   fi
 }
 
@@ -175,17 +234,38 @@ get_dotfiles_profile() {
   # Check environment variable first
   local env_value
   env_value=$(_get_env_value "DOTFILES_PROFILE")
-  [[ -n "$env_value" ]] && echo "$env_value" && return 0
+  if [[ -n "$env_value" ]]; then
+    case "$env_value" in
+    personal|restricted)
+      echo "$env_value"
+      return 0
+      ;;
+    esac
+  fi
 
   # Check local config
   local local_value
   local_value=$(_get_yaml_value "$DOTFILES_CONFIG_LOCAL" "profile" "dotfiles")
-  [[ -n "$local_value" ]] && echo "$local_value" && return 0
+  if [[ -n "$local_value" ]]; then
+    case "$local_value" in
+    personal|restricted)
+      echo "$local_value"
+      return 0
+      ;;
+    esac
+  fi
 
   # Check repo config
   local repo_value
   repo_value=$(_get_yaml_value "$DOTFILES_CONFIG_REPO" "profile" "dotfiles")
-  [[ -n "$repo_value" ]] && echo "$repo_value" && return 0
+  if [[ -n "$repo_value" ]]; then
+    case "$repo_value" in
+    personal|restricted)
+      echo "$repo_value"
+      return 0
+      ;;
+    esac
+  fi
 
-  return 1
+  echo "$DEFAULT_PROFILE"
 }

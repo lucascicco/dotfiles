@@ -8,8 +8,10 @@ bat
 broot
 btop
 curl
+eza
 flock
 git
+git-delta
 gnu-sed
 htop
 make
@@ -20,6 +22,7 @@ wget
 
 # Development essentials
 cmake
+lazygit
 libtool
 luarocks
 mise
@@ -36,10 +39,6 @@ docker-buildx
 docker-compose
 docker-credential-helper
 docker-credential-helper-ecr
-
-# AWS
-aws-sso-cli
-aws-vault
 
 # Databases
 mysql-client
@@ -60,12 +59,3 @@ zlib
 
 # Media/Image processing
 imagemagick
-
-# Casks (GUI apps and fonts)
-cask:ghostty
-cask:font-symbols-only-nerd-font
-cask:visual-studio-code
-cask:slack
-cask:freelens
-
-ingress2gateway

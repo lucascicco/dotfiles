@@ -1,7 +1,6 @@
 dotfiles:
-  profile: ""
+  profile: "restricted"
 
 tools:
-  copilot: false
-  codecompanion: false
+  opencode: false
   wakatime: false

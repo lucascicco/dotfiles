@@ -103,5 +103,5 @@ alias ocprojs='oc projects'
 alias ocnew='oc new-project'
 
 # git-sync aliases (loaded from YAML config)
-GIT_SYNC_SCRIPT="${DOTFILES_DIR:-$HOME/dotfiles}/scripts/utils/git-sync.sh"
+GIT_SYNC_SCRIPT="${DOTFILES_DIR:-$HOME/.dotfiles}/scripts/utils/git-sync.sh"
 [[ -s "$GIT_SYNC_SCRIPT" ]] && source "$GIT_SYNC_SCRIPT"

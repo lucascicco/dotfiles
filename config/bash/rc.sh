@@ -2,7 +2,7 @@
 
 # CONSTANTS #
 
-export DOTFILES_DIR="${HOME}/dotfiles"
+export DOTFILES_DIR="${HOME}/.dotfiles"
 export BOOTSTRAP_SCRIPTS_DIR="$DOTFILES_DIR/scripts/bootstrapping"
 readonly FUNCTIONS_SCRIPT="${DOTFILES_DIR}/scripts/utils/functions.sh"
 if [ -s "${FUNCTIONS_SCRIPT}" ]; then
@@ -27,15 +27,6 @@ readonly -a BASE_PATHS=(
   "${HOME}/.krew/bin"
 )
 
-# EXPORTS #
-
-# Telemetry/Analytics opt-out
-export HOMEBREW_NO_ANALYTICS=1
-export SAM_CLI_TELEMETRY=0
-export DOTNET_CLI_TELEMETRY_OPTOUT=1
-export AZURE_CORE_COLLECT_TELEMETRY=0
-export DO_NOT_TRACK=1 # Generic opt-out (respects by some tools)
-
 # git
 export GIT_SSH=ssh
 export GIT_USERS_DIR="$DOTFILES_DIR/config/git/users"
@@ -44,6 +35,7 @@ export GIT_CONFIG_FILE="$DOTFILES_DIR/config/git/gitconfig"
 # paths
 export PROJECT_HOME=${HOME}/projects
 export GOBIN=${HOME}/.local/bin
+export GOPATH=${HOME}/.go
 
 # os
 export EDITOR="nvim"
@@ -69,6 +61,18 @@ export PIP_REQUIRE_VIRTUALENV=true
 export RIPGREP_CONFIG_PATH="$DOTFILES_DIR/config/rg/ripgreprc"
 export PYTHON_CFLAGS="-march=native -mtune=native"
 export PYTHON_CONFIGURE_OPTS="--enable-shared --enable-optimizations --with-lto"
+
+# safe
+export SAFEHOUSE_ADD_DIRS="${HOME}/Downloads:${HOME}/.cache"
+SAFEHOUSE_ADD_DIRS_RO="${HOME}/Library/Caches/Homebrew"
+SAFEHOUSE_ADD_DIRS_RO+=":${HOME}/.gitconfig:${HOME}/.gitignore:${HOME}/.gitattributes"
+[[ -e "${HOME}/.npmrc" ]] && SAFEHOUSE_ADD_DIRS_RO+=":${HOME}/.npmrc"
+[[ -e "${HOME}/.dotfiles" ]] && SAFEHOUSE_ADD_DIRS_RO+=":${HOME}/.dotfiles"
+SAFEHOUSE_ADD_DIRS_RO+=":/Applications/Ghostty.app"
+export SAFEHOUSE_ADD_DIRS_RO
+export SAFEHOUSE_TRUST_WORKDIR_CONFIG=1
+
+SAFEHOUSE_ENABLE="docker,chromium-full,browser-native-messaging,ssh,shell-init,all-agents"
 
 # Sources #
 
@@ -102,6 +106,7 @@ dynamic_batch_source "${SOURCE_SCRIPT_PATHS[@]}"
 recursive_load_scripts "$CORP_EXTRA_SCRIPTS_DIR"
 
 # FUNCTIONS #
+#
 
 bootstrap() {
   local -r current_os="$(uname -s | tr '[:upper:]' '[:lower:]')"
@@ -172,8 +177,16 @@ vi() {
   nvim "${@}"
 }
 
+function safe() {
+  safehouse --enable="${SAFEHOUSE_ENABLE}" --env -- "${@}"
+}
+
+function claude() {
+  safe claude --dangerously-skip-permissions --plugin-dir "${DOTFILES_DIR}/agents" "${@}"
+}
+
 opencode() {
-  XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}${XDG_DATA_EXTRA:-}" mise exec opencode@latest -- opencode "${@}"
+  safe npx opencode-ai@latest "${@}"
 }
 
 # Reload dotfiles configuration
@@ -215,6 +228,58 @@ dotfiles-config-reload() {
 
   echo ""
   echo "Done! Restart your shell (exec zsh) for changes to take effect."
+}
+
+dotfiles-mise-lock() {
+  if ! command -v mise &>/dev/null; then
+    echo "Error: mise not found" >&2
+    return 1
+  fi
+
+  local original_mise_env="${MISE_ENV-__UNSET__}"
+  local original_mise_locked="${MISE_LOCKED-__UNSET__}"
+  local lock_failed=0
+
+  _dotfiles_mise_lock_for_env() {
+    local env_value="$1"
+    local label="$2"
+
+    echo "Refreshing mise lock for ${label}..."
+    if [[ -z "$env_value" ]]; then
+      unset MISE_ENV
+    else
+      export MISE_ENV="$env_value"
+    fi
+
+    MISE_LOCKED=0 mise lock --global || return 1
+    return 0
+  }
+
+  _dotfiles_mise_lock_for_env "" "restricted profile" || lock_failed=1
+  [[ "$lock_failed" -eq 0 ]] && _dotfiles_mise_lock_for_env "ai" "ai environment" || lock_failed=1
+  [[ "$lock_failed" -eq 0 ]] && _dotfiles_mise_lock_for_env "personal" "personal environment" || lock_failed=1
+  [[ "$lock_failed" -eq 0 ]] && _dotfiles_mise_lock_for_env "ai,personal" "personal+ai profile" || lock_failed=1
+
+  unset -f _dotfiles_mise_lock_for_env
+
+  if [[ "$original_mise_env" == "__UNSET__" ]]; then
+    unset MISE_ENV
+  else
+    export MISE_ENV="$original_mise_env"
+  fi
+
+  if [[ "$original_mise_locked" == "__UNSET__" ]]; then
+    unset MISE_LOCKED
+  else
+    export MISE_LOCKED="$original_mise_locked"
+  fi
+
+  if [[ "$lock_failed" -ne 0 ]]; then
+    echo "Error: Failed to refresh mise lock for one or more environments." >&2
+    return 1
+  fi
+
+  echo "Done. Review and commit ~/.config/mise/mise.lock (repo: config/mise/mise.lock)."
 }
 
 aws_eks_kubeconfig_profiles_parallel() {

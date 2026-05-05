@@ -1,9 +1,11 @@
 [env]
 OPENCODE_EXPERIMENTAL_ICON_DISCOVERY = "true"
 OPENCODE_EXPERIMENTAL_FILEWATCHER = "true"
+OPENCODE_EXPERIMENTAL_LSP_TOOL = "true"
+CLAUDE_CONFIG_DIR = "{{env.HOME}}/.claude"
+CLAUDE_CODE_NO_FLICKER = "1"
 
 [tools]
 opencode = "latest"
-
-"npm:@github/copilot" = "latest"
-"npm:@github/copilot-language-server" = "latest"
+"cargo:tuicr" = 'latest'
+"cargo:https://github.com/rtk-ai/rtk" = "latest"

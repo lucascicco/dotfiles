@@ -1,6 +1,6 @@
 #!/bin/bash
 
-readonly BASE_RC_CONFIG="$HOME/dotfiles/config/bash/rc.sh"
+readonly BASE_RC_CONFIG="$HOME/.dotfiles/config/bash/rc.sh"
 if [[ -s "$BASE_RC_CONFIG" ]]; then
   # shellcheck disable=1090
   source "$BASE_RC_CONFIG"

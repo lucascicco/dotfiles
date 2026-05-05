@@ -27,6 +27,7 @@ inotify-tools
 iputils-ping
 jq
 kubetail
+lazygit
 libbz2-dev
 libffi-dev
 liblzma-dev
