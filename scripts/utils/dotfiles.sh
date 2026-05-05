@@ -244,7 +244,7 @@ get_dotfiles_profile() {
   env_value=$(_get_env_value "DOTFILES_PROFILE")
   if [[ -n "$env_value" ]]; then
     case "$env_value" in
-    personal|restricted)
+    personal | restricted)
       echo "$env_value"
       return 0
       ;;
@@ -256,7 +256,7 @@ get_dotfiles_profile() {
   local_value=$(_get_yaml_value "$DOTFILES_CONFIG_LOCAL" "profile" "dotfiles")
   if [[ -n "$local_value" ]]; then
     case "$local_value" in
-    personal|restricted)
+    personal | restricted)
       echo "$local_value"
       return 0
       ;;
@@ -268,7 +268,7 @@ get_dotfiles_profile() {
   repo_value=$(_get_yaml_value "$DOTFILES_CONFIG_REPO" "profile" "dotfiles")
   if [[ -n "$repo_value" ]]; then
     case "$repo_value" in
-    personal|restricted)
+    personal | restricted)
       echo "$repo_value"
       return 0
       ;;

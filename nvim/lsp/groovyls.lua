@@ -12,7 +12,12 @@ return {
   cmd = { "java", "-jar", jar },
   filetypes = { "groovy" },
   root_dir = function(fname)
-    return require("lspconfig.util").root_pattern("Jenkinsfile", "build.gradle", "build.gradle.kts", ".git")(fname)
+    return require("lspconfig.util").root_pattern(
+      "Jenkinsfile",
+      "build.gradle",
+      "build.gradle.kts",
+      ".git"
+    )(fname)
   end,
   settings = {
     groovy = {
