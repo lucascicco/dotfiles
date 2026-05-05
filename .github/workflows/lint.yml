@@ -6,14 +6,9 @@ on:
   pull_request:
 
 jobs:
-  shellcheck:
+  prek:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: shellcheck
-        uses: ludeeus/action-shellcheck@master
-        with:
-          severity: warning
-          scandir: ./scripts
-          additional_files: "config/bash/rc.sh config/bash/rc_darwin.sh config/bash/rc_linux.sh"
+      - uses: j178/prek-action@v2

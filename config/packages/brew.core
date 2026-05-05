@@ -5,6 +5,7 @@ zoxide
 
 # Version control / Forge CLIs
 glab
+prek
 
 # Core utilities
 bat

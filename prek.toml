@@ -1,0 +1,75 @@
+# Configuration file for `prek`, a git hook framework written in Rust.
+# See https://prek.j178.dev for more information.
+#:schema https://www.schemastore.org/prek.json
+
+[[repos]]
+repo = "https://github.com/pre-commit/pre-commit-hooks"
+rev = "v6.0.0"
+hooks = [
+  { id = "trailing-whitespace" },
+  { id = "end-of-file-fixer" },
+  { id = "check-docstring-first" },
+  { id = "check-merge-conflict" },
+  { id = "check-yaml" },
+  { id = "check-toml" },
+  { id = "check-json" },
+  { id = "check-xml" },
+  {
+    id = "check-added-large-files",
+    args = ["--maxkb=1024"]
+  }
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "shfmt",
+    name = "shfmt",
+    language = "system",
+    types = ["shell"],
+    entry = "shfmt -i 2 -w",
+    exclude = '(.*.zsh|agents/hooks/pre-tool-use/rtk-rewrite\.sh)'
+  }
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "shellcheck",
+    name = "shellcheck",
+    language = "system",
+    types = ["shell"],
+    entry = "shellcheck --external-sources",
+    exclude = '(.*.zsh|git-sync\.sh)'
+  }
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "stylua",
+    name = "StyLua",
+    language = "rust",
+    types = ["lua"],
+    entry = "stylua -s -"
+  }
+]
+
+[[repos]]
+repo = "local"
+hooks = [
+  {
+    id = "prettier",
+    name = "prettier",
+    language = "system",
+    types_or = [
+      "yaml",
+      "json",
+      "markdown"
+    ],
+    entry = "prettier --write --list-different --ignore-unknown"
+  }
+]
