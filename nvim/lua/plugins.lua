@@ -1,6 +1,4 @@
-local ai = require("ai")
-
-local plugins = {
+return {
   -- Theme
   {
     "rebelot/kanagawa.nvim",
@@ -180,6 +178,27 @@ local plugins = {
       require("config.blink")
     end,
   },
+  {
+    "zbirenbaum/copilot.lua",
+    build = ":Copilot auth",
+    event = "VeryLazy",
+    opts = {
+      suggestion = { enabled = true, auto_trigger = true },
+      panel = { enabled = false },
+      filetypes = {
+        ["*"] = true,
+      },
+      logger = {
+        log_to_file = true,
+        file = vim.fn.stdpath("log") .. "/copilot-lua.log",
+        file_log_level = vim.log.levels.WARN,
+        print_log = false,
+        print_log_level = vim.log.levels.WARN,
+        trace_lsp = "off", -- "off" | "messages" | "verbose"
+        trace_lsp_progress = false,
+      },
+    },
+  },
 
   -- Testing
   {
@@ -251,6 +270,17 @@ local plugins = {
       menu = {
         preview = false,
       },
+      bar = {
+        -- nvim master removed BufModifiedSet (#35610); override dropbar's
+        -- default buf list, which still references it.
+        update_events = {
+          buf = {
+            "FileChangedShellPost",
+            "TextChanged",
+            "ModeChanged",
+          },
+        },
+      },
     },
   },
   {
@@ -261,43 +291,29 @@ local plugins = {
     dependencies = {
       "nvim-tree/nvim-web-devicons",
     },
-    opts = function()
-      local offsets = {
-        {
-          filetype = "neo-tree",
-          text = "File Explorer",
-          separator = true,
-          padding = 1,
+    opts = {
+      options = {
+        mode = "tabs",
+        diagnostics = "nvim_lsp",
+        color_icons = true,
+        show_close_icon = false,
+        always_show_bufferline = false,
+        offsets = {
+          {
+            filetype = "neo-tree",
+            text = "File Explorer",
+            separator = true,
+            padding = 1,
+          },
+          {
+            filetype = "neotest-summary",
+            text = "Tests",
+            separator = true,
+            padding = 1,
+          },
         },
-        {
-          filetype = "neotest-summary",
-          text = "Tests",
-          separator = true,
-          padding = 1,
-        },
-      }
-
-      -- Only add codecompanion offset if enabled
-      if ai.is_enabled("codecompanion") then
-        table.insert(offsets, 2, {
-          filetype = "codecompanion",
-          text = "Code Companion",
-          separator = true,
-          padding = 1,
-        })
-      end
-
-      return {
-        options = {
-          mode = "tabs",
-          diagnostics = "nvim_lsp",
-          color_icons = true,
-          show_close_icon = false,
-          always_show_bufferline = false,
-          offsets = offsets,
-        },
-      }
-    end,
+      },
+    },
   },
   {
     "sindrets/winshift.nvim",
@@ -325,6 +341,23 @@ local plugins = {
       vim.g.neo_tree_remove_legacy_commands = 1
     end,
     opts = function(_, opts)
+      -- Compatibility: recent Neovim nightlies removed/changed BufModifiedSet
+      -- (see nvim PR #35610). Neo-tree still tries to register that event,
+      -- so we fall back to OptionSet modified when BufModifiedSet is missing.
+      if vim.fn.exists("##BufModifiedSet") == 0 then
+        local events = require("neo-tree.events")
+        if not events._dotfiles_bufmodifiedset_compat then
+          local original_define_autocmd_event = events.define_autocmd_event
+          events.define_autocmd_event = function(event_name, autocmds, ...)
+            if event_name == events.VIM_BUFFER_MODIFIED_SET then
+              return original_define_autocmd_event(event_name, { "OptionSet modified" }, ...)
+            end
+            return original_define_autocmd_event(event_name, autocmds, ...)
+          end
+          events._dotfiles_bufmodifiedset_compat = true
+        end
+      end
+
       opts.close_if_last_window = true
       opts.filesystem = {
         follow_current_file = {
@@ -362,7 +395,7 @@ local plugins = {
   },
   {
     "MeanderingProgrammer/render-markdown.nvim",
-    ft = ai.is_enabled("codecompanion") and { "markdown", "codecompanion" } or { "markdown" },
+    ft = { "markdown" },
   },
 
   -- Text editing
@@ -397,6 +430,10 @@ local plugins = {
     },
   },
   {
+    "wakatime/vim-wakatime",
+    event = "VeryLazy",
+  },
+  {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {
@@ -429,22 +466,15 @@ local plugins = {
   },
   {
     "ethanholz/nvim-lastplace",
-    opts = function()
-      local ignore_ft = {
+    opts = {
+      lastplace_ignore_buftype = { "quickfix", "nofile", "help", "Trouble" },
+      lastplace_ignore_filetype = {
         "gitcommit",
         "gitrebase",
         "neo-tree",
         "neotest-summary",
-      }
-      -- Only ignore codecompanion if enabled
-      if ai.is_enabled("codecompanion") then
-        table.insert(ignore_ft, "codecompanion")
-      end
-      return {
-        lastplace_ignore_buftype = { "quickfix", "nofile", "help", "Trouble" },
-        lastplace_ignore_filetype = ignore_ft,
-      }
-    end,
+      },
+    },
   },
 
   {
@@ -455,102 +485,51 @@ local plugins = {
   {
     "kylechui/nvim-surround",
     event = "BufReadPost",
+    init = function()
+      vim.g.nvim_surround_no_normal_mappings = true
+    end,
+    opts = {},
+  },
+  {
+    -- Lightweight linter runner; used here for tflint on Terraform files.
+    -- Add more linters per filetype in the config below as needed.
+    "mfussenegger/nvim-lint",
+    ft = { "terraform" },
+    config = function()
+      local lint = require("lint")
+      lint.linters_by_ft = {
+        terraform = { "tflint" },
+      }
+      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost" }, {
+        pattern = { "*.tf", "*.tfvars" },
+        callback = function()
+          lint.try_lint()
+        end,
+      })
+    end,
+  },
+  {
+    -- VimScript syntax for Helm (yaml + gotmpl + sprig + custom).
+    -- Loaded eagerly (lazy=false) so syntax/helm.vim is in rtp before any file
+    -- opens — avoids the race where lazy's ft-trigger adds the plugin after
+    -- Neovim has already attempted (and silently skipped) syntax loading for
+    -- the first helm buffer. Safe on lazy.nvim; the yaml-ls conflict warning
+    -- in helm-ls docs only applies to other plugin managers.
+    -- When the treesitter helm parser is installed, treesitter takes precedence
+    -- automatically; vim-helm acts as a solid fallback until then.
+    "towolf/vim-helm",
+    lazy = false,
+  },
+  {
+    -- Helm-aware extras on top of vim-helm: block highlighting, % jump
+    -- between block start/end (if/with/range), and indent hints.
+    -- Requires treesitter helm parser (installed via treesitter.lua).
+    "qvalentin/helm-ls.nvim",
+    ft = "helm",
     opts = {
-      keymaps = {
-        -- disable conflicting keymaps
-        normal_cur = false,
-        normal_line = false,
-        normal_cur_line = false,
-      },
+      conceal_templates = { enabled = false },
+      indent_hints = { enabled = true, only_for_current_line = true },
+      action_highlight = { enabled = true },
     },
   },
 }
-
--- AI plugins (conditionally added)
-if ai.is_enabled("copilot") then
-  table.insert(plugins, {
-    "zbirenbaum/copilot.lua",
-    build = ":Copilot auth",
-    event = "VeryLazy",
-    opts = {
-      suggestion = { enabled = true, auto_trigger = true },
-      panel = { enabled = false },
-      filetypes = {
-        ["*"] = true,
-      },
-      copilot_model = "claude-4.5-sonnet",
-      logger = {
-        log_to_file = true,
-        file = vim.fn.stdpath("log") .. "/copilot-lua.log",
-        file_log_level = vim.log.levels.WARN,
-        print_log = false,
-        print_log_level = vim.log.levels.WARN,
-        trace_lsp = "off", -- "off" | "messages" | "verbose"
-        trace_lsp_progress = false,
-      },
-      should_attach = function(_, bufname)
-        local val = os.getenv("SKIP_COPILOT_SHOULD_ATTACH_VALIDATION")
-        if val and (val:lower() == "true" or val == "1") then
-          return true
-        end
-        if vim.fn.executable("git") ~= 1 then
-          return true
-        end
-        local git_dir = vim.fn.finddir(".git", vim.fn.fnamemodify(bufname, ":p:h") .. ";")
-        if git_dir == "" then
-          return true
-        end
-        if type(git_dir) == "table" then
-          git_dir = git_dir[1]
-        end
-        local git_root = vim.fn.fnamemodify(git_dir, ":h")
-        local remote = vim.fn.systemlist("git -C " .. git_root .. " remote get-url origin")[1] or ""
-        if remote == "" then
-          return true
-        end
-        local org = remote:match("github.com[:/]([^/]+)/")
-        if not org then
-          return true
-        end
-        local disabled = require("utils").disabled_copilot_organizations
-        return not vim.tbl_contains(disabled, org)
-      end,
-    },
-  })
-end
-
-if ai.is_enabled("codecompanion") then
-  table.insert(plugins, {
-    "olimorris/codecompanion.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-treesitter/nvim-treesitter",
-    },
-    opts = {
-      ignore_warnings = true,
-      strategies = {
-        chat = {
-          adapter = "opencode",
-        },
-        inline = {
-          adapter = "opencode",
-        },
-        agent = {
-          adapter = "opencode",
-        },
-        cmd = {
-          adapter = "opencode",
-        },
-      },
-    },
-  })
-end
-
-if ai.is_enabled("wakatime") then
-  table.insert(plugins, {
-    "wakatime/vim-wakatime",
-    event = "VeryLazy",
-  })
-end
-
-return plugins

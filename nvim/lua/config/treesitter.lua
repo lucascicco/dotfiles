@@ -1,4 +1,8 @@
 require("nvim-treesitter").install({ "stable" })
+require("nvim-treesitter").install({ "toml" })
+require("nvim-treesitter").install({ "hcl" })   -- Terraform, Terragrunt .hcl files
+require("nvim-treesitter").install({ "groovy" }) -- Jenkinsfiles, Groovy scripts
+require("nvim-treesitter").install({ "helm" })  -- Helm chart templates (required by helm-ls.nvim)
 require("nvim-treesitter-textobjects").setup({
   select = {
     lookahead = true,

@@ -4,8 +4,12 @@ local utils = require("utils")
 local wk = require("which-key")
 
 wk.add({
-  { "<leader>y", '"+y', silent = true, mode = "v" },
-  { "<leader>p", '"+p', silent = true, mode = { "n", "v" } },
+  {
+    "<C-c>",
+    '"+y',
+    desc = "Copy to clipboard",
+    mode = { "v", "x", "n" },
+  },
   { "<A-/>", desc = "Toggle comment" },
   { "<A-Left>", "gT", desc = "Previous tab" },
   { "<A-Right>", "gt", desc = "Next tab" },
@@ -32,6 +36,13 @@ wk.add({
     end,
     desc = "Toggle snacks",
   },
+  {
+    "<C-g>",
+    function()
+      Snacks.lazygit()
+    end,
+    desc = "Toggle lazygit",
+  },
   { "<C-w>m", "<cmd>WinShift<cr>", desc = "WinShift mode" },
   { "<C-w>t", "<cmd>tab split<cr>", desc = "Duplicate tab" },
   { "<C-w>x", "<cmd>WinShift swap<cr><C-w><C-w>", desc = "Swap splits" },
@@ -57,6 +68,7 @@ wk.add({
     end,
     desc = "Toggle neotest summary",
   },
+  { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
   {
     "<leader>bd",
     function()
@@ -64,7 +76,6 @@ wk.add({
     end,
     desc = "Delete buffer",
   },
-  { "<leader>e", vim.diagnostic.open_float, desc = "Open diagnostic float" },
   {
     group = "toggle",
     { "<leader>td", utils.toggle_diagnostics, desc = "Toggle diagnostics" },
@@ -77,18 +88,23 @@ wk.add({
     { "<leader>tw", "<cmd>set wrap!<cr>:set wrap?<CR>", desc = "Toggle wrap" },
   },
   {
-    "<C-g>",
-    function()
-      Snacks.lazygit()
-    end,
-    desc = "Toggle lazygit",
-  },
-  {
     "<leader>vb",
     function()
       Snacks.git.blame_line()
     end,
     desc = "Blame current line",
+  },
+  {
+    "<leader>y",
+    '"+y',
+    silent = true,
+    mode = "v",
+  },
+  {
+    "<leader>p",
+    '"+p',
+    silent = true,
+    mode = { "n", "v" },
   },
   {
     "<leader>pf",
@@ -151,7 +167,7 @@ wk.add({
   {
     "ge",
     function()
-      ---@diagnostic disable-next-line: missing-parameter, missing-fields
+      ---@diagnostic disable-next-line: missing-fields
       require("trouble").toggle({
         mode = "diagnostics",
         focus = false,
@@ -212,9 +228,6 @@ wk.add({
   },
   {
     mode = { "n", "v" },
-    { "<C-.>", "<cmd>CodeCompanion<cr>", desc = "Code companion prompt" },
-    { "<F9>", "<cmd>CodeCompanionActions<cr>", desc = "Code companion actions" },
-    { "<C-F9>", "<cmd>CodeCompanionChat Toggle<cr>", desc = "Code companion chat" },
     {
       "<leader>rr",
       function()
@@ -222,10 +235,6 @@ wk.add({
       end,
       desc = "Find & Replace",
     },
-  },
-  {
-    mode = { "v" },
-    { "ga", "<cmd>CodeCompanionChat Add<cr>", desc = "Code companion add" },
   },
   {
     mode = { "i" },
@@ -263,6 +272,13 @@ wk.add({
     { "<C-Down>", "15<C-e>", desc = "Down 1 page" },
     { "<C-Up>", "15<C-y>", desc = "Up 1 page" },
     { "<esc>", "<cmd>noh<cr><esc>", desc = "Clear" },
+  },
+  {
+    group = "Surround",
+    { "ys", "<Plug>(nvim-surround-normal)", desc = "Surround" },
+    { "ds", "<Plug>(nvim-surround-delete)", desc = "Delete surround" },
+    { "cs", "<Plug>(nvim-surround-change)", desc = "Change surround" },
+    { "cS", "<Plug>(nvim-surround-change-line)", desc = "Change surround (line)" },
   },
 })
 

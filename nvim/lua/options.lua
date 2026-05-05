@@ -44,7 +44,7 @@ vim.opt.matchpairs:append("<:>")
 vim.opt.formatoptions:append("1o")
 vim.opt.whichwrap:append("<,>,[,],~")
 vim.opt.shortmess:append("a")
-vim.o.completeopt = "menu,menuone,noselect"
+vim.o.completeopt = "menu,menuone,noselect,popup"
 vim.opt.fillchars = {
   foldopen = "",
   foldclose = "",
@@ -90,11 +90,9 @@ vim.filetype.add({
   extension = {
     gotmpl = "gotmpl",
   },
-  pattern = {
-    [".*/templates/.*%.tpl"] = "helm",
-    [".*/templates/.*%.ya?ml"] = "helm",
-    ["helmfile.*%.ya?ml"] = "helm",
-  },
+  -- Helm patterns removed: helm-ls.nvim's ftdetect/filetype.lua is a strict
+  -- superset (adds *.txt templates, helmfile*.yaml.gotmpl, and routes
+  -- values*.yaml → yaml.helm-values for correct helm-ls attachment).
 })
 
 -- FT Configs
@@ -122,8 +120,14 @@ local ft_configs = {
   zsh = { indent = 2 },
 }
 
+-- Filetypes where VimScript syntax is preferred over treesitter.
+-- The parser may still be installed for plugin features (e.g. helm-ls.nvim
+-- uses vim.treesitter.get_parser() for block highlighting and % jump), but
+-- vim.treesitter.start() must not run or it overrides syntax/helm.vim.
+local no_ts_syntax = { helm = true }
+
 M.setup_ft = function()
-  if pcall(vim.treesitter.start) then
+  if not no_ts_syntax[vim.bo.filetype] and pcall(vim.treesitter.start) then
     vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
   end
 
