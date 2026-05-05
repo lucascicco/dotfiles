@@ -56,6 +56,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return
     end
 
+    -- taplo uses TOML 1.0 spec; prek.toml uses TOML 1.1 multi-line inline tables.
+    -- Attaching taplo causes false syntax errors and broken formatting on save.
+    if
+      client.name == "taplo"
+      and vim.fn.fnamemodify(vim.api.nvim_buf_get_name(bufnr), ":t") == "prek.toml"
+    then
+      vim.lsp.buf_detach_client(bufnr, client.id)
+      return
+    end
+
     if client.name == "ruff" then
       -- favor pyright over ruff
       client.server_capabilities.hoverProvider = false

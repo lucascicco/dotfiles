@@ -1,6 +1,5 @@
 # Configuration file for `prek`, a git hook framework written in Rust.
 # See https://prek.j178.dev for more information.
-#:schema https://www.schemastore.org/prek.json
 
 [[repos]]
 repo = "https://github.com/pre-commit/pre-commit-hooks"
@@ -14,10 +13,7 @@ hooks = [
   { id = "check-toml" },
   { id = "check-json" },
   { id = "check-xml" },
-  {
-    id = "check-added-large-files",
-    args = ["--maxkb=1024"]
-  }
+  { id = "check-added-large-files", args = ["--maxkb=1024"] },
 ]
 
 [[repos]]
@@ -29,47 +25,28 @@ hooks = [
     language = "system",
     types = ["shell"],
     entry = "shfmt -i 2 -w",
-    exclude = '(.*.zsh|agents/hooks/pre-tool-use/rtk-rewrite\.sh)'
-  }
-]
-
-[[repos]]
-repo = "local"
-hooks = [
+    exclude = '(.*.zsh|agents/hooks/pre-tool-use/rtk-rewrite\.sh|git-sync\.sh)',
+  },
   {
     id = "shellcheck",
     name = "shellcheck",
     language = "system",
     types = ["shell"],
     entry = "shellcheck --external-sources",
-    exclude = '(.*.zsh|git-sync\.sh)'
-  }
-]
-
-[[repos]]
-repo = "local"
-hooks = [
+    exclude = '(.*.zsh|git-sync\.sh)',
+  },
   {
     id = "stylua",
     name = "StyLua",
     language = "system",
     types = ["lua"],
-    entry = "stylua"
-  }
-]
-
-[[repos]]
-repo = "local"
-hooks = [
+    entry = "stylua",
+  },
   {
     id = "prettier",
     name = "prettier",
     language = "system",
-    types_or = [
-      "yaml",
-      "json",
-      "markdown"
-    ],
-    entry = "prettier --write --list-different --ignore-unknown"
-  }
+    types_or = ["yaml", "json", "markdown"],
+    entry = "prettier --write --list-different --ignore-unknown",
+  },
 ]
