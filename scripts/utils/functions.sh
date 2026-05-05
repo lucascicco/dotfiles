@@ -135,7 +135,8 @@ function create_symlink {
   if [ "$dest_symlink_path" != "$source_file" ]; then
     # If dest is a real directory (not a symlink), back it up and remove
     if [ -d "$dest_file" ] && [ ! -L "$dest_file" ]; then
-      local backup_dir="${dest_file}.bak.$(date +%Y%m%d%H%M%S)"
+      local backup_dir
+      backup_dir="${dest_file}.bak.$(date +%Y%m%d%H%M%S)"
       warning "Backing up existing directory: ${dest_file} -> ${backup_dir}"
       mv "$dest_file" "$backup_dir"
     fi

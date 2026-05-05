@@ -47,6 +47,7 @@ export MISE_USE_TOML=1
 # dotfiles config (functions only; export_dotfiles_config called later from zshrc)
 DOTFILES_CONFIG_SCRIPT="${DOTFILES_DIR}/scripts/utils/dotfiles.sh"
 if [[ -s "$DOTFILES_CONFIG_SCRIPT" ]]; then
+  # shellcheck source=/dev/null
   source "$DOTFILES_CONFIG_SCRIPT"
 fi
 
@@ -198,6 +199,7 @@ dotfiles-config-reload() {
     return 1
   fi
 
+  # shellcheck source=/dev/null
   source "$dotfiles_script"
 
   echo "Reloading dotfiles configuration..."

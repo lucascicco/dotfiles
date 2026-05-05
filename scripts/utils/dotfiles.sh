@@ -209,13 +209,21 @@ export_dotfiles_config() {
   for tool in "${AI_TOOLS[@]}"; do
     env_var="DOTFILES_AI_$(_to_upper "$tool")"
     env_var="${env_var//-/_}"
-    is_ai_enabled "$tool" && export "${env_var}=1" || export "${env_var}=0"
+    if is_ai_enabled "$tool"; then
+      export "${env_var}=1"
+    else
+      export "${env_var}=0"
+    fi
   done
 
   for tool in "${TELEMETRY_TOOLS[@]}"; do
     env_var="DOTFILES_AI_$(_to_upper "$tool")"
     env_var="${env_var//-/_}"
-    is_telemetry_enabled "$tool" && export "${env_var}=1" || export "${env_var}=0"
+    if is_telemetry_enabled "$tool"; then
+      export "${env_var}=1"
+    else
+      export "${env_var}=0"
+    fi
   done
 
   # Export MISE_ENV based on profile setting

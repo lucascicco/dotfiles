@@ -31,7 +31,7 @@ repos:
         types:
           - shell
         entry: shellcheck --external-sources
-        exclude: .*.zsh
+        exclude: (.*.zsh|scripts/utils/git-sync\.sh)
   - repo: local
     hooks:
       - id: stylua
