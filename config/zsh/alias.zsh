@@ -1,6 +1,8 @@
 # zsh aliases
 alias c="clear"
 
+export STARSHIP_K8S=1
+
 function kube-toggle() {
   if [[ -n "$STARSHIP_K8S" ]]; then
     unset STARSHIP_K8S
