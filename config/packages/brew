@@ -1,6 +1,7 @@
 # Personal brew packages — installed on personal profile only, in addition to brew.core.
 # Do NOT duplicate entries already in brew.core.
 1password-cli
+age
 cpanminus
 eugene1g/safehouse/agent-safehouse
 ffmpegthumbnailer
@@ -19,6 +20,7 @@ meetingbar
 mole
 poppler
 snitch
+sops
 sox
 tectonic
 watchman

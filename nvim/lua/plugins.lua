@@ -430,10 +430,6 @@ return {
     },
   },
   {
-    "wakatime/vim-wakatime",
-    event = "VeryLazy",
-  },
-  {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {

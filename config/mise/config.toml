@@ -18,11 +18,10 @@ uvx = true
 uv_venv_auto = true
 
 [settings.npm]
-bun = true
+bun = false
 
 [tools]
 # Languages
-bun = 'latest'
 deno = 'latest'
 go = ['latest', '1.20', '1.19', '1.18']
 node = ['latest', '20', '18', '16']
@@ -44,13 +43,13 @@ duf = 'latest'
 fd = 'latest'
 fzf = 'latest'
 jq = 'latest'
+glab = 'latest'
 github-cli = 'latest'
 groovy = 'latest'
 gomplate = 'latest'
 helm = 'latest'
 helm-diff = 'latest'
 helm-docs = 'latest'
-"aqua:mrjosh/helm-ls" = 'latest'
 
 # Kubernetes tools
 kubesec = 'latest'
@@ -68,9 +67,7 @@ velero = 'latest'
 
 lua-language-server = 'latest'
 marksman = 'latest'
-pdm = 'latest'
 pnpm = 'latest'
-poetry = 'latest'
 pre-commit = 'latest'
 ripgrep = 'latest'
 ruff = 'latest'
@@ -81,16 +78,19 @@ shfmt = 'latest'
 stylua = 'latest'
 trivy = 'latest'
 opentofu = 'latest'
-terraform = ['latest']
+terraform = '1.15.1'
 terraform-docs = 'latest'
-"aqua:hashicorp/terraform-ls" = 'latest'
-"aqua:terraform-linters/tflint" = 'latest'
 terraformer = 'latest'
-terragrunt = 'latest'
+terragrunt = '1.0.1'
 yazi = 'latest'
 yamlfmt = 'latest'
 yamllint = 'latest'
 yq = 'latest'
+
+# aqua tools
+"aqua:hashicorp/terraform-ls" = 'latest'
+"aqua:mrjosh/helm-ls" = 'latest'
+"aqua:terraform-linters/tflint" = 'latest'
 
 # pipx tools
 "pipx:autotools-language-server" = "latest"
@@ -101,6 +101,8 @@ yq = 'latest'
 "pipx:ipython" = "latest"
 "pipx:mypy" = "latest"
 "pipx:nox" = "latest"
+"pipx:pdm" = 'latest'
+"pipx:poetry" = 'latest'
 "pipx:pyrefly" = "latest"
 "pipx:pytest" = "latest"
 "pipx:pytest-language-server" = "latest"
@@ -123,6 +125,7 @@ yq = 'latest'
 "npm:lua-3p-language-servers" = "latest"
 "npm:markdownlint-cli" = "latest"
 "npm:mermaid-cli" = "latest"
+"npm:npm-groovy-lint" = "latest"
 "npm:prettier" = "latest"
 "npm:pyright" = "latest"
 "npm:stylelint" = "latest"
@@ -145,4 +148,4 @@ yq = 'latest'
 'go:github.com/kubernetes-sigs/ingress2gateway' = 'v1.0.0'
 'go:github.com/segmentio/golines' = 'latest'
 'go:golang.org/x/tools/gopls' = 'latest'
-'go:mvdan.cc/gofumpt' = 'latest'
+'go:mvdan.cc/gofumpt' = '0.10.0'

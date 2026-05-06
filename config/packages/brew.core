@@ -4,7 +4,6 @@ zsh
 zoxide
 
 # Version control / Forge CLIs
-glab
 prek
 
 # Core utilities
@@ -21,6 +20,7 @@ htop
 make
 md5sha1sum
 sd
+tree
 unar
 wget
 

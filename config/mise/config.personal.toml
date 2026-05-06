@@ -1,7 +1,10 @@
+[settings.npm]
+bun = true
+
 [tools]
+bun = 'latest'
 cloud-sql-proxy = 'latest'
 doctl = 'latest'
-glab = 'latest'
 gcloud = 'latest'
 
 # npm tools
