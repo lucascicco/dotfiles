@@ -2124,6 +2124,10 @@ version = "2.4.1"
 backend = "asdf:stylua"
 
 [[tools.terraform]]
+version = "1.14.8"
+backend = "asdf:terraform"
+
+[[tools.terraform]]
 version = "1.15.1"
 backend = "asdf:terraform"
 
