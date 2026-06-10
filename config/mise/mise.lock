@@ -589,6 +589,10 @@ url = "https://github.com/muesli/duf/releases/download/v0.9.1/duf_0.9.1_windows_
 checksum = "sha256:503934be81f847d9ddb1b739834217480633435ad16515dd199e372c0b2e1afc"
 url = "https://github.com/muesli/duf/releases/download/v0.9.1/duf_0.9.1_windows_x86_64.zip"
 
+[[tools.dyff]]
+version = "1.12.0"
+backend = "aqua:homeport/dyff"
+
 [[tools.fd]]
 version = "10.3.0"
 backend = "asdf:fd"
@@ -2128,7 +2132,7 @@ version = "1.14.8"
 backend = "asdf:terraform"
 
 [[tools.terraform]]
-version = "1.15.1"
+version = "1.15.5"
 backend = "asdf:terraform"
 
 [[tools.terraform-docs]]
@@ -2167,7 +2171,7 @@ url = "https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.
 url = "https://github.com/GoogleCloudPlatform/terraformer/releases/download/0.8.30/terraformer-all-darwin-amd64"
 
 [[tools.terragrunt]]
-version = "1.0.1"
+version = "1.0.7"
 backend = "asdf:terragrunt"
 
 [[tools.trivy]]

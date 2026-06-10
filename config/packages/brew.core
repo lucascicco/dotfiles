@@ -26,6 +26,7 @@ wget
 
 # Development essentials
 cmake
+golangci-lint
 lazygit
 libtool
 luarocks
@@ -43,6 +44,7 @@ docker-buildx
 docker-compose
 docker-credential-helper
 docker-credential-helper-ecr
+
 
 # Databases
 mysql-client
